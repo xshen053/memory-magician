@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-memorymagician-dev-235834-authRole",
+      "UnauthRoleArn": "arn:aws:iam::719498112178:role/amplify-memorymagician-dev-235834-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::719498112178:role/amplify-memorymagician-dev-235834-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-memorymagician-dev-235834-deployment",
+      "UnauthRoleName": "amplify-memorymagician-dev-235834-unauthRole",
+      "StackName": "amplify-memorymagician-dev-235834",
+      "StackId": "arn:aws:cloudformation:us-west-1:719498112178:stack/amplify-memorymagician-dev-235834/ddff5390-c1a0-11ee-95d3-023819955d6b",
+      "AmplifyAppId": "d9gd5jz26at7e"
+    },
+    "categories": {
+      "auth": {
+        "memorymagician6532fd10": {}
+      },
+      "api": {
+        "memorymagician": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d9gd5jz26at7e",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
