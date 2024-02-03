@@ -37,6 +37,7 @@ const App = ({ signOut, user }) => {
           <Route path="/todayreview" element={<TodayReviewScreen />} /> 
         </Routes>
       </div>
+      <AddMemory />
     </div>
   );
 }

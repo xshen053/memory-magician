@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import moment from "moment-timezone";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import moment from 'moment-timezone';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import '../css/style.css';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-import "../css/style.css";
+
+const StyledChip = styled(Chip)({
+  marginLeft: '8px',
+});
 
 function TodayReview() {
   const [memories, setMemories] = useState([]);
-  const [isMemoryListVisible, setMemoryListVisible] = useState(false);
 
   const today = moment().tz("America/Los_Angeles").startOf("day");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -65,81 +72,40 @@ function TodayReview() {
   }
 
   return (
-    <div>
-      <h1
-        className="title-hover-effect"
-        onClick={() => setMemoryListVisible(!isMemoryListVisible)}
-      >
-        Today's Review
-      </h1>
-
-      {/* <Button
-        variant="contained"
-        color="secondary"
-        onClick={triggerTestSnackbar}
-      >
-        Test "Good Job!" Snackbar
-      </Button> */}
-      {isMemoryListVisible && (
-        <div>
-          {memories.map((memory) => (
-            <Card
-              key={memory.id}
-              sx={{
-                maxWidth: 345,
-                margin: "20px auto",
-                backgroundColor: memory.type === 1 ? "transparent" : "#e8e3d3",
-                backgroundImage: memory.type === 1 ? "url('/img1.png')" : "none",
-                backgroundSize: 'cover', // Optional based on your design needs
-                transition: "transform 0.3s, box-shadow 0.3s",
-                ":hover": {
-                  transform: "scale(1.05)",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-                },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  {memory.title}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    marginTop: 2,
-                    backgroundColor: memory.type === 1 ? "transparent" : "#4b2e83",
-                    "&:hover": { backgroundColor: "#4b2e83" },
-                  }}
-                  onClick={() => markMemoryAsReviewed(memory.id)}
-                >
-                  {memory.type !== 1 && "Mark as Reviewed"}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+    <div style={{ textAlign: 'left' }}> {/* This div ensures everything inside is left-aligned */}
+      <Typography variant="h5" gutterBottom style={{ marginTop: '50px' }} >
+        All Tasks For Today!
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        Estimate time: 2 hours
+      </Typography>
+      <Divider sx={{ bgcolor: 'purple' }} />
+      <List>
+        {memories.map((memory) => (
+          <ListItem key={memory.id} secondaryAction={
+            // <StyledChip label={`${memory.reviewCount} time`} color="primary" />
+            <StyledChip label={`3/18`} color="primary" />
+          }>
+            <Checkbox
+              edge="start"
+              checked={memory.reviewed}
+              tabIndex={-1}
+              disableRipple
+              inputProps={{ 'aria-labelledby': `checkbox-list-label-${memory.id}` }}
+              onClick={() => markMemoryAsReviewed(memory.id)}
+            />
+            <ListItemText id={`checkbox-list-label-${memory.id}`} primary={memory.title} />
+          </ListItem>
+        ))}
+      </List>
 
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity="success"
-          sx={{
-            width: "100%",
-            bgcolor: "rgb(233, 221, 174)", // Blue background color 4b2e83
-            color: "#fff", // White text color
-            ".MuiAlert-icon": { color: "#4b2e83" }, // This targets the checkmark icon e8e3d3
-            ".MuiAlert-message": {
-              color: "#4b2e83",
-              fontWeight: "bold", // Bold text
-            }, // Yellow text color for the "Good Job!" message
-          }}
-        >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success">
           Good Job!
         </Alert>
       </Snackbar>
