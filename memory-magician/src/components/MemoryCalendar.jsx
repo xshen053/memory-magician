@@ -48,7 +48,6 @@ function MemoryCalendar(props) {
 
   return (
     <div style={props.style}>
-      <h1 className="title-hover-effect">Review Calendar</h1>
       <Calendar
         localizer={localizer}
         events={events}

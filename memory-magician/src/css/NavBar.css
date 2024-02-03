@@ -31,6 +31,19 @@
   /* Add other styles like color, border, etc., as needed */
 }
 
+.navbar .nav-links .sign-out-button {
+  color: black;
+  text-decoration: none;
+  margin-left: 100px; /* Adjusted margin */
+  font-size: 1.6em; /* Increased font size */
+  padding: 5px 10px; /* Added padding */  
+  border: none; /* Optional: remove border */
+  background-color: transparent; /* Optional: make background transparent */
+  cursor: pointer; /* Change cursor on hover */
+  /* Add other styling as per your design */
+}
+
+
 
 @media (max-width: 768px) {
   .navbar .logo img {

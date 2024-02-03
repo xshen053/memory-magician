@@ -26,13 +26,13 @@
 }
 
 .rbc-day-bg.rbc-today {
-  background-image: url("/2.jpeg"); /* Adjust the path to point to your image */
+  /* background-image: url("/2.jpeg"); /* Adjust the path to point to your image */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-position: center center; /* Centers the background image */
 }
 
 .rbc-day-bg.rbc-off-range-bg {
-  background-image: url("/4.jpg"); /* Adjust the path to point to your image */
+  /* background-image: url("/4.jpg"); /* Adjust the path to point to your image */
   background-size: cover; /* Ensures the image covers the entire element */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-position: center center; /* Centers the background image */
