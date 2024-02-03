@@ -1,8 +1,9 @@
 import React from 'react';
+import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
 import { NavLink } from 'react-router-dom';
 import '../css/NavBar.css'; // Assuming you have a separate CSS file for styling
 
-const NavBar = () => {
+const NavBar = ({ signOut, user }) => {
   return (
     <nav className="navbar">
       <div className="logo">
@@ -15,11 +16,11 @@ const NavBar = () => {
         <NavLink to="/todayreview" className={({ isActive }) => isActive ? 'active-link' : ''}>Today's Review</NavLink>
         <NavLink to="/calendar" className={({ isActive }) => isActive ? 'active-link' : ''}>Calendar</NavLink>
         <NavLink to="/catch-up" className={({ isActive }) => isActive ? 'active-link' : ''}>Catch Up</NavLink>
-        <NavLink to="/signout" className={({ isActive }) => isActive ? 'active-link' : ''}>Sign Out</NavLink>
+        <Button onClick={signOut}>Sign out</Button>
         {/* Additional links as needed */}
       </div>
     </nav>
   );
 };
 
-export default NavBar;
+export default withAuthenticator(NavBar);

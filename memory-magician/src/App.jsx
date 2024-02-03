@@ -26,6 +26,7 @@ const App = ({ signOut, user }) => {
   
   return (
     <div>
+      <NavBar /> {/* NavBar is always displayed */}
       <div className="App">
         {/* Main content */}
         <Routes>

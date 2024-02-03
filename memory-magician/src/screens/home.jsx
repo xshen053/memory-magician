@@ -16,7 +16,6 @@ const HomeScreen = ({ signOut, user }) => {
 
   return (
     <div>
-      <NavBar />
       {/* <div style={styles.contentContainer}>
         <Heading level={1}>Hello {user.username}</Heading>
         <Button onClick={signOut}>Sign out</Button>
@@ -41,4 +40,4 @@ const styles = {
   // ... other styles ...
 };
 
-export default HomeScreen
+export default withAuthenticator(HomeScreen)
