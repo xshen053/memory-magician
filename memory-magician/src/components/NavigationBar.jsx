@@ -8,7 +8,7 @@ const NavBar = ({ signOut, user }) => {
     <nav className="navbar">
       <div className="logo">
         {/* Logo here */}
-        <img src="../img/logo_with_text.png" alt="Logo" />
+        <img src="/logo_with_text.png" alt="Logo" />
       </div>
       
       <div className="nav-links">
