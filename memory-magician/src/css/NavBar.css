@@ -1,0 +1,43 @@
+.navbar {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: white;
+  padding: 10px 20px;
+}
+
+.navbar .logo img {
+  align-items: center;
+  width: 250px;  /* Adjust the width as needed */
+  height: auto;  /* This will maintain the aspect ratio */
+  margin-right: 400px
+}
+
+.navbar .nav-links a {
+  color: black;
+  text-decoration: none;
+  margin-left: 100px; /* Adjusted margin */
+  font-size: 1.6em; /* Increased font size */
+  padding: 5px 10px; /* Added padding */
+}
+
+.navbar .nav-links .active-link { 
+  background-color: #E8E3D3; /* Example background color */
+  border-radius: 10px; /* Optional: for rounded corners */
+  color: white;
+  padding: 20px 20px; /* Optional: for additional spacing */
+  /* Add other styles like color, border, etc., as needed */
+}
+
+
+@media (max-width: 768px) {
+  .navbar .logo img {
+    margin-right: 15px; /* Smaller margin for mobile */
+  }
+
+  .navbar .nav-links a {
+    margin-left: 8px; /* Smaller margin for mobile */
+  }
+}
