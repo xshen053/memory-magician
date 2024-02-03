@@ -83,7 +83,6 @@ function TodayReview() {
       <List>
         {memories.map((memory) => (
           <ListItem key={memory.id} secondaryAction={
-            // <StyledChip label={`${memory.reviewCount} time`} color="primary" />
             <StyledChip label={`3/18`} color="primary" />
           }>
             <Checkbox
