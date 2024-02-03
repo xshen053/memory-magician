@@ -1,5 +1,5 @@
 .navbar {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,7 +12,7 @@
   align-items: center;
   width: 250px;  /* Adjust the width as needed */
   height: auto;  /* This will maintain the aspect ratio */
-  margin-right: 400px
+  margin-right: 300px
 }
 
 .navbar .nav-links a {
