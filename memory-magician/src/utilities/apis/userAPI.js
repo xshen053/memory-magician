@@ -1,5 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
-import { cardTagsByCardId } from '../../graphql/queries.js';
+import { createUser } from '../../graphql/mutations.js';
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
 
@@ -9,5 +9,16 @@ const client = generateClient();
 
 
 export const createUserAPI = async (data) => {
-
+  console.log(data)
+  try {
+    await client.graphql({
+      query: createUser,
+      variables: {
+        input: data
+      }
+    });
+  } catch (error) {
+    console.error("Error during createUserAPI:", error);
+    throw error;
+  }
 }

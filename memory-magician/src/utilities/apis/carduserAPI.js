@@ -1,5 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
-import { createCard } from '../../graphql/mutations.js';
+import { createUserCards } from '../../graphql/mutations.js';
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
 
@@ -7,10 +7,10 @@ Amplify.configure(amplifyconfig);
 const client = generateClient();
 
 
-export const createCardApi = async (data) => {
+export const createUserCardsApi = async (data) => {
   try {
     await client.graphql({
-      query: createCard,
+      query: createUserCards,
       variables: {
         input: data
       }
