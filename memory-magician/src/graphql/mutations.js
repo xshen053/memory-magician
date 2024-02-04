@@ -69,27 +69,14 @@ export const createCard = /* GraphQL */ `
     createCard(input: $input, condition: $condition) {
       id
       content
-      user {
-        id
-        username
-        phoneNumber
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      date {
-        nextToken
-        __typename
-      }
-      tags {
-        nextToken
-        __typename
-      }
+      tags
       type
+      users {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
-      userCardsId
       __typename
     }
   }
@@ -102,27 +89,14 @@ export const updateCard = /* GraphQL */ `
     updateCard(input: $input, condition: $condition) {
       id
       content
-      user {
-        id
-        username
-        phoneNumber
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      date {
-        nextToken
-        __typename
-      }
-      tags {
-        nextToken
-        __typename
-      }
+      tags
       type
+      users {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
-      userCardsId
       __typename
     }
   }
@@ -135,6 +109,27 @@ export const deleteCard = /* GraphQL */ `
     deleteCard(input: $input, condition: $condition) {
       id
       content
+      tags
+      type
+      users {
+        nextToken
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createUserCards = /* GraphQL */ `
+  mutation CreateUserCards(
+    $input: CreateUserCardsInput!
+    $condition: ModelUserCardsConditionInput
+  ) {
+    createUserCards(input: $input, condition: $condition) {
+      id
+      userID
+      cardID
       user {
         id
         username
@@ -144,33 +139,18 @@ export const deleteCard = /* GraphQL */ `
         updatedAt
         __typename
       }
-      date {
-        nextToken
-        __typename
-      }
-      tags {
-        nextToken
-        __typename
-      }
-      type
-      createdAt
-      updatedAt
-      userCardsId
-      __typename
-    }
-  }
-`;
-export const createReviewDate = /* GraphQL */ `
-  mutation CreateReviewDate(
-    $input: CreateReviewDateInput!
-    $condition: ModelReviewDateConditionInput
-  ) {
-    createReviewDate(input: $input, condition: $condition) {
-      id
       card {
-        nextToken
+        id
+        content
+        tags
+        type
+        createdAt
+        updatedAt
         __typename
       }
+      number
+      isReviewed
+      reviewDuration
       reviewDate
       createdAt
       updatedAt
@@ -178,17 +158,36 @@ export const createReviewDate = /* GraphQL */ `
     }
   }
 `;
-export const updateReviewDate = /* GraphQL */ `
-  mutation UpdateReviewDate(
-    $input: UpdateReviewDateInput!
-    $condition: ModelReviewDateConditionInput
+export const updateUserCards = /* GraphQL */ `
+  mutation UpdateUserCards(
+    $input: UpdateUserCardsInput!
+    $condition: ModelUserCardsConditionInput
   ) {
-    updateReviewDate(input: $input, condition: $condition) {
+    updateUserCards(input: $input, condition: $condition) {
       id
-      card {
-        nextToken
+      userID
+      cardID
+      user {
+        id
+        username
+        phoneNumber
+        name
+        createdAt
+        updatedAt
         __typename
       }
+      card {
+        id
+        content
+        tags
+        type
+        createdAt
+        updatedAt
+        __typename
+      }
+      number
+      isReviewed
+      reviewDuration
       reviewDate
       createdAt
       updatedAt
@@ -196,258 +195,37 @@ export const updateReviewDate = /* GraphQL */ `
     }
   }
 `;
-export const deleteReviewDate = /* GraphQL */ `
-  mutation DeleteReviewDate(
-    $input: DeleteReviewDateInput!
-    $condition: ModelReviewDateConditionInput
+export const deleteUserCards = /* GraphQL */ `
+  mutation DeleteUserCards(
+    $input: DeleteUserCardsInput!
+    $condition: ModelUserCardsConditionInput
   ) {
-    deleteReviewDate(input: $input, condition: $condition) {
+    deleteUserCards(input: $input, condition: $condition) {
       id
-      card {
-        nextToken
+      userID
+      cardID
+      user {
+        id
+        username
+        phoneNumber
+        name
+        createdAt
+        updatedAt
         __typename
       }
+      card {
+        id
+        content
+        tags
+        type
+        createdAt
+        updatedAt
+        __typename
+      }
+      number
+      isReviewed
+      reviewDuration
       reviewDate
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const createTag = /* GraphQL */ `
-  mutation CreateTag(
-    $input: CreateTagInput!
-    $condition: ModelTagConditionInput
-  ) {
-    createTag(input: $input, condition: $condition) {
-      id
-      name
-      cards {
-        nextToken
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const updateTag = /* GraphQL */ `
-  mutation UpdateTag(
-    $input: UpdateTagInput!
-    $condition: ModelTagConditionInput
-  ) {
-    updateTag(input: $input, condition: $condition) {
-      id
-      name
-      cards {
-        nextToken
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const deleteTag = /* GraphQL */ `
-  mutation DeleteTag(
-    $input: DeleteTagInput!
-    $condition: ModelTagConditionInput
-  ) {
-    deleteTag(input: $input, condition: $condition) {
-      id
-      name
-      cards {
-        nextToken
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const createCardDates = /* GraphQL */ `
-  mutation CreateCardDates(
-    $input: CreateCardDatesInput!
-    $condition: ModelCardDatesConditionInput
-  ) {
-    createCardDates(input: $input, condition: $condition) {
-      id
-      cardId
-      reviewDateId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      reviewDate {
-        id
-        reviewDate
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const updateCardDates = /* GraphQL */ `
-  mutation UpdateCardDates(
-    $input: UpdateCardDatesInput!
-    $condition: ModelCardDatesConditionInput
-  ) {
-    updateCardDates(input: $input, condition: $condition) {
-      id
-      cardId
-      reviewDateId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      reviewDate {
-        id
-        reviewDate
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const deleteCardDates = /* GraphQL */ `
-  mutation DeleteCardDates(
-    $input: DeleteCardDatesInput!
-    $condition: ModelCardDatesConditionInput
-  ) {
-    deleteCardDates(input: $input, condition: $condition) {
-      id
-      cardId
-      reviewDateId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      reviewDate {
-        id
-        reviewDate
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const createCardTags = /* GraphQL */ `
-  mutation CreateCardTags(
-    $input: CreateCardTagsInput!
-    $condition: ModelCardTagsConditionInput
-  ) {
-    createCardTags(input: $input, condition: $condition) {
-      id
-      cardId
-      tagId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      tag {
-        id
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const updateCardTags = /* GraphQL */ `
-  mutation UpdateCardTags(
-    $input: UpdateCardTagsInput!
-    $condition: ModelCardTagsConditionInput
-  ) {
-    updateCardTags(input: $input, condition: $condition) {
-      id
-      cardId
-      tagId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      tag {
-        id
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const deleteCardTags = /* GraphQL */ `
-  mutation DeleteCardTags(
-    $input: DeleteCardTagsInput!
-    $condition: ModelCardTagsConditionInput
-  ) {
-    deleteCardTags(input: $input, condition: $condition) {
-      id
-      cardId
-      tagId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      tag {
-        id
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
       createdAt
       updatedAt
       __typename

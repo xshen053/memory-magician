@@ -57,27 +57,14 @@ export const onCreateCard = /* GraphQL */ `
     onCreateCard(filter: $filter) {
       id
       content
-      user {
-        id
-        username
-        phoneNumber
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      date {
-        nextToken
-        __typename
-      }
-      tags {
-        nextToken
-        __typename
-      }
+      tags
       type
+      users {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
-      userCardsId
       __typename
     }
   }
@@ -87,27 +74,14 @@ export const onUpdateCard = /* GraphQL */ `
     onUpdateCard(filter: $filter) {
       id
       content
-      user {
-        id
-        username
-        phoneNumber
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      date {
-        nextToken
-        __typename
-      }
-      tags {
-        nextToken
-        __typename
-      }
+      tags
       type
+      users {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
-      userCardsId
       __typename
     }
   }
@@ -117,6 +91,26 @@ export const onDeleteCard = /* GraphQL */ `
     onDeleteCard(filter: $filter) {
       id
       content
+      tags
+      type
+      users {
+        nextToken
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCreateUserCards = /* GraphQL */ `
+  subscription OnCreateUserCards(
+    $filter: ModelSubscriptionUserCardsFilterInput
+  ) {
+    onCreateUserCards(filter: $filter) {
+      id
+      userID
+      cardID
       user {
         id
         username
@@ -126,32 +120,18 @@ export const onDeleteCard = /* GraphQL */ `
         updatedAt
         __typename
       }
-      date {
-        nextToken
-        __typename
-      }
-      tags {
-        nextToken
-        __typename
-      }
-      type
-      createdAt
-      updatedAt
-      userCardsId
-      __typename
-    }
-  }
-`;
-export const onCreateReviewDate = /* GraphQL */ `
-  subscription OnCreateReviewDate(
-    $filter: ModelSubscriptionReviewDateFilterInput
-  ) {
-    onCreateReviewDate(filter: $filter) {
-      id
       card {
-        nextToken
+        id
+        content
+        tags
+        type
+        createdAt
+        updatedAt
         __typename
       }
+      number
+      isReviewed
+      reviewDuration
       reviewDate
       createdAt
       updatedAt
@@ -159,16 +139,35 @@ export const onCreateReviewDate = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateReviewDate = /* GraphQL */ `
-  subscription OnUpdateReviewDate(
-    $filter: ModelSubscriptionReviewDateFilterInput
+export const onUpdateUserCards = /* GraphQL */ `
+  subscription OnUpdateUserCards(
+    $filter: ModelSubscriptionUserCardsFilterInput
   ) {
-    onUpdateReviewDate(filter: $filter) {
+    onUpdateUserCards(filter: $filter) {
       id
-      card {
-        nextToken
+      userID
+      cardID
+      user {
+        id
+        username
+        phoneNumber
+        name
+        createdAt
+        updatedAt
         __typename
       }
+      card {
+        id
+        content
+        tags
+        type
+        createdAt
+        updatedAt
+        __typename
+      }
+      number
+      isReviewed
+      reviewDuration
       reviewDate
       createdAt
       updatedAt
@@ -176,236 +175,36 @@ export const onUpdateReviewDate = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteReviewDate = /* GraphQL */ `
-  subscription OnDeleteReviewDate(
-    $filter: ModelSubscriptionReviewDateFilterInput
+export const onDeleteUserCards = /* GraphQL */ `
+  subscription OnDeleteUserCards(
+    $filter: ModelSubscriptionUserCardsFilterInput
   ) {
-    onDeleteReviewDate(filter: $filter) {
+    onDeleteUserCards(filter: $filter) {
       id
-      card {
-        nextToken
+      userID
+      cardID
+      user {
+        id
+        username
+        phoneNumber
+        name
+        createdAt
+        updatedAt
         __typename
       }
+      card {
+        id
+        content
+        tags
+        type
+        createdAt
+        updatedAt
+        __typename
+      }
+      number
+      isReviewed
+      reviewDuration
       reviewDate
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onCreateTag = /* GraphQL */ `
-  subscription OnCreateTag($filter: ModelSubscriptionTagFilterInput) {
-    onCreateTag(filter: $filter) {
-      id
-      name
-      cards {
-        nextToken
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateTag = /* GraphQL */ `
-  subscription OnUpdateTag($filter: ModelSubscriptionTagFilterInput) {
-    onUpdateTag(filter: $filter) {
-      id
-      name
-      cards {
-        nextToken
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteTag = /* GraphQL */ `
-  subscription OnDeleteTag($filter: ModelSubscriptionTagFilterInput) {
-    onDeleteTag(filter: $filter) {
-      id
-      name
-      cards {
-        nextToken
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onCreateCardDates = /* GraphQL */ `
-  subscription OnCreateCardDates(
-    $filter: ModelSubscriptionCardDatesFilterInput
-  ) {
-    onCreateCardDates(filter: $filter) {
-      id
-      cardId
-      reviewDateId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      reviewDate {
-        id
-        reviewDate
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateCardDates = /* GraphQL */ `
-  subscription OnUpdateCardDates(
-    $filter: ModelSubscriptionCardDatesFilterInput
-  ) {
-    onUpdateCardDates(filter: $filter) {
-      id
-      cardId
-      reviewDateId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      reviewDate {
-        id
-        reviewDate
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteCardDates = /* GraphQL */ `
-  subscription OnDeleteCardDates(
-    $filter: ModelSubscriptionCardDatesFilterInput
-  ) {
-    onDeleteCardDates(filter: $filter) {
-      id
-      cardId
-      reviewDateId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      reviewDate {
-        id
-        reviewDate
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onCreateCardTags = /* GraphQL */ `
-  subscription OnCreateCardTags($filter: ModelSubscriptionCardTagsFilterInput) {
-    onCreateCardTags(filter: $filter) {
-      id
-      cardId
-      tagId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      tag {
-        id
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateCardTags = /* GraphQL */ `
-  subscription OnUpdateCardTags($filter: ModelSubscriptionCardTagsFilterInput) {
-    onUpdateCardTags(filter: $filter) {
-      id
-      cardId
-      tagId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      tag {
-        id
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteCardTags = /* GraphQL */ `
-  subscription OnDeleteCardTags($filter: ModelSubscriptionCardTagsFilterInput) {
-    onDeleteCardTags(filter: $filter) {
-      id
-      cardId
-      tagId
-      card {
-        id
-        content
-        type
-        createdAt
-        updatedAt
-        userCardsId
-        __typename
-      }
-      tag {
-        id
-        name
-        createdAt
-        updatedAt
-        __typename
-      }
       createdAt
       updatedAt
       __typename
