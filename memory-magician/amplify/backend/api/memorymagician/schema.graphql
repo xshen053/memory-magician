@@ -3,11 +3,11 @@
 input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
 
 type User @model {
-  id: ID!
-  username: String!
+  cognitoID: ID! @primaryKey
+  email: String! @index
   phoneNumber: String
-  name: String!
-  cards: [UserCards] @hasMany(indexName: "byUser", fields: ["id"])
+  name: String
+  cards: [UserCards] @hasMany(indexName: "byUser", fields: ["cognitoID"])
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
