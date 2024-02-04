@@ -110,7 +110,8 @@ export const getAllUnreviewedCardsOfUserForToday = async (input) => {
       query: userCardsByUserIDAndCardID,
       variables: input
     });
-    console.log(r.data.userCardsByUserIDAndCardID.items)
+    // console.log(r.data.userCardsByUserIDAndCardID.items)
+    return
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
     throw error;
@@ -166,8 +167,8 @@ export const getAllUnreviewedCardsOfUser = async (input) => {
       query: userCardsByUserIDAndCardID,
       variables: input
     });
-    console.log(r.data.userCardsByUserIDAndCardID.items)
-    return r
+    // console.log(r.data.userCardsByUserIDAndCardID.items)
+    return r.data.userCardsByUserIDAndCardID.items
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUser:", error);
     throw error;
