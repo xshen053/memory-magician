@@ -32,10 +32,6 @@ type UserCards @model {
   reviewDate: AWSDateTime
 }
 
-type Query {
-  getUserCards(userID: ID!): [Card]
-}
-
 
 enum CardType {
  DAILY
