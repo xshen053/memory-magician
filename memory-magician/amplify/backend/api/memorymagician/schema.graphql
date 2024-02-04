@@ -6,7 +6,7 @@ type User @model {
   cognitoID: ID! @primaryKey
   email: String! @index
   phoneNumber: String
-  name: String!
+  name: String
   cards: [UserCards] @hasMany(indexName: "byUser", fields: ["cognitoID"])
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
