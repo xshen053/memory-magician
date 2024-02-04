@@ -54,3 +54,24 @@ type UserCards @model {
 
 
 
+# some apis are unexpected called twice (race condition in development mode)
+
+Strict Mode in React:
+
+If your application is running in React's strict mode (<React.StrictMode>), certain lifecycle methods including useEffect are intentionally invoked twice in development mode to help find problems in your code. This does not happen in production builds. If this is the case, the function being called twice should only be an issue during development.
+
+## Bug2
+
+```
+
+I have the same issue stuck forever in the loop of
+
+🛑 ["Index: 1 State: {\"preRollback\":\"previousDeploymentReadyCheck\"} Message: Resource is not in the state stackUpdateComplete"]
+
+```
+
+solution
+
+
+i found the solution. I got the same error due to want to change the primary key, so did what they amplify told me, to use --allow-destructive-graphql-schema-updates , heck it failed, then i just delete the tables in the schema ( the one i want to change the primary key), push to the cloud, then after it finished, put back the table, push again, it worked
+
