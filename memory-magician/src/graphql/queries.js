@@ -2,10 +2,10 @@
 // this is an auto generated file. This will be overwritten
 
 export const getUser = /* GraphQL */ `
-  query GetUser($id: ID!) {
-    getUser(id: $id) {
-      id
-      username
+  query GetUser($cognitoID: ID!) {
+    getUser(cognitoID: $cognitoID) {
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -20,14 +20,22 @@ export const getUser = /* GraphQL */ `
 `;
 export const listUsers = /* GraphQL */ `
   query ListUsers(
+    $cognitoID: ID
     $filter: ModelUserFilterInput
     $limit: Int
     $nextToken: String
+    $sortDirection: ModelSortDirection
   ) {
-    listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listUsers(
+      cognitoID: $cognitoID
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
       items {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
@@ -84,8 +92,8 @@ export const getUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
@@ -135,6 +143,35 @@ export const listUserCards = /* GraphQL */ `
     }
   }
 `;
+export const usersByEmail = /* GraphQL */ `
+  query UsersByEmail(
+    $email: String!
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    usersByEmail(
+      email: $email
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const userCardsByUserIDAndCardID = /* GraphQL */ `
   query UserCardsByUserIDAndCardID(
     $userID: ID!
@@ -156,15 +193,6 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
         id
         userID
         cardID
-        card {
-          id
-          content
-          tags
-          type
-          createdAt
-          updatedAt
-          __typename
-        }        
         number
         isReviewed
         reviewDuration

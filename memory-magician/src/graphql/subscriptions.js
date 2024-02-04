@@ -4,8 +4,8 @@
 export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
     onCreateUser(filter: $filter) {
-      id
-      username
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -21,8 +21,8 @@ export const onCreateUser = /* GraphQL */ `
 export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
     onUpdateUser(filter: $filter) {
-      id
-      username
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -38,8 +38,8 @@ export const onUpdateUser = /* GraphQL */ `
 export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
     onDeleteUser(filter: $filter) {
-      id
-      username
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -112,8 +112,8 @@ export const onCreateUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
@@ -148,8 +148,8 @@ export const onUpdateUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
@@ -184,8 +184,8 @@ export const onDeleteUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt

@@ -1,6 +1,6 @@
 import { generateClient } from 'aws-amplify/api';
 import { useState, useRef, useEffect } from 'react';
-import { getUserByEmail, createUserAPI } from './utilities/apis/userAPI'
+import { getUserByCognitoID, createUserAPI } from './utilities/apis/userAPI'
 import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { fetchUserAttributes, updateUserAttribute } from 'aws-amplify/auth';
@@ -22,27 +22,25 @@ const client = generateClient();
 const App = ({ signOut, user }) => {
 
   const navigate = useNavigate();
+
   useEffect(() => {
     addUserToDatabaseWhenFirstSignIn()
   }, []);
+  
   const handleNavigation = (path) => {
-    // ... submit logic ...
     navigate(path);
   };
 
   const addUserToDatabaseWhenFirstSignIn = async () => {
     try {
       const currentUser = await fetchUserAttributes()
-      const r = await getUserByEmail(currentUser["email"])
-      console.log(r)
-      if (r.length === 0) {
+      const r = await getUserByCognitoID(currentUser["sub"])
+      if (r === null) {
           const userData = {
             email: currentUser["email"],
-            name: "shen"
+            cognitoID: currentUser["sub"]
           };
-          console.log("here2")
           await createUserAPI(userData);
-          console.log("here4")
       } else {
         console.log("User is already in the database")
       }

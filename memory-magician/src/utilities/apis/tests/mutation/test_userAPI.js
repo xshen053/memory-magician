@@ -15,9 +15,8 @@ Amplify.configure(amplifyconfig);
 
 // Example usage:
 const userData = {
-  username: "exampleUser",
-  phoneNumber: "123456789",
-  name: "John Doe",
+  email: "exampleUser",
+  name: "shen"
   // Include any other fields that are required by your CreateUserInput type
 };
 

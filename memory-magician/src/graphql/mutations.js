@@ -7,8 +7,8 @@ export const createUser = /* GraphQL */ `
     $condition: ModelUserConditionInput
   ) {
     createUser(input: $input, condition: $condition) {
-      id
-      username
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -27,8 +27,8 @@ export const updateUser = /* GraphQL */ `
     $condition: ModelUserConditionInput
   ) {
     updateUser(input: $input, condition: $condition) {
-      id
-      username
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -47,8 +47,8 @@ export const deleteUser = /* GraphQL */ `
     $condition: ModelUserConditionInput
   ) {
     deleteUser(input: $input, condition: $condition) {
-      id
-      username
+      cognitoID
+      email
       phoneNumber
       name
       cards {
@@ -131,8 +131,8 @@ export const createUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
@@ -168,8 +168,8 @@ export const updateUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
@@ -205,8 +205,8 @@ export const deleteUserCards = /* GraphQL */ `
       userID
       cardID
       user {
-        id
-        username
+        cognitoID
+        email
         phoneNumber
         name
         createdAt
