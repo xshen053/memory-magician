@@ -112,7 +112,7 @@ export const getAllUnreviewedCardsOfUserForToday = async (input) => {
     });
     console.log(r.data.userCardsByUserIDAndCardID.items)
   } catch (error) {
-    console.error("Error during getAllCardsOfUserAPI:", error);
+    console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
     throw error;
   }
 }
@@ -169,7 +169,7 @@ export const getAllUnreviewedCardsOfUser = async (input) => {
     console.log(r.data.userCardsByUserIDAndCardID.items)
     return r
   } catch (error) {
-    console.error("Error during createCardApi:", error);
+    console.error("Error during getAllUnreviewedCardsOfUser:", error);
     throw error;
   }
 }
