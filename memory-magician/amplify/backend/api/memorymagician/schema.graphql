@@ -7,32 +7,33 @@ type User @model {
   username: String!
   phoneNumber: String
   name: String!
-  cards: [Card] @hasMany
+  cards: [UserCards] @hasMany(indexName: "byUser", fields: ["id"])
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
 
-
 type Card @model {
   id: ID!
   content: String!
-  user: User! @belongsTo
-  date: [ReviewDate!]! @manyToMany(relationName: "CardDates")         # date is non-nullable
-  tags: [Tag] @manyToMany(relationName: "CardTags")
-  type: CardType!        # {daily task, don't need review task, general task}
+  tags: [String]
+  type: CardType! # {daily task, don't need review task, general task}
+  users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
 }
 
-type ReviewDate @model {
+type UserCards @model {
   id: ID!
-  card: [Card]  @manyToMany(relationName: "CardDates")
+  userID: ID! @index(name: "byUser", sortKeyFields: ["cardID"])
+  cardID: ID! @index(name: "byCard", sortKeyFields: ["userID"])
+  user: User @belongsTo(fields: ["userID"])
+  card: Card @belongsTo(fields: ["cardID"])
+  number: Int          # the ith time to review
+  isReviewed: Boolean 
+  reviewDuration: Int
   reviewDate: AWSDateTime
 }
 
-
-type Tag @model {
-  id: ID!
-  name: String!
-  cards: [Card]  @manyToMany(relationName: "CardTags")
+type Query {
+  getUserCards(userID: ID!): [Card]
 }
 
 
