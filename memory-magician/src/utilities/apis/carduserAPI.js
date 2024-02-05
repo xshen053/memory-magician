@@ -234,20 +234,27 @@ export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
  */
 export const getAllUnreviewedCardsOfUser = async (user_id) => {
   try {
-    const input = {
-      userID: user_id,
-      filter: {
-        isReviewed: {
-          eq: false
-        }
+    let allItems = [];
+    let nextToken = null;
+    do {
+      const input = {
+        userID: user_id,
+        filter: {
+          isReviewed: {
+            eq: false
+          }
+        },
+        nextToken: nextToken
       }
-    }
-    const r = await client.graphql({
-      query: userCardsByUserIDAndCardID,
-      variables: input
-    });
-    // console.log(r.data.userCardsByUserIDAndCardID.items)
-    return r.data.userCardsByUserIDAndCardID.items
+      const r = await client.graphql({
+        query: userCardsByUserIDAndCardID,
+        variables: input
+      });
+      allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items)
+      nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
+    } while (nextToken)
+
+    return allItems
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUser:", error);
     throw error;
