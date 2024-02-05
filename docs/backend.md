@@ -16,4 +16,3 @@
 # resolver
 
 - [ ] custom batch resolver
-
