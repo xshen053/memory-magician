@@ -2,33 +2,43 @@
 
 
 ## All the screens
-- [ ] As a user, I want to create new memories. (all the screens)
-- [ ] When creating memory, I want to give them tags, e.g. leetcode 3, it is {blind 75, amazon, strings}
+- [x] As a user, I want to create new memories. (all the screens)
+- [x] When creating memory, I want to give them tags, e.g. leetcode 3, it is {blind 75, amazon, strings}
 
 ## Today's review screen
-- [ ] As a user, I want to know what memories I want to review today. (today's review screen)
-- [ ] As a user, I want to remove a card (mark as reviewed) when I finish reviewing that card (today's review screen)
-- [ ] As a user, I am able to create different types of card, e.g. (daily card(need to do every day), general task), and 
+- [x] As a user, I want to know what memories I want to review today. (today's review screen)
+- [x] As a user, I want to remove a card (mark as reviewed) when I finish reviewing that card (today's review screen)
+- [x] As a user, I am able to create different types of card, e.g. (daily card(need to do every day), general task), and 
 different types of card have different background so it's clear.
-- [ ] For each card, I want to see how many times I reviewed it, e.g. 3rd, or 3/18
+- [x] For each card, I want to see how many times I reviewed it, e.g. 3rd, or 3/18
+- [x] Add tag for a task
+- [ ] for each card, I am about to start counting and stop counting the time and once I finished and clicked reviewed, that time is stored
+
+
 
 ### No urgent
 - [ ] As a user, if I accidentally review a memory, I can withdraw (no urgent)
   - maybe count, if more than 5 seconds, then disappear
+  - undo!
 
 ## Home screen (Data visualization screen)
 - [ ] As a user, I want to know review data of each memory, e.g., memory 1 reviewed 5/8, review rate 62.5%
-- [ ] As a user, I want to categorize tasks, and see how many I finished for each category
+- [ ] I want to see how long I spent today on all the tasks
+- [ ] I want to have a pie chart to know number of each type of card
+
+
+### metrics
+
+- review rate: actually review count / all cards need to review by far
+- different tags: task number
 
 
 
 ## Calendar screen
 - [ ] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
-- [ ] As a user, I want to see all tests for everyday in a calendar
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
-
 
 
 ## No urgent

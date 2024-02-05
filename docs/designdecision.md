@@ -2,10 +2,10 @@
 
 - [Time zone](#linkedlist)
 - [how to design db schema](#useEffect)
-- [when to put user in db](#useEffect)
+- [when to store user in db](#useEffect)
 - [db auth rules](#useEffect)
 - [solve routes problem, refresh](#useEffect)
-- [field in usercard table](#field)
+- [all the fields in usercard table](#field)
 - [using context api to share the state across different components](#context-api)
 
 
