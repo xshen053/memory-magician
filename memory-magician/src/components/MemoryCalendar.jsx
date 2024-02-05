@@ -5,6 +5,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "../css/MemoryCalendar.css";
+import { getAllUnreviewedCardsOfUser } from '../utilities/apis/carduserAPI';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 const localizer = momentLocalizer(moment);
 
@@ -12,38 +14,33 @@ function MemoryCalendar(props) {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("https://9d50-66-160-179-28.ngrok-free.app/api/memory/", {
-      headers: {
-        "ngrok-skip-browser-warning": "69420"
-      }
-    })
-      .then((response) => {
+    const fetchCards = async () => {
+      try {
+        const currentUser = await fetchUserAttributes()
+        const allCardUser = await getAllUnreviewedCardsOfUser(currentUser["sub"])
         const formattedEvents = [];
-
-        response.data.forEach((memory) => {
-          memory.review_dates.forEach((reviewDateObj) => {
+        allCardUser.forEach((cardUser) => {
             formattedEvents.push({
-              title: memory.title,
+              title: cardUser.card.content,
               start: new Date(
-                moment(reviewDateObj.date).tz("America/Los_Angeles").toDate()
+                moment(cardUser.reviewDate).tz("America/Los_Angeles").toDate()
               ),
               end: new Date(
-                moment(reviewDateObj.date).tz("America/Los_Angeles").toDate()
+                moment(cardUser.reviewDate).tz("America/Los_Angeles").toDate()
               ),
-              color:
-                memory.title === "Special Event"
-                  ? "blue"
-                  : "rgb(233, 221, 174)",
+              color: "#c5b4e3"
+              // cardUser.title === "Special Event"
+              //     ? "blue"
+              //     : "#c5b4e3",
             });
-          });
         });
-
         setEvents(formattedEvents);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the memories:", error);
-      });
+      } catch (error) {
+        console.log("Error during fetchCards: ", error)
+        throw error
+      }
+    }
+    fetchCards()
   }, []);
 
   return (
