@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -15,11 +15,14 @@ import MenuItem from "@mui/material/MenuItem";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Chip from '@mui/material/Chip';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { createCardApi } from '../utilities/apis/cardAPI';
 import { generateAllReviewDates } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 
 function AddMemory() {
@@ -29,6 +32,26 @@ function AddMemory() {
   const [selection, setSelection] = useState("DAILY"); // Initialize with a default value
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
+  const [reviewDates, setReviewDates] = useState([])
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+
+    // one day only calculate once
+    // TODO: will change in the future if allow customized learning interval
+    const prepareForReviewDatesForTodayNewTask = () => {
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+  
+      if (reviewDates.length === 0) {
+        const rd = generateAllReviewDates(todayDate);
+        setReviewDates(rd);
+      }
+      console.log("I am in prepareForReviewDatesForTodayNewTask()")
+    };
+  
+    prepareForReviewDatesForTodayNewTask();
+  }, []); // Runs only once on component mount
   
   const handleChange = (event) => {
     setSelection(event.target.value);
@@ -46,14 +69,60 @@ function AddMemory() {
     setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
   };
 
+  const createCardAndAddToDataBase = async () => {
+    try {
+      // get keys
+      const currentUser = await fetchUserAttributes()
+      const userID = currentUser["sub"]
+  
+      // add task
+      const cardID = await createCardApi({
+        content: title, // Description or content of the card
+        tags: tags, // Array of tags associated with the card
+        type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
+      })
+    
+      // generate userCardDate
+      const userCardData = {
+        userID: userID,
+        cardID: cardID,
+        reviewDuration: -1,      // init to -1
+        isReviewed: false,
+      }
 
-  const handleSubmit = () => {
-    setTags([]);
-    const cardData = {
-      content: title, // Description or content of the card
-      tags: ["blind75", "leetcode"], // Array of tags associated with the card
-      type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
-    };
+      // add reviewDate and iteration field
+      const updatedDataArray = reviewDates.map((reviewDate, index) => {
+        // Create a new data object for each call with the updated reviewDate
+        return {
+          ...userCardData, 
+          reviewDate: reviewDate,
+          iteration: index 
+        };
+      })
+      
+      // associate card to reviewDate
+      await createUserCardsBatchAPI(updatedDataArray)
+      
+    } catch (error) {
+      console.log("error when creating new task: ", error)
+      setLoading(false); // Stop loading on error
+      alert(error)
+      throw error
+    }
+  }
+
+  const cleanAllStates = () => {
+        setLoading(false); // Stop loading on success
+        setTags([]);
+        setOpen(false);
+        setSnackbarOpen(true);
+        setTitle("")
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true); // Start loading
+    await createCardAndAddToDataBase()
+    cleanAllStates(); // Call cleanAllStates() after finishing adding
   };
 
   return (
@@ -183,7 +252,6 @@ function AddMemory() {
           </Button>
         </Box>
       </Modal>
-
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -204,9 +272,16 @@ function AddMemory() {
             }, // Yellow text color for the "Good Job!" message
           }}
         >
-          Memory successfully added!
+          Congrations! Card is successfully added!
         </Alert>
       </Snackbar>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.modal + 1 }}
+        open={loading}
+        >
+      {/* You can use CircularProgress or replace it with an img tag for a GIF */}
+      <CircularProgress color="inherit" />
+    </Backdrop>      
     </div>
   );
 }

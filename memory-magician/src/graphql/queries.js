@@ -109,7 +109,7 @@ export const getUserCards = /* GraphQL */ `
         updatedAt
         __typename
       }
-      number
+      iteration
       isReviewed
       reviewDuration
       reviewDate
@@ -130,7 +130,7 @@ export const listUserCards = /* GraphQL */ `
         id
         userID
         cardID
-        number
+        iteration
         isReviewed
         reviewDuration
         reviewDate
@@ -193,7 +193,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
         id
         userID
         cardID
-        number
+        iteration
         isReviewed
         reviewDuration
         reviewDate
@@ -227,7 +227,7 @@ export const userCardsByCardIDAndUserID = /* GraphQL */ `
         id
         userID
         cardID
-        number
+        iteration
         isReviewed
         reviewDuration
         reviewDate
