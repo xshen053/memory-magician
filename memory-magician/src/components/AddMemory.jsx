@@ -79,7 +79,6 @@ function AddMemory() {
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
-  
       // add task
       const cardID = await createCardApi({
         content: title, // Description or content of the card
@@ -88,7 +87,6 @@ function AddMemory() {
         // Set total to -1 if selection is NOREVIEW, otherwise use reviewDates.length
         total: selection === 'NOREVIEW' ? -1 : reviewDates.length 
       })
-    
       // generate userCardDate
       const userCardData = {
         userID: userID,
@@ -108,8 +106,7 @@ function AddMemory() {
             iteration: index 
           };
         });
-        
-        // associate card to reviewDate
+        console.log(updatedDataArray)
         await createUserCardsBatchAPI(updatedDataArray)
       }
       

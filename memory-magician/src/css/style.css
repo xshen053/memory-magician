@@ -44,3 +44,21 @@
   font-weight: bold;
   margin-bottom: 4px;
 }
+
+
+
+.list-item-container {
+  box-shadow: none; /* Remove shadow */
+  border: none; /* Remove borders */
+  margin: 0; /* Remove margins if any */
+  padding: 0; /* Remove paddings if any */
+}
+
+.list-item-hover {
+  border: 1px solid transparent; /* Hide border by default */
+}
+
+.list-item-hover:hover {
+  border: 1px solid #000; /* Border color on hover */
+  /* You can also add 'box-shadow' here if you want a shadow effect on hover */
+}

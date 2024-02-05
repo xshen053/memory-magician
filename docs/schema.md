@@ -1,28 +1,49 @@
+- when fetching data, using nextToken
+
+```graphql
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type User @model {
+  cognitoID: ID! @primaryKey
+  email: String! @index
+  phoneNumber: String
+  name: String
+  cards: [UserCards] @hasMany(indexName: "byUser", fields: ["cognitoID"])
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type Card @model {
+  id: ID!
+  content: String!
+  tags: [String]
+  type: CardType!         # {daily task, don't need review task, general task}
+  total: Int              # how many times is needed for this card
+  users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
+}
+
+type UserCards @model {
+  id: ID!
+  userID: ID! @index(name: "byUser", sortKeyFields: ["cardID"])
+  cardID: ID! @index(name: "byCard", sortKeyFields: ["userID"])
+  user: User @belongsTo(fields: ["userID"])
+  card: Card @belongsTo(fields: ["cardID"])
+  iteration: Int!             # the ith time to review
+  isReviewed: Boolean! 
+  reviewDuration: Int         # in millisecond
+  reviewDate: AWSDateTime
+}
 
 
-# user table
-- A user has 0 - many cards
+enum CardType {
+ DAILY
+ GENERAL
+ NOREVIEW
+}
+
+```
 
 
-
-# card table
-- A card has 1 - many date
-- A card belongs to one user
-- A card has 0 - many tags
-- A card has type
-
-
-# date table
-- A date belongs to 0 - many card
-
-
-# tag table
-
-
-- A tag belongs to 0 - many card
-
-
-
-it might be necessary in the future to query a user from a task, so use both
-`@hasMany` and `@belongsto`
-
+# when fetching data, using nextToken
