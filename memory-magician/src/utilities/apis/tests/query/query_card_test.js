@@ -1,4 +1,3 @@
-import { getAllUnreviewedCardsOfUser, getAllUnreviewedCardsOfUserForToday } from '../../cardAPI.js';
 import fs from 'fs';
 
 import { Amplify } from 'aws-amplify';
