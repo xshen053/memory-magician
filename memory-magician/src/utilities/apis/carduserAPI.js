@@ -180,8 +180,7 @@ export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
       allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items);
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
     } while (nextToken)
-
-    // console.log(r.data.userCardsByUserIDAndCardID.items)
+    
     return allItems
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
