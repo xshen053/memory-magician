@@ -88,7 +88,6 @@ function AddMemory() {
         // Set total to -1 if selection is NOREVIEW, otherwise use reviewDates.length
         total: selection === 'NOREVIEW' ? -1 : reviewDates.length 
       })
-    
       // generate userCardDate
       const userCardData = {
         userID: userID,

@@ -25,6 +25,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
           content
           tags
           type
+          total
           createdAt
           updatedAt
           __typename
