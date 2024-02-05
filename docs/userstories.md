@@ -32,6 +32,8 @@ different types of card have different background so it's clear.
 
 
 ## No urgent
+- [ ] As a user I want to change my review time cycle, like not from 00 to 00
+but from 10 - 10
 - [ ] As a user, I am able to reset curve of a specific memory 
 - [ ] As a user, I want to know how long I spent on each card, default is 0
 - [ ] The user has bunches of card need to review each day, but for a specific problem, let's say coding problem, the user feels overwhelmed to review all of them, but if user know there is a limit let's say at most 10 problem, then user feels motivated again!! User wants to see estimate time / number of task they will review for a day.
