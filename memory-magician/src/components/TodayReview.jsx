@@ -156,7 +156,6 @@ function TodayReview() {
       {/* <div className="list-container"> */}
       
       <List>
-        
         {todayCards.map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
