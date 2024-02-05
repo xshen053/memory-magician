@@ -1,10 +1,33 @@
 import { generateClient } from 'aws-amplify/api';
-import { createUserCards } from '../../graphql/mutations.js';
+import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js';
+import { createUserCards, updateUserCards } from '../../graphql/mutations.js';
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
 
 Amplify.configure(amplifyconfig);
 const client = generateClient();
+
+/**
+ * 
+ * @param {string} id id of that usercard relation
+ */
+export const markOneUserCardReviewed = async (id) => {
+  try {
+    const input = {
+      id: id,
+      isReviewed: true
+    }
+    await client.graphql({
+      query: updateUserCards,
+      variables: {
+        input: input
+      }
+    });
+  } catch (error) {
+    console.log("Error in markOneUserCardReviewed: ", error)
+    throw error
+  }
+}
 
 /**
  * Function to create a user card association with review details.
@@ -43,21 +66,7 @@ export const createUserCardsBatchAPI = async (dataArray) => {
 }
 
 
-export const getAllCardsOfUserFromReviewIdAPI = async (review_id) => {
-  try {
-    const r = await client.graphql({
-      query: getUserCards,
-      variables: {
-        id: review_id
-      }
-    });
-    console.log(r.data.getUserCards)
-  } catch (error) {
-    console.error("Error during getAllCardsOfUserAPI:", error);
-    throw error;
-  }
-}
-
+//////////////////////////////// QUERY ////////////////////////////////
 /**
  * Retrieves all card details associated with a specific user ID where:
  * - The `isReviewed` status is false.
@@ -114,14 +123,32 @@ export const getAllCardsOfUserFromReviewIdAPI = async (review_id) => {
  * },
  * ...
  */
-export const getAllUnreviewedCardsOfUserForToday = async (input) => {
+export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
   try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of today
+    const startOfToday = today.toISOString();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
+    const startOfTomorrow = tomorrow.toISOString();
+    const input = {
+      userID: user_id,
+      filter: {
+        reviewDate : {
+          ge: startOfToday, // Greater than or equal to the start of today
+          lt: startOfTomorrow // Less than the start of tomorrow
+        },
+        isReviewed: {
+          eq: false
+        }
+      }
+    }    
     const r = await client.graphql({
       query: userCardsByUserIDAndCardID,
       variables: input
     });
     // console.log(r.data.userCardsByUserIDAndCardID.items)
-    return
+    return r.data.userCardsByUserIDAndCardID.items
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
     throw error;
@@ -171,8 +198,16 @@ export const getAllUnreviewedCardsOfUserForToday = async (input) => {
  * }
  * ]
  */
-export const getAllUnreviewedCardsOfUser = async (input) => {
+export const getAllUnreviewedCardsOfUser = async (user_id) => {
   try {
+    const input = {
+      userID: user_id,
+      filter: {
+        isReviewed: {
+          eq: false
+        }
+      }
+    }
     const r = await client.graphql({
       query: userCardsByUserIDAndCardID,
       variables: input

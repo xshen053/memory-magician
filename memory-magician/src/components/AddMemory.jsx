@@ -23,20 +23,25 @@ import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { createCardApi } from '../utilities/apis/cardAPI';
 import { generateAllReviewDates } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import { useMemory } from '../context/MemoryContext.jsx';
 
 
 function AddMemory() {
+  // iteration of card starts from 0
+
+
+  const { triggerMemoryAdded } = useMemory();
+
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selection, setSelection] = useState("DAILY"); // Initialize with a default value
+  const [selection, setSelection] = useState("GENERAL"); // Initialize with a default value
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
   const [reviewDates, setReviewDates] = useState([])
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
     // one day only calculate once
     // TODO: will change in the future if allow customized learning interval
     const prepareForReviewDatesForTodayNewTask = () => {
@@ -47,7 +52,7 @@ function AddMemory() {
         const rd = generateAllReviewDates(todayDate);
         setReviewDates(rd);
       }
-      console.log("I am in prepareForReviewDatesForTodayNewTask()")
+      console.log("I am in prepareForReviewDatesForTodayNewTask")
     };
   
     prepareForReviewDatesForTodayNewTask();
@@ -80,28 +85,33 @@ function AddMemory() {
         content: title, // Description or content of the card
         tags: tags, // Array of tags associated with the card
         type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
+        // Set total to -1 if selection is NOREVIEW, otherwise use reviewDates.length
+        total: selection === 'NOREVIEW' ? -1 : reviewDates.length 
       })
     
       // generate userCardDate
       const userCardData = {
         userID: userID,
         cardID: cardID,
-        reviewDuration: -1,      // init to -1
+        reviewDuration: -1,             // init to -1
         isReviewed: false,
       }
 
-      // add reviewDate and iteration field
-      const updatedDataArray = reviewDates.map((reviewDate, index) => {
-        // Create a new data object for each call with the updated reviewDate
-        return {
-          ...userCardData, 
-          reviewDate: reviewDate,
-          iteration: index 
-        };
-      })
-      
-      // associate card to reviewDate
-      await createUserCardsBatchAPI(updatedDataArray)
+      // only card need review will add this
+      if (selection !== "NOREVIEW") {
+        // add reviewDate and iteration field
+        const updatedDataArray = reviewDates.map((reviewDate, index) => {
+          // Create a new data object for each call with the updated reviewDate
+          return {
+            ...userCardData, 
+            reviewDate: reviewDate,
+            iteration: index 
+          };
+        });
+        
+        // associate card to reviewDate
+        await createUserCardsBatchAPI(updatedDataArray)
+      }
       
     } catch (error) {
       console.log("error when creating new task: ", error)
@@ -123,6 +133,7 @@ function AddMemory() {
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
+    triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
   };
 
   return (
