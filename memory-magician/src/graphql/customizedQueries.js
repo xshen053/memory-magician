@@ -1,4 +1,4 @@
-// return card information
+
 export const userCardsByUserIDAndCardID = /* GraphQL */ `
   query UserCardsByUserIDAndCardID(
     $userID: ID!
@@ -29,7 +29,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
           updatedAt
           __typename
         }        
-        number
+        iteration
         isReviewed
         reviewDuration
         reviewDate

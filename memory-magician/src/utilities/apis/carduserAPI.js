@@ -1,4 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
+import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js';
 import { createUserCards } from '../../graphql/mutations.js';
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
@@ -114,14 +115,32 @@ export const getAllCardsOfUserFromReviewIdAPI = async (review_id) => {
  * },
  * ...
  */
-export const getAllUnreviewedCardsOfUserForToday = async (input) => {
+export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
   try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of today
+    const startOfToday = today.toISOString();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
+    const startOfTomorrow = tomorrow.toISOString();
+    const input = {
+      userID: user_id,
+      filter: {
+        reviewDate : {
+          ge: startOfToday, // Greater than or equal to the start of today
+          lt: startOfTomorrow // Less than the start of tomorrow
+        },
+        isReviewed: {
+          eq: false
+        }
+      }
+    }    
     const r = await client.graphql({
       query: userCardsByUserIDAndCardID,
       variables: input
     });
     // console.log(r.data.userCardsByUserIDAndCardID.items)
-    return
+    return r.data.userCardsByUserIDAndCardID.items
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
     throw error;
@@ -171,8 +190,16 @@ export const getAllUnreviewedCardsOfUserForToday = async (input) => {
  * }
  * ]
  */
-export const getAllUnreviewedCardsOfUser = async (input) => {
+export const getAllUnreviewedCardsOfUser = async (user_id) => {
   try {
+    const input = {
+      userID: user_id,
+      filter: {
+        isReviewed: {
+          eq: false
+        }
+      }
+    }
     const r = await client.graphql({
       query: userCardsByUserIDAndCardID,
       variables: input

@@ -8,35 +8,16 @@ import fetch from 'node-fetch';
 if (!global.fetch) {
   global.fetch = fetch;
 }
+import { getAllUnreviewedCardsOfUserForToday, getAllUnreviewedCardsOfUser } from '../../carduserAPI.js';
 
 Amplify.configure(amplifyconfig);
 
 // Test2: get card of a user
-const userID = "069eff2b-8019-4291-aa12-a91709a0189e"
+const userID = "7d008bd6-740c-47a5-9338-8f237504584d"
 const reviewID = "65da175d-5491-41e8-a88d-9c6539a97dc3"
 
-const today = new Date();
-today.setHours(0, 0, 0, 0); // Set to start of today
-const startOfToday = today.toISOString();
-
-const tomorrow = new Date(today);
-tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
-const startOfTomorrow = tomorrow.toISOString();
-
-const input = {
-  userID: userID,
-  filter: {
-    // reviewDate : {
-    //   ge: startOfToday, // Greater than or equal to the start of today
-    //   lt: startOfTomorrow // Less than the start of tomorrow
-    // },
-    isReviewed: {
-      eq: false
-    }
-  }
-}
-
-getAllUnreviewedCardsOfUser(input)
+getAllUnreviewedCardsOfUser(userID)
 // getAllCardsOfUserFromReviewIdAPI(reviewID)
   .then(response => console.log('User get:', response))
   .catch(error => console.error(error));
+
