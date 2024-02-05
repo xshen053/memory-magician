@@ -1,11 +1,33 @@
 import { generateClient } from 'aws-amplify/api';
 import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js';
-import { createUserCards } from '../../graphql/mutations.js';
+import { createUserCards, updateUserCards } from '../../graphql/mutations.js';
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
 
 Amplify.configure(amplifyconfig);
 const client = generateClient();
+
+/**
+ * 
+ * @param {string} id id of that usercard relation
+ */
+export const markOneUserCardReviewed = async (id) => {
+  try {
+    const input = {
+      id: id,
+      isReviewed: true
+    }
+    await client.graphql({
+      query: updateUserCards,
+      variables: {
+        input: input
+      }
+    });
+  } catch (error) {
+    console.log("Error in markOneUserCardReviewed: ", error)
+    throw error
+  }
+}
 
 /**
  * Function to create a user card association with review details.
@@ -44,21 +66,7 @@ export const createUserCardsBatchAPI = async (dataArray) => {
 }
 
 
-export const getAllCardsOfUserFromReviewIdAPI = async (review_id) => {
-  try {
-    const r = await client.graphql({
-      query: getUserCards,
-      variables: {
-        id: review_id
-      }
-    });
-    console.log(r.data.getUserCards)
-  } catch (error) {
-    console.error("Error during getAllCardsOfUserAPI:", error);
-    throw error;
-  }
-}
-
+//////////////////////////////// QUERY ////////////////////////////////
 /**
  * Retrieves all card details associated with a specific user ID where:
  * - The `isReviewed` status is false.

@@ -13,7 +13,7 @@ import '../css/style.css';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { getAllUnreviewedCardsOfUserForToday } from '../utilities/apis/carduserAPI';
+import { getAllUnreviewedCardsOfUserForToday, markOneUserCardReviewed } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx"
 
 const StyledChip = styled(Chip)({
@@ -36,7 +36,6 @@ function TodayReview() {
         const currentUser = await fetchUserAttributes()
         const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
         setTodayCards(r)
-        console.log(r)
         console.log("I am in fetchTodaysMemories")
       } catch (error) {
         console.log("Error during fetchTodaysMemories: ", error)
@@ -50,8 +49,27 @@ function TodayReview() {
     }
   }, [memoryAdded]);
 
-  function markMemoryAsReviewed(memoryId) {
-    setSnackbarOpen(true); // Open the Snackbar to display the success message
+  const fetchTodaysMemories = async () => {
+    try {
+      const currentUser = await fetchUserAttributes()
+      const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+      setTodayCards(r)
+      console.log("I am in fetchTodaysMemories")
+    } catch (error) {
+      console.log("Error during fetchTodaysMemories: ", error)
+      throw error
+    }
+  }
+
+  const markMemoryAsReviewed = async (cardID) => {
+    try {
+      await markOneUserCardReviewed(cardID);
+      setSnackbarOpen(true); // Open the Snackbar to display the success message
+      fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
+    } catch (error) {
+      console.error("Error during markMemoryAsReviewed: ", error);
+      throw error
+    }
   }
 
   return (
@@ -64,24 +82,23 @@ function TodayReview() {
       </Typography>
       <Divider sx={{ bgcolor: 'purple' }} />
       <List>
-        {todayCards.map((card) => (
+        {todayCards.map((cardUser) => (
           <ListItem 
-            key={card.id} 
+            key={cardUser.id} 
             secondaryAction={
-              <StyledChip label={`${card.iteration}/${card.card.total}`} color="primary" />
+              <StyledChip label={`${cardUser.iteration}/${cardUser.card.total}`} color="primary" />
             }
-            style={{ backgroundColor: card.card.type === "GENERAL" ? "#c5b4e3" : "transparent" }}
+            style={{ backgroundColor: cardUser.card.type === "GENERAL" ? "#c5b4e3" : "transparent" }}
           > 
             <Checkbox
               edge="start"
-              // checked={card.isReviewed}
-              checked = {true}
+              checked = {cardUser.isReviewed}
               tabIndex={-1}
               disableRipple
-              inputProps={{ 'aria-labelledby': `checkbox-list-label-${card.id}` }}
-              onClick={() => markMemoryAsReviewed(card.id)}
+              inputProps={{ 'aria-labelledby': `checkbox-list-label-${cardUser.id}` }}
+              onClick={() => markMemoryAsReviewed(cardUser.id)}
             />
-            <ListItemText id={`checkbox-list-label-${card.id}`} primary={card.card.content} />
+            <ListItemText id={`checkbox-list-label-${cardUser.id}`} primary={cardUser.card.content} />
           </ListItem>
         ))}
       </List>
