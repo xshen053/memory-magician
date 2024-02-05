@@ -13,6 +13,7 @@ different types of card have different background so it's clear.
 - [x] For each card, I want to see how many times I reviewed it, e.g. 3rd, or 3/18
 - [x] Add tag for a task
 - [ ] for each card, I am about to start counting and stop counting the time and once I finished and clicked reviewed, that time is stored
+- [ ] if I don't start the timer, it means it can be finished in 1s
 
 
 
@@ -35,7 +36,7 @@ different types of card have different background so it's clear.
 
 
 ## Calendar screen
-- [ ] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
+- [x] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
