@@ -14,12 +14,14 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { getAllUnreviewedCardsOfUserForToday } from '../utilities/apis/carduserAPI';
+import { useMemory } from "../context/MemoryContext.jsx"
 
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
 });
 
 function TodayReview() {
+  const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
   
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -42,8 +44,11 @@ function TodayReview() {
       }
     }
 
-    fetchTodaysMemories(); // Use the extracted function here
-  }, []);
+    fetchTodaysMemories(); // call it when first render
+    if (memoryAdded) {
+      fetchTodaysMemories(); // call it when a new card is created
+    }
+  }, [memoryAdded]);
 
   function markMemoryAsReviewed(memoryId) {
     setSnackbarOpen(true); // Open the Snackbar to display the success message

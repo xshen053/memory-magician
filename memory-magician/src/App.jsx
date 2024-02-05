@@ -14,6 +14,7 @@ import CalendarScreen from './screens/calendar';
 import TodayReviewScreen from './screens/todayreview';
 import HomeScreen from './screens/home';
 import NavBar from './components/NavigationBar';
+import { MemoryProvider } from './context/MemoryContext.jsx';
 
 const initialState = { name: '', description: '' };
 const client = generateClient();
@@ -50,20 +51,22 @@ const App = ({ signOut, user }) => {
     }
   }
   return (
-    <div>
-      <NavBar /> {/* NavBar is always displayed */}
-      <div className="App">
-        {/* Main content */}
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<HomeScreen />} />
-          <Route path="/catch-up" element={<CatchUpScreen />} />
-          <Route path="/calendar" element={<CalendarScreen />} /> 
-          <Route path="/todayreview" element={<TodayReviewScreen />} /> 
-        </Routes>
+    <MemoryProvider>
+      <div>
+        <NavBar /> {/* NavBar is always displayed */}
+        <div className="App">
+          {/* Main content */}
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<HomeScreen />} />
+            <Route path="/catch-up" element={<CatchUpScreen />} />
+            <Route path="/calendar" element={<CalendarScreen />} /> 
+            <Route path="/todayreview" element={<TodayReviewScreen />} /> 
+          </Routes>
+        </div>
+        <AddMemory />
       </div>
-      <AddMemory />
-    </div>
+    </MemoryProvider>
   );
 }
 

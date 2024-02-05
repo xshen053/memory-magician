@@ -23,9 +23,13 @@ import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { createCardApi } from '../utilities/apis/cardAPI';
 import { generateAllReviewDates } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import { useMemory } from '../context/MemoryContext.jsx';
 
 
 function AddMemory() {
+
+  const { triggerMemoryAdded } = useMemory();
+
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -36,7 +40,6 @@ function AddMemory() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
     // one day only calculate once
     // TODO: will change in the future if allow customized learning interval
     const prepareForReviewDatesForTodayNewTask = () => {
@@ -124,6 +127,7 @@ function AddMemory() {
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
+    triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
   };
 
   return (
