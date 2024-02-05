@@ -1,7 +1,6 @@
 
 # Table of Contents
 
-data structure:
 - [API Efficiency](#linkedlist)
 - [useEffect](#useEffect)
 
