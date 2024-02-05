@@ -12,70 +12,41 @@ import Divider from '@mui/material/Divider';
 import '../css/style.css';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { fetchUserAttributes } from 'aws-amplify/auth';
+import { getAllUnreviewedCardsOfUserForToday } from '../utilities/apis/carduserAPI';
 
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
 });
 
 function TodayReview() {
-  const [cards, setCards] = useState([]);
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set to start of today
-  const startOfToday = today.toISOString();
-  
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
-  const startOfTomorrow = tomorrow.toISOString();
+  const [todayCards, setTodayCards] = useState([]);
   
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   function triggerTestSnackbar() {
     setSnackbarOpen(true);
   }
 
-  function fetchTodaysMemories() {
-    axios
-      .get("https://9d50-66-160-179-28.ngrok-free.app/api/memory/", {
-      headers: {
-        "ngrok-skip-browser-warning": "69420"
-      }
-    })
-      .then((response) => {
-        console.log(response.data); // Add this line to inspect the response data
-        const todaysMemories = response.data.filter((memory) => {
-          return memory.review_dates.some((reviewDateObj) =>
-            moment(reviewDateObj.date)
-              .tz("America/Los_Angeles")
-              .isSame(today, "day")
-          );
-        });
-        setMemories(todaysMemories);
-      })
-      .catch((error) => {
-        console.error("Error fetching today's memories:", error);
-      });
-  }
-
+  
   useEffect(() => {
+    const fetchTodaysMemories = async () => {
+      try {
+        const currentUser = await fetchUserAttributes()
+        const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+        setTodayCards(r)
+        console.log(r)
+        console.log("I am in fetchTodaysMemories")
+      } catch (error) {
+        console.log("Error during fetchTodaysMemories: ", error)
+        throw error
+      }
+    }
+
     fetchTodaysMemories(); // Use the extracted function here
   }, []);
 
   function markMemoryAsReviewed(memoryId) {
-    axios
-      .post(`http://127.0.0.1:8000/api/mark_as_reviewed/${memoryId}/`)
-      .then((response) => {
-        console.log(response.data);
-        if (response.data.message === "Memory marked as reviewed.") {
-          // Remove this memory from the list
-          setMemories((prevMemories) =>
-            prevMemories.filter((memory) => memory.id !== memoryId)
-          );
-          setSnackbarOpen(true); // Open the Snackbar to display the success message
-        }
-      })
-      .catch((error) => {
-        console.error("Error marking memory as reviewed:", error);
-      });
+    setSnackbarOpen(true); // Open the Snackbar to display the success message
   }
 
   return (
@@ -88,19 +59,20 @@ function TodayReview() {
       </Typography>
       <Divider sx={{ bgcolor: 'purple' }} />
       <List>
-        {memories.map((memory) => (
-          <ListItem key={memory.id} secondaryAction={
-            <StyledChip label={`3/18`} color="primary" />
+        {todayCards.map((card) => (
+          <ListItem key={card.id} secondaryAction={
+            <StyledChip label={`${card.iteration}/${card.card.total}`} color="primary" />
           }>
             <Checkbox
               edge="start"
-              checked={memory.reviewed}
+              // checked={card.isReviewed}
+              checked = {true}
               tabIndex={-1}
               disableRipple
-              inputProps={{ 'aria-labelledby': `checkbox-list-label-${memory.id}` }}
-              onClick={() => markMemoryAsReviewed(memory.id)}
+              inputProps={{ 'aria-labelledby': `checkbox-list-label-${card.id}` }}
+              onClick={() => markMemoryAsReviewed(card.id)}
             />
-            <ListItemText id={`checkbox-list-label-${memory.id}`} primary={memory.title} />
+            <ListItemText id={`checkbox-list-label-${card.id}`} primary={card.card.content} />
           </ListItem>
         ))}
       </List>

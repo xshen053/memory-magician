@@ -47,7 +47,7 @@ function AddMemory() {
         const rd = generateAllReviewDates(todayDate);
         setReviewDates(rd);
       }
-      console.log("I am in prepareForReviewDatesForTodayNewTask()")
+      console.log("I am in prepareForReviewDatesForTodayNewTask")
     };
   
     prepareForReviewDatesForTodayNewTask();
@@ -80,6 +80,7 @@ function AddMemory() {
         content: title, // Description or content of the card
         tags: tags, // Array of tags associated with the card
         type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
+        total: reviewDates.length       // how many times total are needed for this card
       })
     
       // generate userCardDate
@@ -88,7 +89,6 @@ function AddMemory() {
         cardID: cardID,
         reviewDuration: -1,             // init to -1
         isReviewed: false,
-        total: reviewDates.length       // how many times total are needed for this card
       }
 
       // add reviewDate and iteration field
