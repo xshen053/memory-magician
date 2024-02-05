@@ -30,6 +30,30 @@ export const markOneUserCardReviewed = async (id) => {
 }
 
 /**
+ * 
+ * @param {*} id 
+ * @param {int} duration ms
+ */
+export const markOneUserCardReviewedWithDuration = async (id, duration) => {
+  try {
+    const input = {
+      id: id,
+      reviewDuration: duration,
+      isReviewed: true
+    }
+    await client.graphql({
+      query: updateUserCards,
+      variables: {
+        input: input
+      }
+    });
+  } catch (error) {
+    console.log("Error in markOneUserCardReviewedWithDuration: ", error)
+    throw error
+  }
+}
+
+/**
  * Function to create a user card association with review details.
  *
  * @param {} dataArray - The Array of data
