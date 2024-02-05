@@ -74,7 +74,6 @@ export const markOneUserCardReviewedWithDuration = async (id, duration) => {
  */
 export const createUserCardsBatchAPI = async (dataArray) => {
   try {
-    
     for (const data of dataArray) {
       await client.graphql({
         query: createUserCards,
@@ -95,6 +94,7 @@ export const createUserCardsBatchAPI = async (dataArray) => {
  * Retrieves all card details associated with a specific user ID where:
  * - The `isReviewed` status is false.
  * - The `reviewDate` is set to today (based on the server's time zone).
+ * - need to use limit to fetch all data
  * 
  * @param {Object} input - The input object containing the userID and filters.
  *   - `userID`: The unique identifier of the user.
@@ -155,24 +155,34 @@ export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
     const startOfTomorrow = tomorrow.toISOString();
-    const input = {
-      userID: user_id,
-      filter: {
-        reviewDate : {
-          ge: startOfToday, // Greater than or equal to the start of today
-          lt: startOfTomorrow // Less than the start of tomorrow
+ 
+    let allItems = [];
+    let nextToken = null;
+
+    do {
+      const input = {
+        userID: user_id,
+        filter: {
+          reviewDate : {
+            ge: startOfToday, // Greater than or equal to the start of today
+            lt: startOfTomorrow // Less than the start of tomorrow
+          },
+          isReviewed: {
+            eq: false
+          }
         },
-        isReviewed: {
-          eq: false
-        }
+        nextToken: nextToken
       }
-    }    
-    const r = await client.graphql({
-      query: userCardsByUserIDAndCardID,
-      variables: input
-    });
+      const r = await client.graphql({
+        query: userCardsByUserIDAndCardID,
+        variables: input
+      });
+      allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items);
+      nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
+    } while (nextToken)
+
     // console.log(r.data.userCardsByUserIDAndCardID.items)
-    return r.data.userCardsByUserIDAndCardID.items
+    return allItems
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
     throw error;
