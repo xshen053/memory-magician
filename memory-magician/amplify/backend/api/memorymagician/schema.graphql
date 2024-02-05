@@ -16,7 +16,7 @@ type Card @model {
   id: ID!
   content: String!
   tags: [String]
-  type: CardType! # {daily task, don't need review task, general task}
+  type: CardType!         # {daily task, don't need review task, general task}
   total: Int              # how many times is needed for this card
   users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
 }
