@@ -5,7 +5,7 @@
 - [when to put user in db](#useEffect)
 - [db auth rules](#useEffect)
 - [solve routes problem, refresh](#useEffect)
-
+- [field in usercard table](#field)
 
 
 # time zone
@@ -23,5 +23,7 @@ put user in db after confirmation
 # db authorization rules
 
 # solve routes problem
+
+# fields
 
 
