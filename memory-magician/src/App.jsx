@@ -21,10 +21,21 @@ const client = generateClient();
 
 
 const App = ({ signOut, user }) => {
+  const [userEmail, setUserEmail] = useState('');
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    const getEmail = async () => {
+      try {
+        const currentUser = await fetchUserAttributes()
+        setUserEmail(currentUser["email"])
+      } catch (error) {
+        console.log("Error during getUserEmail: ", error)
+        throw error        
+      }
+    }
+    getEmail()
     addUserToDatabaseWhenFirstSignIn()
   }, []);
   
@@ -53,6 +64,9 @@ const App = ({ signOut, user }) => {
   return (
     <MemoryProvider>
       <div>
+        <div className="user-greeting">
+          Hello, {userEmail}!
+        </div>      
         <NavBar /> {/* NavBar is always displayed */}
         <div className="App">
           {/* Main content */}
@@ -79,6 +93,7 @@ const styles = {
     justifyContent: 'center',
     padding: 20
   }
+  
 };
 
 export default withAuthenticator(App);

@@ -5,6 +5,16 @@
   text-align: center;
 }
 
+.user-greeting {
+  position: absolute;
+  right: 20px; /* Adjust as needed for your layout */
+  top: 20px; /* Adjust as needed for your layout */
+  font-size: 16px;
+  font-weight: bold;
+  color: #333; /* Or any color that fits your design */
+}
+
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -40,3 +50,4 @@
 .read-the-docs {
   color: #888;
 }
+

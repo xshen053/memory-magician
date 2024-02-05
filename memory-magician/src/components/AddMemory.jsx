@@ -27,13 +27,15 @@ import { useMemory } from '../context/MemoryContext.jsx';
 
 
 function AddMemory() {
+  // iteration of card starts from 0
+
 
   const { triggerMemoryAdded } = useMemory();
 
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selection, setSelection] = useState("DAILY"); // Initialize with a default value
+  const [selection, setSelection] = useState("GENERAL"); // Initialize with a default value
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
   const [reviewDates, setReviewDates] = useState([])
@@ -83,7 +85,8 @@ function AddMemory() {
         content: title, // Description or content of the card
         tags: tags, // Array of tags associated with the card
         type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
-        total: reviewDates.length       // how many times total are needed for this card
+        // Set total to -1 if selection is NOREVIEW, otherwise use reviewDates.length
+        total: selection === 'NOREVIEW' ? -1 : reviewDates.length 
       })
     
       // generate userCardDate
@@ -94,18 +97,21 @@ function AddMemory() {
         isReviewed: false,
       }
 
-      // add reviewDate and iteration field
-      const updatedDataArray = reviewDates.map((reviewDate, index) => {
-        // Create a new data object for each call with the updated reviewDate
-        return {
-          ...userCardData, 
-          reviewDate: reviewDate,
-          iteration: index 
-        };
-      })
-      
-      // associate card to reviewDate
-      await createUserCardsBatchAPI(updatedDataArray)
+      // only card need review will add this
+      if (selection !== "NOREVIEW") {
+        // add reviewDate and iteration field
+        const updatedDataArray = reviewDates.map((reviewDate, index) => {
+          // Create a new data object for each call with the updated reviewDate
+          return {
+            ...userCardData, 
+            reviewDate: reviewDate,
+            iteration: index 
+          };
+        });
+        
+        // associate card to reviewDate
+        await createUserCardsBatchAPI(updatedDataArray)
+      }
       
     } catch (error) {
       console.log("error when creating new task: ", error)

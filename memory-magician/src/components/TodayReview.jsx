@@ -65,9 +65,13 @@ function TodayReview() {
       <Divider sx={{ bgcolor: 'purple' }} />
       <List>
         {todayCards.map((card) => (
-          <ListItem key={card.id} secondaryAction={
-            <StyledChip label={`${card.iteration}/${card.card.total}`} color="primary" />
-          }>
+          <ListItem 
+            key={card.id} 
+            secondaryAction={
+              <StyledChip label={`${card.iteration}/${card.card.total}`} color="primary" />
+            }
+            style={{ backgroundColor: card.card.type === "GENERAL" ? "#c5b4e3" : "transparent" }}
+          > 
             <Checkbox
               edge="start"
               // checked={card.isReviewed}
