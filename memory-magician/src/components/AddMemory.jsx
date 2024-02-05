@@ -79,7 +79,6 @@ function AddMemory() {
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
-  
       // add task
       const cardID = await createCardApi({
         content: title, // Description or content of the card
@@ -107,8 +106,7 @@ function AddMemory() {
             iteration: index 
           };
         });
-        
-        // associate card to reviewDate
+        console.log(updatedDataArray)
         await createUserCardsBatchAPI(updatedDataArray)
       }
       

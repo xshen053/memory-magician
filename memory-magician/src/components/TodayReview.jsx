@@ -77,6 +77,7 @@ function TodayReview() {
         const currentUser = await fetchUserAttributes()
         const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
         setTodayCards(r)
+        console.log(r.length)
         console.log("I am in fetchTodaysMemories")
       } catch (error) {
         console.log("Error during fetchTodaysMemories: ", error)
@@ -129,7 +130,7 @@ function TodayReview() {
         await markOneUserCardReviewedWithDuration(cardID, 1000)
       }
       setSnackbarOpen(true); // Open the Snackbar to display the success message
-      fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
+      await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
       console.error("Error during markMemoryAsReviewed: ", error);
       throw error
@@ -146,16 +147,20 @@ function TodayReview() {
   return (
     <div style={{ textAlign: 'left' }}> {/* This div ensures everything inside is left-aligned */}
       <Typography variant="h5" gutterBottom style={{ marginTop: '50px' }} >
-        All Tasks For Today!
+        All cards for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        Estimate time: 2 hours
-      </Typography>
+        Estimate time: 2 hours, 
+      </Typography>            
       <Divider sx={{ bgcolor: 'purple' }} />
+      {/* <div className="list-container"> */}
+      
       <List>
+        
         {todayCards.map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
+            className="list-item-container list-item-hover"
             secondaryAction={
               <>
               <StyledChip label={`${cardUser.iteration}/${cardUser.card.total}`} color="primary" />
@@ -167,10 +172,16 @@ function TodayReview() {
               Timer: {formatTime(timers[cardUser.id].elapsedTime)}
             </Typography>
           )}
-              </>
+            </>
             }
+            
             // define the color
-            style={{ backgroundColor: cardUser.card.type === "GENERAL" ? "#c5b4e3" : "transparent" }}
+            style={{ 
+              width: '100%', // Adjust width as needed
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
+            }}
           > 
             <Checkbox
               edge="start"
@@ -191,7 +202,7 @@ function TodayReview() {
           </ListItem>
         ))}
       </List>
-
+      {/* </div> */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
