@@ -18,9 +18,16 @@ const StyledChip = styled(Chip)({
 });
 
 function TodayReview() {
-  const [memories, setMemories] = useState([]);
+  const [cards, setCards] = useState([]);
 
-  const today = moment().tz("America/Los_Angeles").startOf("day");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set to start of today
+  const startOfToday = today.toISOString();
+  
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
+  const startOfTomorrow = tomorrow.toISOString();
+  
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   function triggerTestSnackbar() {
     setSnackbarOpen(true);

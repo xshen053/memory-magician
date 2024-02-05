@@ -86,8 +86,9 @@ function AddMemory() {
       const userCardData = {
         userID: userID,
         cardID: cardID,
-        reviewDuration: -1,      // init to -1
+        reviewDuration: -1,             // init to -1
         isReviewed: false,
+        total: reviewDates.length       // how many times total are needed for this card
       }
 
       // add reviewDate and iteration field
