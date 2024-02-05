@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -9,44 +8,52 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Chip from '@mui/material/Chip';
 
 
+import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
+import { createCardApi } from '../utilities/apis/cardAPI';
+import { generateAllReviewDates } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
 
 
 function AddMemory() {
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [isDailyType, setIsDailyType] = useState(false);
-  const [noNeedReview, setNoNeedReview] = useState(false);
+  const [selection, setSelection] = useState("DAILY"); // Initialize with a default value
+  const [tags, setTags] = useState([]); // State to hold the tags
+  const [newTag, setNewTag] = useState(""); // State to hold the new tag input
+  
+  const handleChange = (event) => {
+    setSelection(event.target.value);
+  };
+
+  const handleAddTag = () => {
+    if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
+      setTags(prevTags => [...prevTags, newTag]);
+      setNewTag(""); // Clear input after adding
+    }
+  };
+
+  // Function to remove a tag
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
+  };
 
 
   const handleSubmit = () => {
-    axios
-      .post("http://127.0.0.1:8000/api/memory/", {
-        title: title,
-        /*
-        If isDailyType is true, type will be set to 1.
-        If isDailyType is false, then it checks noNeedReview.
-        If noNeedReview is true, type will be set to 2.
-        If noNeedReview is false, type will be set to 0.
-        */
-        type: isDailyType ? 1 : (noNeedReview ? 2 : 0),
-
-      })
-      .then((response) => {
-        console.log(response.data);
-        setTitle("");
-        setIsDailyType(false); // Resetting the switch state
-        setNoNeedReview(false);
-        setOpen(false);
-        setSnackbarOpen(true);
-      })
-      .catch((error) => {
-        console.error("There was an error adding the memory:", error);
-      });
+    setTags([]);
+    const cardData = {
+      content: title, // Description or content of the card
+      tags: ["blind75", "leetcode"], // Array of tags associated with the card
+      type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
+    };
   };
 
   return (
@@ -94,38 +101,69 @@ function AddMemory() {
             gutterBottom
             style={{ marginBottom: "20px" }}
           >
-            Add Memory
+            Add Card
           </Typography>
           <TextField
             fullWidth
             variant="outlined"
-            label="Add New Memory"
+            label="Add New Card"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             style={{ marginBottom: "20px" }}
           />
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isDailyType}
-                onChange={(e) => setIsDailyType(e.target.checked)}
-              />
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="Add Tag"
+          value={newTag}
+          onChange={(e) => setNewTag(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault(); // Prevent form submission on Enter
+              handleAddTag();
             }
-            label="Daily"
-            style={{ marginBottom: "20px" }}
-          />
+          }}
+          style={{ marginBottom: "20px" }}
+        />
+        <Button onClick={handleAddTag} style={{ marginBottom: "5px" }}>
+          Add Tag
+        </Button>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: "20px" }}>
+          {tags.map((tag, index) => (
+            <Chip
+              key={index}
+              label={tag}
+              onDelete={() => handleRemoveTag(tag)}
+              sx={{
+                bgcolor: '#c5b4e3', // Light blue background
+                '& .MuiChip-deleteIcon': {
+                  color: '#ffffff', // Dark blue delete icon
+                },
+              }}
+              color='primary'
+            />
+          ))}
+        </Box>  
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={noNeedReview}
-                onChange={(e) => setNoNeedReview(e.target.checked)}
-              />
-            }
-            label="No review"
-            style={{ marginBottom: "20px" }}
-          />          
+          <FormControl style={{ marginBottom: "20px"}}>
+            <InputLabel id="demo-simple-select-label">
+              Options
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selection.toUpperCase()} // Convert selection to uppercase
+              label="Options"
+              onChange={handleChange}
+              >
+              <MenuItem value="GENERAL">General</MenuItem>
+              <MenuItem value="DAILY">Daily</MenuItem>
+              <MenuItem value="NOREVIEW">No Review Needed</MenuItem>
+            </Select>
+          </FormControl>
+
+                  
           
           <Button
             variant="contained"
@@ -135,6 +173,7 @@ function AddMemory() {
             style={{
               padding: "10px",
               transition: "background-color 0.3s",
+              backgroundColor: "#4b2e83", // Change this line
             }}
             hover={{
               backgroundColor: "#1976D2",
