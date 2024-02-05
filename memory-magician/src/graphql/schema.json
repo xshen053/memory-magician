@@ -689,7 +689,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "number",
+          "name" : "iteration",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -1055,7 +1055,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "number",
+          "name" : "iteration",
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
@@ -2791,7 +2791,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "number",
+          "name" : "iteration",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -2854,7 +2854,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "number",
+          "name" : "iteration",
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
@@ -2965,7 +2965,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "number",
+          "name" : "iteration",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -3666,7 +3666,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "number",
+          "name" : "iteration",
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
@@ -4948,6 +4948,23 @@
             }
           },
           "defaultValue" : null
+        } ],
+        "onOperation" : false,
+        "onFragment" : false,
+        "onField" : false
+      }, {
+        "name" : "deprecated",
+        "description" : null,
+        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
+        "args" : [ {
+          "name" : "reason",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
+          },
+          "defaultValue" : "\"No longer supported\""
         } ],
         "onOperation" : false,
         "onFragment" : false,

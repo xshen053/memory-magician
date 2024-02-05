@@ -5,7 +5,14 @@
 
 # mutation
 
-- [ ] add a new task and update review date of a user
+- [x] create a new task 
+- [x] associate that task to review dates
 - [ ] 
 
+# other
 
+- [ ] migrate data from one database to another
+
+# resolver
+
+- [ ] custom batch resolver

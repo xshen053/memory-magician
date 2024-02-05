@@ -1,5 +1,4 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -9,44 +8,121 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Chip from '@mui/material/Chip';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
+import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
+import { createCardApi } from '../utilities/apis/cardAPI';
+import { generateAllReviewDates } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 
 function AddMemory() {
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [isDailyType, setIsDailyType] = useState(false);
-  const [noNeedReview, setNoNeedReview] = useState(false);
+  const [selection, setSelection] = useState("DAILY"); // Initialize with a default value
+  const [tags, setTags] = useState([]); // State to hold the tags
+  const [newTag, setNewTag] = useState(""); // State to hold the new tag input
+  const [reviewDates, setReviewDates] = useState([])
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
 
-  const handleSubmit = () => {
-    axios
-      .post("http://127.0.0.1:8000/api/memory/", {
-        title: title,
-        /*
-        If isDailyType is true, type will be set to 1.
-        If isDailyType is false, then it checks noNeedReview.
-        If noNeedReview is true, type will be set to 2.
-        If noNeedReview is false, type will be set to 0.
-        */
-        type: isDailyType ? 1 : (noNeedReview ? 2 : 0),
+    // one day only calculate once
+    // TODO: will change in the future if allow customized learning interval
+    const prepareForReviewDatesForTodayNewTask = () => {
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+  
+      if (reviewDates.length === 0) {
+        const rd = generateAllReviewDates(todayDate);
+        setReviewDates(rd);
+      }
+      console.log("I am in prepareForReviewDatesForTodayNewTask()")
+    };
+  
+    prepareForReviewDatesForTodayNewTask();
+  }, []); // Runs only once on component mount
+  
+  const handleChange = (event) => {
+    setSelection(event.target.value);
+  };
 
+  const handleAddTag = () => {
+    if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
+      setTags(prevTags => [...prevTags, newTag]);
+      setNewTag(""); // Clear input after adding
+    }
+  };
+
+  // Function to remove a tag
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
+  };
+
+  const createCardAndAddToDataBase = async () => {
+    try {
+      // get keys
+      const currentUser = await fetchUserAttributes()
+      const userID = currentUser["sub"]
+  
+      // add task
+      const cardID = await createCardApi({
+        content: title, // Description or content of the card
+        tags: tags, // Array of tags associated with the card
+        type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
       })
-      .then((response) => {
-        console.log(response.data);
-        setTitle("");
-        setIsDailyType(false); // Resetting the switch state
-        setNoNeedReview(false);
+    
+      // generate userCardDate
+      const userCardData = {
+        userID: userID,
+        cardID: cardID,
+        reviewDuration: -1,      // init to -1
+        isReviewed: false,
+      }
+
+      // add reviewDate and iteration field
+      const updatedDataArray = reviewDates.map((reviewDate, index) => {
+        // Create a new data object for each call with the updated reviewDate
+        return {
+          ...userCardData, 
+          reviewDate: reviewDate,
+          iteration: index 
+        };
+      })
+      
+      // associate card to reviewDate
+      await createUserCardsBatchAPI(updatedDataArray)
+      
+    } catch (error) {
+      console.log("error when creating new task: ", error)
+      setLoading(false); // Stop loading on error
+      alert(error)
+      throw error
+    }
+  }
+
+  const cleanAllStates = () => {
+        setLoading(false); // Stop loading on success
+        setTags([]);
         setOpen(false);
         setSnackbarOpen(true);
-      })
-      .catch((error) => {
-        console.error("There was an error adding the memory:", error);
-      });
+        setTitle("")
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true); // Start loading
+    await createCardAndAddToDataBase()
+    cleanAllStates(); // Call cleanAllStates() after finishing adding
   };
 
   return (
@@ -94,38 +170,69 @@ function AddMemory() {
             gutterBottom
             style={{ marginBottom: "20px" }}
           >
-            Add Memory
+            Add Card
           </Typography>
           <TextField
             fullWidth
             variant="outlined"
-            label="Add New Memory"
+            label="Add New Card"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             style={{ marginBottom: "20px" }}
           />
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isDailyType}
-                onChange={(e) => setIsDailyType(e.target.checked)}
-              />
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="Add Tag"
+          value={newTag}
+          onChange={(e) => setNewTag(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault(); // Prevent form submission on Enter
+              handleAddTag();
             }
-            label="Daily"
-            style={{ marginBottom: "20px" }}
-          />
+          }}
+          style={{ marginBottom: "20px" }}
+        />
+        <Button onClick={handleAddTag} style={{ marginBottom: "5px" }}>
+          Add Tag
+        </Button>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: "20px" }}>
+          {tags.map((tag, index) => (
+            <Chip
+              key={index}
+              label={tag}
+              onDelete={() => handleRemoveTag(tag)}
+              sx={{
+                bgcolor: '#c5b4e3', // Light blue background
+                '& .MuiChip-deleteIcon': {
+                  color: '#ffffff', // Dark blue delete icon
+                },
+              }}
+              color='primary'
+            />
+          ))}
+        </Box>  
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={noNeedReview}
-                onChange={(e) => setNoNeedReview(e.target.checked)}
-              />
-            }
-            label="No review"
-            style={{ marginBottom: "20px" }}
-          />          
+          <FormControl style={{ marginBottom: "20px"}}>
+            <InputLabel id="demo-simple-select-label">
+              Options
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selection.toUpperCase()} // Convert selection to uppercase
+              label="Options"
+              onChange={handleChange}
+              >
+              <MenuItem value="GENERAL">General</MenuItem>
+              <MenuItem value="DAILY">Daily</MenuItem>
+              <MenuItem value="NOREVIEW">No Review Needed</MenuItem>
+            </Select>
+          </FormControl>
+
+                  
           
           <Button
             variant="contained"
@@ -135,6 +242,7 @@ function AddMemory() {
             style={{
               padding: "10px",
               transition: "background-color 0.3s",
+              backgroundColor: "#4b2e83", // Change this line
             }}
             hover={{
               backgroundColor: "#1976D2",
@@ -144,7 +252,6 @@ function AddMemory() {
           </Button>
         </Box>
       </Modal>
-
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -165,9 +272,16 @@ function AddMemory() {
             }, // Yellow text color for the "Good Job!" message
           }}
         >
-          Memory successfully added!
+          Congrations! Card is successfully added!
         </Alert>
       </Snackbar>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.modal + 1 }}
+        open={loading}
+        >
+      {/* You can use CircularProgress or replace it with an img tag for a GIF */}
+      <CircularProgress color="inherit" />
+    </Backdrop>      
     </div>
   );
 }

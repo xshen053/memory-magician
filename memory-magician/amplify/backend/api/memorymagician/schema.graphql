@@ -26,7 +26,7 @@ type UserCards @model {
   cardID: ID! @index(name: "byCard", sortKeyFields: ["userID"])
   user: User @belongsTo(fields: ["userID"])
   card: Card @belongsTo(fields: ["cardID"])
-  number: Int          # the ith time to review
+  iteration: Int          # the ith time to review
   isReviewed: Boolean 
   reviewDuration: Int
   reviewDate: AWSDateTime

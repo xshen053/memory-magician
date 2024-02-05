@@ -1,4 +1,4 @@
-import { createCardApi, getCardOfUser } from '../../cardAPI.js';
+import { createCardApi } from '../../cardAPI.js';
 import fs from 'fs';
 
 import { Amplify } from 'aws-amplify';
@@ -14,7 +14,7 @@ Amplify.configure(amplifyconfig);
 
 // Example usage:
 const cardData = {
-  content: "django knowledge",
+  content: "hey",
   tags: ["blind75", "leetcode"],
   type: "DAILY"
   // Include any other fields that are required by your CreateUserInput type

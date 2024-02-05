@@ -2,12 +2,12 @@
 
 
 ## All the screens
-- [x] As a user, I want to create new memories. (all the screens)
+- [ ] As a user, I want to create new memories. (all the screens)
 - [ ] When creating memory, I want to give them tags, e.g. leetcode 3, it is {blind 75, amazon, strings}
 
 ## Today's review screen
-- [x] As a user, I want to know what memories I want to review today. (today's review screen)
-- [x] As a user, I want to remove a card (mark as reviewed) when I finish reviewing that card (today's review screen)
+- [ ] As a user, I want to know what memories I want to review today. (today's review screen)
+- [ ] As a user, I want to remove a card (mark as reviewed) when I finish reviewing that card (today's review screen)
 - [ ] As a user, I am able to create different types of card, e.g. (daily card(need to do every day), general task), and 
 different types of card have different background so it's clear.
 - [ ] For each card, I want to see how many times I reviewed it, e.g. 3rd, or 3/18
@@ -23,8 +23,8 @@ different types of card have different background so it's clear.
 
 
 ## Calendar screen
-- [x] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
-- [x] As a user, I want to see all tests for everyday in a calendar
+- [ ] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
+- [ ] As a user, I want to see all tests for everyday in a calendar
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them

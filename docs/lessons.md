@@ -1,4 +1,10 @@
 
+# Table of Contents
+
+data structure:
+- [API Efficiency](#linkedlist)
+- [useEffect](#useEffect)
+
 
 # API Efficiency
 
@@ -75,3 +81,25 @@ solution
 
 i found the solution. I got the same error due to want to change the primary key, so did what they amplify told me, to use --allow-destructive-graphql-schema-updates , heck it failed, then i just delete the tables in the schema ( the one i want to change the primary key), push to the cloud, then after it finished, put back the table, push again, it worked
 
+# useEffect
+
+
+when using useEffect to call function?
+
+`setState` doesn't function immediately
+
+
+## why reviewDates are both []?
+
+```Javascript
+  console.log(reviewDates)
+    if (reviewDates.length === 0) {
+      const rd = generateAllReviewDates(todayDate)
+      console.log("print")
+      setReviewDates(rd)
+    }
+    console.log(reviewDates) why reviewDates is empty
+```
+
+
+> In React, state updates using the useState hook are asynchronous. This means when you call setReviewDates(rd), the state reviewDates doesn't update immediately. Instead, the update is scheduled, and the new value will be available on the next render of the component.
