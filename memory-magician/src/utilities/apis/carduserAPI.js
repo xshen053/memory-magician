@@ -288,6 +288,39 @@ export const getAllUnreviewedCardsOfUser = async (user_id) => {
 }
 
 /**
+ * get all review cardUser of a user
+ * - all dates
+ * - both reviewed and unreviewed
+ * 
+ * @param {*} user_id 
+ * @returns 
+ */
+export const getAllUserCardsOfUser = async (user_id) => {
+  try {
+    let allItems = [];
+    let nextToken = null;
+    do {
+      const input = {
+        userID: user_id,
+        nextToken: nextToken
+      }
+      const r = await client.graphql({
+        query: userCardsByUserIDAndCardID,
+        variables: input
+      });
+      allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items)
+      nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
+    } while (nextToken)
+
+    return allItems
+  } catch (error) {
+    console.error("Error during getAllUnreviewedCardsOfUser:", error);
+    throw error;
+  }
+}
+
+
+/**
  * 
  * @param {*} user_id 
  * @returns 
@@ -328,9 +361,10 @@ export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
 }
 
 /**
+ * get a review date card based on iteration
  * 
- * @param {*} user_id 
- * @param {*} card_id 
+ * @param {*} user_id the user of that review userCard
+ * @param {*} card_id the card of that review userCard
  * @return id of that userCard
  */
 export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) => {
