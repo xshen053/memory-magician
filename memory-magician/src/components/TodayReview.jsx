@@ -149,7 +149,7 @@ function TodayReview() {
    * @param {*} cardID 
    * @param {*} iteration 
    */
-  const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration) => {
+  const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
     try {
       console.log("called")
       let duration = 1000
@@ -158,12 +158,12 @@ function TodayReview() {
       }
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
-      const newIteration = iteration + 1
-      console.log(userID, cardID, newIteration)
-      const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
-      console.log("nextUserCardID" + nextUserCardID)
-      // update next userCard's lastReviewDuration field
-      await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
+      if (type !== "NOREVIEW") {
+        const newIteration = iteration + 1
+        const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
+        // update next userCard's lastReviewDuration field
+        await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
+      }
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
@@ -182,21 +182,37 @@ function TodayReview() {
 
   return (
     <div style={{ textAlign: 'left' }}> {/* This div ensures everything inside is left-aligned */}
-      <Typography variant="h5" gutterBottom style={{ marginTop: '50px' }} >
+      <Typography variant="h5" gutterBottom style={{ marginTop: '50px', color: 'black' }} >
         All cards for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        estimate time left: {estimateTime} minutes, excluding cards that are newly added and already reviewed
-      </Typography>            
+        Estimated time left: 
+        <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime} </span> 
+         minutes <br /> (excluding cards that are newly added and already reviewed)
+      </Typography>  
+      <Typography variant="subtitle2" style={{ marginTop: '20px', color: 'black' }}>
+        Note: Different card backgrounds represent different types of content: <br />
+        <span style={{ backgroundColor: '#FFE0B2'}}> - Orange daily cards:</span> you want to review it every day <br />
+        <span > - Transparent general card: review it according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span>
+      </Typography>                
       <Divider sx={{ bgcolor: 'purple' }} />
+     
       {/* <div className="list-container"> */}
       
       <List>
         {todayCards.sort((a, b) => {
-          if (a.isReviewed === b.isReviewed) {
-            return 0; // Keep original order if both are checked or unchecked
+          // First, sort by review status (unreviewed first)
+          if (a.isReviewed !== b.isReviewed) {
+            return a.isReviewed ? 1 : -1;
           }
-          return a.isReviewed ? 1 : -1; // Unchecked items come first
+
+          // If review status is the same, then sort by card type (daily first)
+          if (a.card.type !== b.card.type) {
+            return a.card.type === "DAILY" ? -1 : 1;
+          }
+
+          // If both review status and card type are the same, keep original order
+          return 0;
         }).map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
@@ -224,7 +240,7 @@ function TodayReview() {
               width: '100%', // Adjust width as needed
               marginLeft: 'auto',
               marginRight: 'auto',
-              // backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
+              backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "#FFE0B2" 
               // backgroundColor: cardUser.isReviewed ? "#d3d3d3" : "transparent", // Grey out reviewed items
               // textDecoration: cardUser.isReviewed ? "line-through" : "none", // Strikethrough if reviewed
             }}
@@ -239,7 +255,7 @@ function TodayReview() {
               onClick={() => {
                 // Check if timer is not running before marking as reviewed
                 if (!timers[cardUser.id] || !timers[cardUser.id].isRunning) {
-                    markMemoryAsReviewed(cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration);
+                    markMemoryAsReviewed(cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration, cardUser.card.type);
                 } else {
                     alert("Please stop timer before finish the task!")
                 }
