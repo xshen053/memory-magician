@@ -107,7 +107,6 @@ function AddMemory() {
             iteration: index 
           };
         });
-        console.log(updatedDataArray)
         await createUserCardsBatchAPI(updatedDataArray)
       }
       

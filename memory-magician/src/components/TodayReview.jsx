@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import moment from 'moment-timezone';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -29,6 +27,7 @@ function TodayReview() {
   const [todayCards, setTodayCards] = useState([]);
   const [reviewDuration, setDuration] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [estimateTime, setEstimateTime] = useState(0);
 
   // Function to update the duration for a specific id
   const updateDuration = (id, duration) => {
@@ -87,7 +86,12 @@ function TodayReview() {
       try {
         const currentUser = await fetchUserAttributes()
         const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+        let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
+          return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
+        }, 0);
         setTodayCards(r)
+        totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
+        setEstimateTime(totalEstimatedTime)
         console.log("I am in fetchTodaysMemories")
       } catch (error) {
         console.log("Error during fetchTodaysMemories: ", error)
@@ -122,6 +126,8 @@ function TodayReview() {
       const currentUser = await fetchUserAttributes()
       const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
       setTodayCards(r)
+      todayCards.map((cardUser) => {})
+
       console.log("I am in fetchTodaysMemories")
     } catch (error) {
       console.log("Error during fetchTodaysMemories: ", error)
@@ -164,7 +170,7 @@ function TodayReview() {
         All cards for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        Estimate time: 2 hours
+        Total estimate time: {estimateTime} minutes, excluding cards that are newly added.
       </Typography>            
       <Divider sx={{ bgcolor: 'purple' }} />
       {/* <div className="list-container"> */}
@@ -187,11 +193,9 @@ function TodayReview() {
               <IconButton onClick={() => resetTimer(cardUser.id)}>
                 <ReplayIcon /> 
               </IconButton>
-              {timers[cardUser.id] && (
-            <Typography variant="body2">
-              Timer: {formatTime(timers[cardUser.id].elapsedTime)}
-            </Typography>
-          )}
+              <Typography variant="body2">
+                  Timer: {timers[cardUser.id] ? formatTime(timers[cardUser.id].elapsedTime) : '0:00'}
+              </Typography>
             </>
             }
             // define the color
@@ -220,7 +224,10 @@ function TodayReview() {
             <ListItemText 
               id={`checkbox-list-label-${cardUser.id}`} 
               primary={cardUser.card.content}
-              secondary = {`est: ${cardUser.lastTimeReviewDuration / 1000} min`}
+              secondary = {
+                cardUser.lastTimeReviewDuration >= 0
+                ? `est: ${(cardUser.lastTimeReviewDuration / 1000).toFixed(2)} min`
+                : 'first time review'}
               style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
 
               />
