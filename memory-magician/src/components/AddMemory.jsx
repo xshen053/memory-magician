@@ -131,7 +131,7 @@ function AddMemory() {
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
-    await triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
+    triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
   };
 
   return (

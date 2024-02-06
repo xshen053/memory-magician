@@ -1,5 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
-import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js';
+import { userCardsByUserIDAndCardID, getUserCardByCard } from '../../graphql/customizedQueries.js';
 import { createUserCards, updateUserCards } from '../../graphql/mutations.js';
 import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
@@ -63,7 +63,7 @@ export const updateOneUserCardLastTimeReviewDuration = async (id, duration) => {
   try {
     const input = {
       id: id,
-      lastTimeReviewDuration: duration
+      lastTimeReviewDuration: parseInt(duration, 10)
     }
     await client.graphql({
       query: updateUserCards,
@@ -335,26 +335,21 @@ export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
  */
 export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) => {
   try {
-    const filter = {
-      userID: { eq: user_id },
-      cardID: { eq: card_id },
-      iteration: { eq: index }
-    };
-    let allItems = [];
-    let nextToken = null;
-    do {
-      const r = await client.graphql({
-        query: listUserCards,
-        variables: {
-          filter: filter
-        }
-      });
-      allItems = allItems.concat(r.data.listUserCards.items)
-      nextToken = r.data.listUserCards.nextToken
-    } while (nextToken)
-    
-    // console.log(r.data.listUserCards.items)
-    return allItems[0].id
+    const r = await client.graphql({
+      query: getUserCardByCard,
+      variables: {
+        id: card_id
+      }
+    });
+    if (!card_id) {
+      throw new Error("card_id is null or undefined");
+    }
+    for (let c of r.data.getCard.users.items) {
+      if (c.userID === user_id && c.iteration === index) {
+        return c.id
+      }
+    }
+    throw new Error("can't find cardID");
   } catch (error) {
     console.error("Error during getOneCardUserFromUserIDCardID:", error);
     throw error;  

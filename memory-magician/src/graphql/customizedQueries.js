@@ -1,3 +1,24 @@
+export const getUserCardByCard = /* GraphQL */ `
+  query GetCard($id: ID!) {
+    getCard(id: $id) {
+      id
+      users {
+        items {
+          id
+          userID
+          cardID
+          iteration
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+
+
 
 export const userCardsByUserIDAndCardID = /* GraphQL */ `
   query UserCardsByUserIDAndCardID(
