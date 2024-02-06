@@ -4,6 +4,7 @@
 ## All the screens
 - [x] As a user, I want to create new memories. (all the screens)
 - [x] When creating memory, I want to give them tags, e.g. leetcode 3, it is {blind 75, amazon, strings}
+- [x] Add a component to show a user's information, like hello xxx
 
 ## Today's review screen
 - [x] As a user, I want to know what memories I want to review today. (today's review screen)
@@ -12,10 +13,10 @@
 different types of card have different background so it's clear.
 - [x] For each card, I want to see how many times I reviewed it, e.g. 3rd, or 3/18
 - [x] Add tag for a task
-- [ ] for each card, I am about to start counting and stop counting the time and once I finished and clicked reviewed, that time is stored
-- [ ] if I don't start the timer, it means it can be finished in 1s
-
-
+- [x] for each card, I am about to start counting and stop counting the time and once I finished and clicked reviewed, that time is stored
+- [x] if I don't start the timer, it means it can be finished in 1s
+- [ ] add different background color of different type of cards
+- [ ] for card I reviewed, make them doesn't appear, just become grep and cann't be selected
 
 ### No urgent
 - [ ] As a user, if I accidentally review a memory, I can withdraw (no urgent)
@@ -35,11 +36,18 @@ different types of card have different background so it's clear.
 
 
 
+
+
 ## Calendar screen
 - [x] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
+- [ ] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
+
+## History Screen
+- [ ] Also search a task I created
+- [ ] I want to update, change, delete, search a task
 
 
 ## No urgent
