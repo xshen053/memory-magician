@@ -178,9 +178,9 @@ function TodayReview() {
       
       <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
         Different card backgrounds represent different types of content: <br />
-        <span style={{ backgroundColor: '#FFE0B2'}}> - Orange daily cards:</span> you want to review it every day <br />
-        <span > - Transparent general card: review it according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span> <br />
-        <span> - No Review card will not show up, just in case you want to record some thing you finished but that's all!</span>
+        <span style={{ backgroundColor: '#FFE0B2'}}> - [Orange daily cards]:</span> you want to review it every day <br />
+        <span > - [Transparent general card]: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span> <br />
+        <span> - [NoReview card]: you want to record some thing you finished but that's all, it won't show up in the list</span>
       </Typography>                
       <Divider sx={{ bgcolor: 'purple' }} />
 

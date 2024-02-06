@@ -188,7 +188,6 @@ export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
  
     let allItems = [];
     let nextToken = null;
-
     do {
       const input = {
         userID: user_id,
