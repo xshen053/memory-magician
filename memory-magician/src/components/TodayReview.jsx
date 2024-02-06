@@ -12,8 +12,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import '../css/style.css';
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
@@ -25,9 +24,11 @@ const StyledChip = styled(Chip)({
 function TodayReview() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
-  const [reviewDuration, setDuration] = useState({});
+  const [reviewDurationMap, setDuration] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
+  const [curCardDuration, setCurCardDuration] = useState(0)
+
 
   // Function to update the duration for a specific id
   const updateDuration = (id, duration) => {
@@ -76,32 +77,8 @@ function TodayReview() {
     }));
   };  
 
-
-  function triggerTestSnackbar() {
-    setSnackbarOpen(true);
-  }
   
   useEffect(() => {
-    const fetchTodaysMemories = async () => {
-      try {
-        const currentUser = await fetchUserAttributes()
-        const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
-        let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
-          if (!cardUser.isReviewed) {
-            return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
-          }
-          return accumulator;
-        }, 0);
-        setTodayCards(r)
-        totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
-        setEstimateTime(totalEstimatedTime)
-        console.log("I am in fetchTodaysMemories")
-      } catch (error) {
-        console.log("Error during fetchTodaysMemories: ", error)
-        throw error
-      }
-    }
-
     fetchTodaysMemories(); // call it when first render
     if (memoryAdded) {
       fetchTodaysMemories(); // call it when a new card is created
@@ -109,6 +86,7 @@ function TodayReview() {
   }, [memoryAdded]);
 
   useEffect(() => {
+    // update real-time interval
     const interval = setInterval(() => {
       setTimers(prevTimers => {
         const updatedTimers = { ...prevTimers };
@@ -129,10 +107,13 @@ function TodayReview() {
       const currentUser = await fetchUserAttributes()
       const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
       let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
-        return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
+        if (!cardUser.isReviewed) {
+          return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
+        }
+        return accumulator;
       }, 0);
       setTodayCards(r)
-      totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
+      totalEstimatedTime = totalEstimatedTime / 60000 // convert to minute
       setEstimateTime(totalEstimatedTime)
       console.log("I am in fetchTodaysMemories")
     } catch (error) {
@@ -151,10 +132,9 @@ function TodayReview() {
    */
   const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
     try {
-      console.log("called")
       let duration = 1000
-      if (reviewDuration[userCardID] !== undefined) {
-        duration = reviewDuration[userCardID]
+      if (reviewDurationMap[userCardID] !== undefined) {
+        duration = reviewDurationMap[userCardID]
       }
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
@@ -164,6 +144,7 @@ function TodayReview() {
         // update next userCard's lastReviewDuration field
         await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
       }
+      setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
@@ -268,7 +249,7 @@ function TodayReview() {
               primary={cardUser.card.content}
               secondary = {
                 cardUser.lastTimeReviewDuration >= 0
-                ? `est: ${(cardUser.lastTimeReviewDuration / 1000).toFixed(2)} min`
+                ? `est: ${(cardUser.lastTimeReviewDuration / 60000).toFixed(2)} min`
                 : 'first time review'}
               style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
 
@@ -277,16 +258,11 @@ function TodayReview() {
         ))}
       </List>
       {/* </div> */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} severity="success">
-          Good Job!
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        snackbarOpen={snackbarOpen}
+        setSnackbarOpen={setSnackbarOpen}
+        curCardDuration={curCardDuration}
+      />
     </div>
   );
 }
