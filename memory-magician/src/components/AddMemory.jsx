@@ -101,14 +101,12 @@ function AddMemory() {
         // add reviewDate and iteration field
         const updatedDataArray = reviewDates.map((reviewDate, index) => {
           // Create a new data object for each call with the updated reviewDate
-          console.log("add iteration:" + index)
           return {
             ...userCardData, 
             reviewDate: reviewDate,
             iteration: index 
           };
         });
-        console.log(updatedDataArray)
         await createUserCardsBatchAPI(updatedDataArray)
       }
     } catch (error) {

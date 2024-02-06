@@ -87,7 +87,10 @@ function TodayReview() {
         const currentUser = await fetchUserAttributes()
         const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
         let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
-          return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
+          if (!cardUser.isReviewed) {
+            return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
+          }
+          return accumulator;
         }, 0);
         setTodayCards(r)
         totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
@@ -183,13 +186,18 @@ function TodayReview() {
         All cards for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        Total estimate time: {estimateTime} minutes, excluding cards that are newly added.
+        estimate time left: {estimateTime} minutes, excluding cards that are newly added and already reviewed
       </Typography>            
       <Divider sx={{ bgcolor: 'purple' }} />
       {/* <div className="list-container"> */}
       
       <List>
-        {todayCards.map((cardUser) => (
+        {todayCards.sort((a, b) => {
+          if (a.isReviewed === b.isReviewed) {
+            return 0; // Keep original order if both are checked or unchecked
+          }
+          return a.isReviewed ? 1 : -1; // Unchecked items come first
+        }).map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
             className={`list-item-container list-item-hover ${cardUser.isReviewed ? 'strikethrough' : ''}`}
@@ -217,13 +225,14 @@ function TodayReview() {
               marginLeft: 'auto',
               marginRight: 'auto',
               // backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
-              backgroundColor: cardUser.isReviewed ? "#d3d3d3" : "transparent", // Grey out reviewed items
-              textDecoration: cardUser.isReviewed ? "line-through" : "none", // Strikethrough if reviewed
+              // backgroundColor: cardUser.isReviewed ? "#d3d3d3" : "transparent", // Grey out reviewed items
+              // textDecoration: cardUser.isReviewed ? "line-through" : "none", // Strikethrough if reviewed
             }}
           > 
             <Checkbox
               edge="start"
               checked = {cardUser.isReviewed}
+              disabled={cardUser.isReviewed} // Disable the checkbox if it's already reviewed
               tabIndex={-1}
               disableRipple
               inputProps={{ 'aria-labelledby': `checkbox-list-label-${cardUser.id}` }}
