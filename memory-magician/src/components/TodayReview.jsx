@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import moment from 'moment-timezone';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -17,7 +15,7 @@ import '../css/style.css';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { getOneCardUserFromUserIDCardID, getAllUnreviewedCardsOfUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
+import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
@@ -29,6 +27,7 @@ function TodayReview() {
   const [todayCards, setTodayCards] = useState([]);
   const [reviewDuration, setDuration] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [estimateTime, setEstimateTime] = useState(0);
 
   // Function to update the duration for a specific id
   const updateDuration = (id, duration) => {
@@ -86,9 +85,16 @@ function TodayReview() {
     const fetchTodaysMemories = async () => {
       try {
         const currentUser = await fetchUserAttributes()
-        const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+        const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
+        let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
+          if (!cardUser.isReviewed) {
+            return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
+          }
+          return accumulator;
+        }, 0);
         setTodayCards(r)
-        console.log(r.length)
+        totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
+        setEstimateTime(totalEstimatedTime)
         console.log("I am in fetchTodaysMemories")
       } catch (error) {
         console.log("Error during fetchTodaysMemories: ", error)
@@ -121,8 +127,13 @@ function TodayReview() {
   const fetchTodaysMemories = async () => {
     try {
       const currentUser = await fetchUserAttributes()
-      const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+      const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
+      let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
+        return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
+      }, 0);
       setTodayCards(r)
+      totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
+      setEstimateTime(totalEstimatedTime)
       console.log("I am in fetchTodaysMemories")
     } catch (error) {
       console.log("Error during fetchTodaysMemories: ", error)
@@ -130,8 +141,17 @@ function TodayReview() {
     }
   }
 
+  /**
+   * mark a usercard as reviewed and also update the next review object's lastReviewDuration
+   * 
+   * @param {*} userCardID 
+   * @param {*} userID 
+   * @param {*} cardID 
+   * @param {*} iteration 
+   */
   const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration) => {
     try {
+      console.log("called")
       let duration = 1000
       if (reviewDuration[userCardID] !== undefined) {
         duration = reviewDuration[userCardID]
@@ -139,8 +159,9 @@ function TodayReview() {
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
       const newIteration = iteration + 1
+      console.log(userID, cardID, newIteration)
       const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
-      
+      console.log("nextUserCardID" + nextUserCardID)
       // update next userCard's lastReviewDuration field
       await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
@@ -165,16 +186,21 @@ function TodayReview() {
         All cards for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        Estimate time: 2 hours
+        estimate time left: {estimateTime} minutes, excluding cards that are newly added and already reviewed
       </Typography>            
       <Divider sx={{ bgcolor: 'purple' }} />
       {/* <div className="list-container"> */}
       
       <List>
-        {todayCards.map((cardUser) => (
+        {todayCards.sort((a, b) => {
+          if (a.isReviewed === b.isReviewed) {
+            return 0; // Keep original order if both are checked or unchecked
+          }
+          return a.isReviewed ? 1 : -1; // Unchecked items come first
+        }).map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
-            className="list-item-container list-item-hover"
+            className={`list-item-container list-item-hover ${cardUser.isReviewed ? 'strikethrough' : ''}`}
             secondaryAction={
               <>
               <StyledChip 
@@ -188,11 +214,9 @@ function TodayReview() {
               <IconButton onClick={() => resetTimer(cardUser.id)}>
                 <ReplayIcon /> 
               </IconButton>
-              {timers[cardUser.id] && (
-            <Typography variant="body2">
-              Timer: {formatTime(timers[cardUser.id].elapsedTime)}
-            </Typography>
-          )}
+              <Typography variant="body2">
+                  Timer: {timers[cardUser.id] ? formatTime(timers[cardUser.id].elapsedTime) : '0:00'}
+              </Typography>
             </>
             }
             // define the color
@@ -200,12 +224,15 @@ function TodayReview() {
               width: '100%', // Adjust width as needed
               marginLeft: 'auto',
               marginRight: 'auto',
-              backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
+              // backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
+              // backgroundColor: cardUser.isReviewed ? "#d3d3d3" : "transparent", // Grey out reviewed items
+              // textDecoration: cardUser.isReviewed ? "line-through" : "none", // Strikethrough if reviewed
             }}
           > 
             <Checkbox
               edge="start"
               checked = {cardUser.isReviewed}
+              disabled={cardUser.isReviewed} // Disable the checkbox if it's already reviewed
               tabIndex={-1}
               disableRipple
               inputProps={{ 'aria-labelledby': `checkbox-list-label-${cardUser.id}` }}
@@ -221,7 +248,10 @@ function TodayReview() {
             <ListItemText 
               id={`checkbox-list-label-${cardUser.id}`} 
               primary={cardUser.card.content}
-              secondary = {`est: ${cardUser.lastTimeReviewDuration / 1000} min`}
+              secondary = {
+                cardUser.lastTimeReviewDuration >= 0
+                ? `est: ${(cardUser.lastTimeReviewDuration / 1000).toFixed(2)} min`
+                : 'first time review'}
               style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
 
               />

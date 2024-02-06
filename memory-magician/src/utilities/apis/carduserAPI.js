@@ -1,5 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
-import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js';
+import { userCardsByUserIDAndCardID, getUserCardByCard } from '../../graphql/customizedQueries.js';
 import { createUserCards, updateUserCards } from '../../graphql/mutations.js';
 import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
@@ -63,7 +63,7 @@ export const updateOneUserCardLastTimeReviewDuration = async (id, duration) => {
   try {
     const input = {
       id: id,
-      lastTimeReviewDuration: duration
+      lastTimeReviewDuration: parseInt(duration, 10)
     }
     await client.graphql({
       query: updateUserCards,
@@ -177,7 +177,7 @@ export const createUserCardsBatchAPI = async (dataArray) => {
  * },
  * ...
  */
-export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
+export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of today
@@ -196,9 +196,6 @@ export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
           reviewDate : {
             ge: startOfToday, // Greater than or equal to the start of today
             lt: startOfTomorrow // Less than the start of tomorrow
-          },
-          isReviewed: {
-            eq: false
           }
         },
         nextToken: nextToken
@@ -338,20 +335,21 @@ export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
  */
 export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) => {
   try {
-    
-    const filter = {
-      userID: { eq: user_id },
-      cardID: { eq: card_id },
-      iteration: { eq: index } // index + 1 doesn't work
-    };
     const r = await client.graphql({
-      query: listUserCards,
+      query: getUserCardByCard,
       variables: {
-        filter: filter
+        id: card_id
       }
     });
-    console.log(r.data.listUserCards.items)
-    return r.data.listUserCards.items[0].id
+    if (!card_id) {
+      throw new Error("card_id is null or undefined");
+    }
+    for (let c of r.data.getCard.users.items) {
+      if (c.userID === user_id && c.iteration === index) {
+        return c.id
+      }
+    }
+    throw new Error("can't find cardID");
   } catch (error) {
     console.error("Error during getOneCardUserFromUserIDCardID:", error);
     throw error;  

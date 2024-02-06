@@ -107,10 +107,8 @@ function AddMemory() {
             iteration: index 
           };
         });
-        console.log(updatedDataArray)
         await createUserCardsBatchAPI(updatedDataArray)
       }
-      
     } catch (error) {
       console.log("error when creating new task: ", error)
       setLoading(false); // Stop loading on error

@@ -102,3 +102,31 @@ when using useEffect to call function?
 
 
 > In React, state updates using the useState hook are asynchronous. This means when you call setReviewDates(rd), the state reviewDates doesn't update immediately. Instead, the update is scheduled, and the new value will be available on the next render of the component.
+
+
+# After add a memory, if directly mark it, it will error
+
+
+`getOneCardUserFromUserIDCardID` this function has problem
+
+## Solution 
+still need use nextToken to make sure fetch all the data
+
+# Bug
+
+```
+"The conditional request failed (Service: DynamoDb, Status Code: 400, Request ID: NRERAH310V1E9A9O00GKTNPPF3VV4KQNSO5AEMVJF66Q9ASUAAJG)"
+path
+```
+
+when doing a mutation
+
+## Solution
+
+didn't pass the correct id, I pass a cardid instead of a usercardid
+
+it doesn't exist in the table!! after I passed the correct id, it works
+
+
+
+
