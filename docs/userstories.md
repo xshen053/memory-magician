@@ -15,8 +15,8 @@ different types of card have different background so it's clear.
 - [x] Add tag for a task
 - [x] for each card, I am about to start counting and stop counting the time and once I finished and clicked reviewed, that time is stored
 - [x] if I don't start the timer, it means it can be finished in 1s
-- [ ] add different background color of different type of cards
-- [ ] for card I reviewed, make them doesn't appear, just become grep and cann't be selected
+- [x] add different background color of different type of cards
+- [x] for card I reviewed, make them doesn't appear, just cann't be selected
 
 ### No urgent
 - [ ] As a user, if I accidentally review a memory, I can withdraw (no urgent)
@@ -40,7 +40,7 @@ different types of card have different background so it's clear.
 
 ## Calendar screen
 - [x] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
-- [ ] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
+- [x] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
