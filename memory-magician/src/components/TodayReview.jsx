@@ -24,50 +24,44 @@ const StyledChip = styled(Chip)({
 function TodayReview() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
-  const [reviewDurationMap, setDuration] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
   const [curCardDuration, setCurCardDuration] = useState(0)
 
-
-  // Function to update the duration for a specific id
-  const updateDuration = (id, duration) => {
-    setDuration(prevDurations => {
-    // Check if the id already exists in the state
-    const existingDuration = prevDurations[id] || 0;
-    return {
-      ...prevDurations,
-      [id]: existingDuration + duration
-    };
-    });
-  };
-
   // Add a state to track the timer for each cardUser
   const [timers, setTimers] = useState({}); // Object with cardUser.id as key and timer info as value
+
 
   // Start the timer
   const startTimer = (id) => {
     setTimers(prevTimers => ({
       ...prevTimers,
-      [id]: { startTime: new Date(), isRunning: true }
+      [id]: {
+        ...prevTimers[id],
+        startTime: new Date(),
+        isRunning: true,
+        elapsedTime: prevTimers[id] && prevTimers[id].elapsedTime ? prevTimers[id].elapsedTime : 0 // Initialize if not present
+      }
     }));
   };
   
   // Stop the timer and log the duration
   const stopTimer = (id) => {
-    const timer = timers[id];
-    if (timer && timer.isRunning) {
-      const duration = new Date() - timer.startTime;
-      console.log(`Timer for ${id} stopped. Duration: ${duration} ms`);
+    setTimers(prevTimers => {
+      const timer = prevTimers[id];
+      if (timer && timer.isRunning) {
+        const duration = new Date() - timer.startTime;
+        const elapsedTime = (timer.elapsedTime || 0) + duration; // Update elapsed time
+        console.log(`Timer for ${id} stopped. Duration: ${duration} ms, Total elapsed: ${elapsedTime} ms`);
 
-      // record the mapping between id -> duration
-      updateDuration(id, duration)
-      // Reset the timer
-      setTimers(prevTimers => ({
-        ...prevTimers,
-        [id]: { ...timer, isRunning: false }
-      }));
-    }
+        // Update the timer object with the new elapsed time and stop the timer
+        return {
+          ...prevTimers,
+          [id]: { ...timer, isRunning: false, elapsedTime }
+        };
+      }
+      return prevTimers; // Return the timers unchanged if the condition is not met
+    });
   };
 
   const resetTimer = (userId) => {
@@ -86,21 +80,28 @@ function TodayReview() {
   }, [memoryAdded]);
 
   useEffect(() => {
-    // update real-time interval
+    // Update real-time interval
     const interval = setInterval(() => {
       setTimers(prevTimers => {
         const updatedTimers = { ...prevTimers };
         Object.keys(updatedTimers).forEach(id => {
           if (updatedTimers[id].isRunning) {
-            updatedTimers[id].elapsedTime = new Date() - updatedTimers[id].startTime;
+            // Calculate the time difference since the timer was started
+            const timeSinceStart = new Date() - updatedTimers[id].startTime;
+            // Add this difference to the existing elapsedTime to accumulate properly
+            updatedTimers[id].elapsedTime = (updatedTimers[id].elapsedTime || 0) + timeSinceStart;
+            // Reset startTime to now for the next interval calculation
+            updatedTimers[id].startTime = new Date();
           }
         });
         return updatedTimers;
       });
     }, 1000); // Update every second
-
-    return () => clearInterval(interval); // Clear interval on component unmount
+  
+    // Clear the interval on component unmount
+    return () => clearInterval(interval);
   }, []);
+  
 
   const fetchTodaysMemories = async () => {
     try {
@@ -133,8 +134,10 @@ function TodayReview() {
   const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
     try {
       let duration = 1000
-      if (reviewDurationMap[userCardID] !== undefined) {
-        duration = reviewDurationMap[userCardID]
+      if (timers[userCardID]) {
+        console.log("duration")
+        duration = timers[userCardID].elapsedTime
+        console.log(duration)
       }
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
@@ -144,6 +147,7 @@ function TodayReview() {
         // update next userCard's lastReviewDuration field
         await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
       }
+      console.log(duration)
       setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
@@ -252,7 +256,6 @@ function TodayReview() {
                 ? `est: ${(cardUser.lastTimeReviewDuration / 60000).toFixed(2)} min`
                 : 'first time review'}
               style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
-
               />
           </ListItem>
         ))}
