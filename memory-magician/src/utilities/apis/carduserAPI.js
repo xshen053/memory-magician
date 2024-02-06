@@ -1,6 +1,7 @@
 import { generateClient } from 'aws-amplify/api';
 import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js';
 import { createUserCards, updateUserCards } from '../../graphql/mutations.js';
+import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
 
@@ -31,7 +32,7 @@ export const markOneUserCardReviewed = async (id) => {
 
 /**
  * 
- * @param {*} id 
+ * @param {*} id card_id
  * @param {int} duration ms
  */
 export const markOneUserCardReviewedWithDuration = async (id, duration) => {
@@ -52,6 +53,33 @@ export const markOneUserCardReviewedWithDuration = async (id, duration) => {
     throw error
   }
 }
+
+/**
+ * 
+ * @param {*} id should be the one next review
+ * @param {*} duration 
+ */
+export const updateOneUserCardLastTimeReviewDuration = async (id, duration) => {
+  try {
+    const input = {
+      id: id,
+      lastTimeReviewDuration: duration
+    }
+    await client.graphql({
+      query: updateUserCards,
+      variables: {
+        input: input
+      }
+    });
+  } catch (error) {
+    console.log("Error in updateOneUserCardLastTimeReviewDuration: ", error)
+    throw error
+  }
+}
+
+
+
+
 
 /**
  * Function to create a user card association with review details.
@@ -87,6 +115,8 @@ export const createUserCardsBatchAPI = async (dataArray) => {
     throw error;
   }
 }
+
+
 
 
 //////////////////////////////// QUERY ////////////////////////////////
@@ -257,5 +287,73 @@ export const getAllUnreviewedCardsOfUser = async (user_id) => {
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUser:", error);
     throw error;
+  }
+}
+
+/**
+ * 
+ * @param {*} user_id 
+ * @returns 
+ */
+export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of today
+    const startOfToday = today.toISOString();
+    let allItems = [];
+    let nextToken = null;
+    do {
+      const input = {
+        userID: user_id,
+        filter: {
+          isReviewed: {
+            eq: false
+          },
+          reviewDate : {
+            lt: startOfToday // Less than the start of tomorrow
+          },
+        },
+        nextToken: nextToken
+      }
+      const r = await client.graphql({
+        query: userCardsByUserIDAndCardID,
+        variables: input
+      });
+      allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items)
+      nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
+    } while (nextToken)
+
+    return allItems
+  } catch (error) {
+    console.error("Error during getAllUnreviewedCardsOfUser:", error);
+    throw error;
+  }
+}
+
+/**
+ * 
+ * @param {*} user_id 
+ * @param {*} card_id 
+ * @return id of that userCard
+ */
+export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) => {
+  try {
+    
+    const filter = {
+      userID: { eq: user_id },
+      cardID: { eq: card_id },
+      iteration: { eq: index } // index + 1 doesn't work
+    };
+    const r = await client.graphql({
+      query: listUserCards,
+      variables: {
+        filter: filter
+      }
+    });
+    console.log(r.data.listUserCards.items)
+    return r.data.listUserCards.items[0].id
+  } catch (error) {
+    console.error("Error during getOneCardUserFromUserIDCardID:", error);
+    throw error;  
   }
 }

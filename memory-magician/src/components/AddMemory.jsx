@@ -92,6 +92,7 @@ function AddMemory() {
         userID: userID,
         cardID: cardID,
         reviewDuration: -1,             // init to -1
+        lastTimeReviewDuration: -1,
         isReviewed: false,
       }
 

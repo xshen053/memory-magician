@@ -34,6 +34,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
         isReviewed
         reviewDuration
         reviewDate
+        lastTimeReviewDuration
         createdAt
         updatedAt
         __typename

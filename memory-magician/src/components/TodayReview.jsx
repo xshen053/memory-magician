@@ -9,6 +9,7 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
+import ReplayIcon from '@mui/icons-material/Replay';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -16,10 +17,11 @@ import '../css/style.css';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { getAllUnreviewedCardsOfUserForToday, markOneUserCardReviewed, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
+import { getOneCardUserFromUserIDCardID, getAllUnreviewedCardsOfUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
+  
 });
 
 function TodayReview() {
@@ -57,7 +59,8 @@ function TodayReview() {
     if (timer && timer.isRunning) {
       const duration = new Date() - timer.startTime;
       console.log(`Timer for ${id} stopped. Duration: ${duration} ms`);
-      // Here you can handle the duration, like updating state or sending it to a server
+
+      // record the mapping between id -> duration
       updateDuration(id, duration)
       // Reset the timer
       setTimers(prevTimers => ({
@@ -66,6 +69,14 @@ function TodayReview() {
       }));
     }
   };
+
+  const resetTimer = (userId) => {
+    setTimers(prevTimers => ({
+      ...prevTimers,
+      [userId]: { ...prevTimers[userId], elapsedTime: 0, isRunning: false }
+    }));
+  };  
+
 
   function triggerTestSnackbar() {
     setSnackbarOpen(true);
@@ -119,16 +130,19 @@ function TodayReview() {
     }
   }
 
-  const markMemoryAsReviewed = async (cardID) => {
+  const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration) => {
     try {
-      if (reviewDuration[cardID] !== undefined) {
-        console.log("new duration: " + reviewDuration[cardID])
-        await markOneUserCardReviewedWithDuration(cardID, reviewDuration[cardID])
-      } else {
-        // one click to review, 1s
-        console.log("new duration: " + 1000)
-        await markOneUserCardReviewedWithDuration(cardID, 1000)
+      let duration = 1000
+      if (reviewDuration[userCardID] !== undefined) {
+        duration = reviewDuration[userCardID]
       }
+      // update this userCard
+      await markOneUserCardReviewedWithDuration(userCardID, duration)
+      const newIteration = iteration + 1
+      const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
+      
+      // update next userCard's lastReviewDuration field
+      await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
@@ -136,6 +150,7 @@ function TodayReview() {
       throw error
     }
   }
+  
 
   const formatTime = (milliseconds = 0) => {
     const seconds = Math.floor(milliseconds / 1000);
@@ -150,7 +165,7 @@ function TodayReview() {
         All cards for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
-        Estimate time: 2 hours, 
+        Estimate time: 2 hours
       </Typography>            
       <Divider sx={{ bgcolor: 'purple' }} />
       {/* <div className="list-container"> */}
@@ -162,9 +177,16 @@ function TodayReview() {
             className="list-item-container list-item-hover"
             secondaryAction={
               <>
-              <StyledChip label={`${cardUser.iteration}/${cardUser.card.total}`} color="primary" />
+              <StyledChip 
+                label={`${cardUser.iteration}/${cardUser.card.total}`} 
+                style={{ backgroundColor: 'transparent' }} // Replace #yourColor with your desired color
+              />
               <IconButton onClick={() => timers[cardUser.id]?.isRunning ? stopTimer(cardUser.id) : startTimer(cardUser.id)}>
                 {timers[cardUser.id]?.isRunning ? <StopIcon /> : <PlayArrowIcon />}
+              </IconButton>
+
+              <IconButton onClick={() => resetTimer(cardUser.id)}>
+                <ReplayIcon /> 
               </IconButton>
               {timers[cardUser.id] && (
             <Typography variant="body2">
@@ -173,7 +195,6 @@ function TodayReview() {
           )}
             </>
             }
-            
             // define the color
             style={{ 
               width: '100%', // Adjust width as needed
@@ -191,13 +212,19 @@ function TodayReview() {
               onClick={() => {
                 // Check if timer is not running before marking as reviewed
                 if (!timers[cardUser.id] || !timers[cardUser.id].isRunning) {
-                    markMemoryAsReviewed(cardUser.id);
+                    markMemoryAsReviewed(cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration);
                 } else {
                     alert("Please stop timer before finish the task!")
                 }
             }}
             />
-            <ListItemText id={`checkbox-list-label-${cardUser.id}`} primary={cardUser.card.content} />
+            <ListItemText 
+              id={`checkbox-list-label-${cardUser.id}`} 
+              primary={cardUser.card.content}
+              secondary = {`est: ${cardUser.lastTimeReviewDuration / 1000} min`}
+              style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
+
+              />
           </ListItem>
         ))}
       </List>

@@ -136,6 +136,7 @@ export const onCreateUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      lastTimeReviewDuration
       reviewDate
       createdAt
       updatedAt
@@ -173,6 +174,7 @@ export const onUpdateUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      lastTimeReviewDuration
       reviewDate
       createdAt
       updatedAt
@@ -210,6 +212,7 @@ export const onDeleteUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      lastTimeReviewDuration
       reviewDate
       createdAt
       updatedAt

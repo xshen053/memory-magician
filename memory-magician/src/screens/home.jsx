@@ -16,12 +16,9 @@ const HomeScreen = ({ signOut, user }) => {
 
   return (
     <div>
-      {/* <div style={styles.contentContainer}>
+      <div style={styles.contentContainer}>
         <Heading level={1}>Hello {user.username}</Heading>
-        <Button onClick={signOut}>Sign out</Button>
-        <Button onClick={() => handleNavigation('/todayreview')}>Today's Review</Button>
-        <Button onClick={() => handleNavigation('/calendar')}>Calendar</Button>
-      </div> */}
+      </div>
     </div>
   );
 

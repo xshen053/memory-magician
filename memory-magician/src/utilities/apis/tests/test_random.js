@@ -1,22 +1,23 @@
 
 import { generateAllReviewDates } from '../../algorithm/ebbinghaus-forgetting-curve1.js';
-
-const reviewDates = ["1","2","3"]
-
-const baseData = {
-  userID: "xx",
-  cardID: "xx"
+import { getAllUnreviewedCardsOfUserBeforeToday, getOneCardUserFromUserIDCardID } from '../carduserAPI.js';
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from '../../../amplifyconfiguration.json' assert { type: 'json' };
+import FormData from 'form-data';
+global.FormData = FormData;
+import fetch from 'node-fetch';
+if (!global.fetch) {
+  global.fetch = fetch;
 }
 
-const updatedDataArray = reviewDates.map(reviewDate => {
-  // Create a new data object for each call with the updated reviewDate
-  return { ...baseData, reviewDate: reviewDate };
+const userID = "7d008bd6-740c-47a5-9338-8f237504584d"
+const cardID = "6e05862b-505a-4516-8ae8-43739f164758"
+// const allCardUsers = await getAllUnreviewedCardsOfUserBeforeToday(user_id).then(response => console.log('User get:', response))
+// .catch(error => console.error(error));
 
-})
+const a = 5 + 1
+const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, a)
 
-console.log(updatedDataArray)
+console.log(nextUserCardID)
 
-const date = "2024-02-04T22:15:52.019Z"
 
-const r = generateAllReviewDates(date)
-console.log(r)
