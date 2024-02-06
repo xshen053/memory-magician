@@ -88,7 +88,6 @@ function TodayReview() {
         const currentUser = await fetchUserAttributes()
         const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
         setTodayCards(r)
-        console.log(r.length)
         console.log("I am in fetchTodaysMemories")
       } catch (error) {
         console.log("Error during fetchTodaysMemories: ", error)
