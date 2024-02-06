@@ -9,6 +9,7 @@ const NavBar = ({ signOut, user }) => {
       <div className="logo">
         {/* Logo here */}
         <img src="/logo_with_text.png" alt="Logo" />
+        <h1>Merym</h1>
       </div>
       
       <div className="nav-links">
