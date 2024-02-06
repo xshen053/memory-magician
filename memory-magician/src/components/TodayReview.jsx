@@ -190,14 +190,15 @@ function TodayReview() {
         <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime} </span> 
          minutes <br /> (excluding cards that are newly added and already reviewed)
       </Typography>  
-      <Typography variant="subtitle2" style={{ marginTop: '20px', color: 'black' }}>
-        Note: Different card backgrounds represent different types of content: <br />
+      
+      <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
+        Different card backgrounds represent different types of content: <br />
         <span style={{ backgroundColor: '#FFE0B2'}}> - Orange daily cards:</span> you want to review it every day <br />
         <span > - Transparent general card: review it according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span> <br />
         <span> - No Review card will not show up, just in case you want to record some thing you finished but that's all!</span>
       </Typography>                
       <Divider sx={{ bgcolor: 'purple' }} />
-     
+
       {/* <div className="list-container"> */}
       
       <List>
