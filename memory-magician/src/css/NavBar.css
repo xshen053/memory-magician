@@ -1,48 +1,62 @@
+/* NavBar.css */
+
 .navbar {
-  /* margin-top: 20px; */
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  background-color: white;
-  padding: 10px 20px;
+  justify-content: space-between;
+  background-color: #fff; /* Example background color */
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Adds a slight shadow for depth */
 }
 
-.navbar .logo img {
+.logo {
+  display: flex; /* Aligns the image and text side by side */
+  align-items: center; /* Centers them vertically */
+  gap: 10px; /* Adjust the space between the image and text */
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;  
+}
+
+.logo img {
+  height: 50px; /* Adjust based on your logo's size */
+}
+
+.logo h1 {
+  font-size: 2rem; /* Large text size for logo */
+  font-weight: bold; /* Makes the logo text bold */
+  margin: 0; /* Removes default margin */
+  padding: 0; /* Adjust padding as needed */
+  /* Add additional styling as desired */
+}
+
+.nav-links {
+  display: flex;
   align-items: center;
-  width: 250px;  /* Adjust the width as needed */
-  height: auto;  /* This will maintain the aspect ratio */
-  margin-right: 300px
+  gap: 20px; /* Adjust the space between navigation links */
 }
 
-.navbar .nav-links a {
-  color: black;
+.nav-links a, .sign-out-button {
   text-decoration: none;
-  margin-left: 100px; /* Adjusted margin */
-  font-size: 1.6em; /* Increased font size */
-  padding: 5px 10px; /* Added padding */
+  color: #333; /* Example text color */
+  padding: 10px 15px;
+  border-radius: 5px; /* Optional: Adds rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+.nav-links a:hover{
+  color: #c5b4e3; /* Light blue hover background color */
 }
 
-.navbar .nav-links .active-link { 
-  background-color: #E8E3D3; /* Example background color */
-  border-radius: 10px; /* Optional: for rounded corners */
-  color: white;
-  padding: 20px 20px; /* Optional: for additional spacing */
-  /* Add other styles like color, border, etc., as needed */
+.nav-links a.active-link, .nav-links a:hover, .sign-out-button:hover {
+  background-color: #f0f0f0; /* Example hover and active link background color */
 }
 
-.navbar .nav-links .sign-out-button {
-  color: black;
-  text-decoration: none;
-  margin-left: 100px; /* Adjusted margin */
-  font-size: 1.6em; /* Increased font size */
-  padding: 5px 10px; /* Added padding */  
-  border: none; /* Optional: remove border */
-  background-color: transparent; /* Optional: make background transparent */
-  cursor: pointer; /* Change cursor on hover */
-  /* Add other styling as per your design */
+.sign-out-button {
+  border: none; /* Removes border */
+  background-color: transparent; /* Starts with a transparent background */
+  cursor: pointer;
 }
-
 
 
 @media (max-width: 768px) {
