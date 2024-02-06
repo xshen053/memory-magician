@@ -5,7 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "../css/MemoryCalendar.css";
-import { getAllUnreviewedCardsOfUser } from '../utilities/apis/carduserAPI';
+import { getAllUserCardsOfUser } from '../utilities/apis/carduserAPI';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useMemory } from "../context/MemoryContext.jsx"
 
@@ -19,7 +19,7 @@ function MemoryCalendar(props) {
     const fetchCards = async () => {
       try {
         const currentUser = await fetchUserAttributes()
-        const allCardUser = await getAllUnreviewedCardsOfUser(currentUser["sub"])
+        const allCardUser = await getAllUserCardsOfUser(currentUser["sub"])
         const formattedEvents = [];
         allCardUser.forEach((cardUser) => {
             formattedEvents.push({
@@ -30,12 +30,16 @@ function MemoryCalendar(props) {
               end: new Date(
                 moment(cardUser.reviewDate).utc().toDate()
               ),
-              color: "#c5b4e3"
-              // cardUser.title === "Special Event"
-              //     ? "blue"
-              //     : "#c5b4e3",
+              color: cardUser.isReviewed ? "#F5F5F5" : "#c5b4e3",
+              isCompleted: cardUser.isReviewed
             });
         });
+        formattedEvents.sort((a, b) => {
+          // Assuming isCompleted: true means the task is completed,
+          // so false (not completed) should come before true (completed)
+          return a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1;
+        });
+        
         setEvents(formattedEvents);
       } catch (error) {
         console.log("Error during fetchCards: ", error)
@@ -48,6 +52,17 @@ function MemoryCalendar(props) {
     }    
   }, [memoryAdded]);
 
+  const eventStyleGetter = (event) => {
+    let newStyle = {
+      backgroundColor: event.color,
+      textDecoration: event.isCompleted ? 'line-through' : 'none', // Apply strikethrough if event is completed
+    };
+
+    return {
+      style: newStyle
+    };
+  };
+
   return (
     <div style={props.style}>
       <Calendar
@@ -56,11 +71,7 @@ function MemoryCalendar(props) {
         startAccessor="start"
         endAccessor="end"
         className="responsiveCalendar"
-        eventPropGetter={(event) => ({
-          style: {
-            backgroundColor: event.color,
-          },
-        })}
+        eventPropGetter={eventStyleGetter}
       />
     </div>
   );
