@@ -62,3 +62,7 @@
   border: 1px solid #000; /* Border color on hover */
   /* You can also add 'box-shadow' here if you want a shadow effect on hover */
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}

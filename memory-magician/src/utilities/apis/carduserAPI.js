@@ -177,7 +177,7 @@ export const createUserCardsBatchAPI = async (dataArray) => {
  * },
  * ...
  */
-export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
+export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of today
@@ -196,9 +196,6 @@ export const getAllUnreviewedCardsOfUserForToday = async (user_id) => {
           reviewDate : {
             ge: startOfToday, // Greater than or equal to the start of today
             lt: startOfTomorrow // Less than the start of tomorrow
-          },
-          isReviewed: {
-            eq: false
           }
         },
         nextToken: nextToken
@@ -338,20 +335,26 @@ export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
  */
 export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) => {
   try {
-    
     const filter = {
       userID: { eq: user_id },
       cardID: { eq: card_id },
-      iteration: { eq: index } // index + 1 doesn't work
+      iteration: { eq: index }
     };
-    const r = await client.graphql({
-      query: listUserCards,
-      variables: {
-        filter: filter
-      }
-    });
-    console.log(r.data.listUserCards.items)
-    return r.data.listUserCards.items[0].id
+    let allItems = [];
+    let nextToken = null;
+    do {
+      const r = await client.graphql({
+        query: listUserCards,
+        variables: {
+          filter: filter
+        }
+      });
+      allItems = allItems.concat(r.data.listUserCards.items)
+      nextToken = r.data.listUserCards.nextToken
+    } while (nextToken)
+    
+    // console.log(r.data.listUserCards.items)
+    return allItems[0].id
   } catch (error) {
     console.error("Error during getOneCardUserFromUserIDCardID:", error);
     throw error;  

@@ -15,7 +15,7 @@ import '../css/style.css';
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { getOneCardUserFromUserIDCardID, getAllUnreviewedCardsOfUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
+import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
@@ -85,7 +85,7 @@ function TodayReview() {
     const fetchTodaysMemories = async () => {
       try {
         const currentUser = await fetchUserAttributes()
-        const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+        const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
         let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
           return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
         }, 0);
@@ -124,10 +124,13 @@ function TodayReview() {
   const fetchTodaysMemories = async () => {
     try {
       const currentUser = await fetchUserAttributes()
-      const r = await getAllUnreviewedCardsOfUserForToday(currentUser["sub"])
+      const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
+      let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
+        return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
+      }, 0);
       setTodayCards(r)
-      todayCards.map((cardUser) => {})
-
+      totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
+      setEstimateTime(totalEstimatedTime)
       console.log("I am in fetchTodaysMemories")
     } catch (error) {
       console.log("Error during fetchTodaysMemories: ", error)
@@ -135,8 +138,17 @@ function TodayReview() {
     }
   }
 
+  /**
+   * mark a usercard as reviewed and also update the next review object's lastReviewDuration
+   * 
+   * @param {*} userCardID 
+   * @param {*} userID 
+   * @param {*} cardID 
+   * @param {*} iteration 
+   */
   const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration) => {
     try {
+      console.log("called")
       let duration = 1000
       if (reviewDuration[userCardID] !== undefined) {
         duration = reviewDuration[userCardID]
@@ -144,8 +156,9 @@ function TodayReview() {
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
       const newIteration = iteration + 1
+      console.log(userID, cardID, newIteration)
       const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
-      
+      console.log("nextUserCardID" + nextUserCardID)
       // update next userCard's lastReviewDuration field
       await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
@@ -179,7 +192,7 @@ function TodayReview() {
         {todayCards.map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
-            className="list-item-container list-item-hover"
+            className={`list-item-container list-item-hover ${cardUser.isReviewed ? 'strikethrough' : ''}`}
             secondaryAction={
               <>
               <StyledChip 
@@ -203,7 +216,9 @@ function TodayReview() {
               width: '100%', // Adjust width as needed
               marginLeft: 'auto',
               marginRight: 'auto',
-              backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
+              // backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "transparent" 
+              backgroundColor: cardUser.isReviewed ? "#d3d3d3" : "transparent", // Grey out reviewed items
+              textDecoration: cardUser.isReviewed ? "line-through" : "none", // Strikethrough if reviewed
             }}
           > 
             <Checkbox

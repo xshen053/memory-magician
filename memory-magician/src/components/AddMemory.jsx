@@ -101,15 +101,16 @@ function AddMemory() {
         // add reviewDate and iteration field
         const updatedDataArray = reviewDates.map((reviewDate, index) => {
           // Create a new data object for each call with the updated reviewDate
+          console.log("add iteration:" + index)
           return {
             ...userCardData, 
             reviewDate: reviewDate,
             iteration: index 
           };
         });
+        console.log(updatedDataArray)
         await createUserCardsBatchAPI(updatedDataArray)
       }
-      
     } catch (error) {
       console.log("error when creating new task: ", error)
       setLoading(false); // Stop loading on error
@@ -130,7 +131,7 @@ function AddMemory() {
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
-    triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
+    await triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
   };
 
   return (
