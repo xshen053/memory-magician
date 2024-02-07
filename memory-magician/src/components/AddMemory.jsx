@@ -21,7 +21,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { createCardApi } from '../utilities/apis/cardAPI';
-import { generateAllReviewDates } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
+import { generateAllReviewDates, generateDatesForDailyCards, generateDatesForPeriodicCards } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useMemory } from '../context/MemoryContext.jsx';
 
@@ -29,6 +29,9 @@ import { useMemory } from '../context/MemoryContext.jsx';
 function AddMemory() {
   // iteration of card starts from 0
 
+  const PERIDOICCOUNT = 50
+  const ONETIMECOUNT = 1
+  const DEFAULTDURATION = -1
 
   const { triggerMemoryAdded } = useMemory();
 
@@ -39,7 +42,12 @@ function AddMemory() {
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
   const [reviewDates, setReviewDates] = useState([])
+  const [dailyDates, setDailyDates] = useState([])
+  const [periodInterval, setPeriodInterval] = useState()
+
   const [loading, setLoading] = useState(false);
+  
+
 
   useEffect(() => {
     // one day only calculate once
@@ -47,14 +55,16 @@ function AddMemory() {
     const prepareForReviewDatesForTodayNewTask = () => {
       const todayDate = new Date();
       todayDate.setHours(0, 0, 0, 0);
-  
       if (reviewDates.length === 0) {
         const rd = generateAllReviewDates(todayDate);
         setReviewDates(rd);
       }
+      if (dailyDates.length === 0) {
+        const dd = generateDatesForDailyCards(todayDate);
+        setDailyDates(dd)
+      }
       console.log("I am in prepareForReviewDatesForTodayNewTask")
     };
-  
     prepareForReviewDatesForTodayNewTask();
   }, []); // Runs only once on component mount
   
@@ -74,41 +84,134 @@ function AddMemory() {
     setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
   };
 
+  /**
+   * GENERAL task:
+   * - create using {@link reviewDates}
+   * 
+   * DAILY task:
+   * - create using {@link dailyDates}
+   * 
+   * ONETIME task:
+   * - create using todayDate
+   * 
+   * PERIODIC task:
+   * - create PeriodicDates first
+   * - create using PeriodicDates
+   * 
+   * @param {Object} userCardData - The data for a user's review card.
+   * @param {string} userCardData.userID - The unique identifier for the user.
+   * @param {string} userCardData.cardID - The unique identifier for the card being reviewed.
+   * @param {number} userCardData.reviewDuration - The duration of the current review session in minutes. Initialized to -1 indicating not started or not applicable.
+   * @param {number} userCardData.lastTimeReviewDuration - The duration of the last review session in minutes. Initialized to -1 indicating no previous review or not applicable.
+   * @param {boolean} userCardData.isReviewed - Flag indicating whether the card has been reviewed in the current session. False indicates not reviewed.
+   * 
+   * @returns {Object[]} An array of objects, each containing:
+   * - userID: Identifier for the user.
+   * - cardID: Identifier for the card.
+   * - reviewDuration: Initial value set to {@link DEFAULTDURATION}.
+   * - lastTimeReviewDuration: Initial value set to {@link DEFAULTDURATION}.
+   * - isReviewed: Boolean indicating if the card has been reviewed, initially false.
+   * - reviewDate: Date of the review (format description, e.g., ISO 8601 string).
+   * - iteration: Number indicating the review iteration.
+   */
+  const addDateToCardData = async (userCardData) => {
+    let updatedDataArray = []
+    if (selection === "GENERAL") {
+      updatedDataArray = reviewDates.map((reviewDate, index) => {
+        // Create a new data object for each call with the updated reviewDate
+        return {
+          ...userCardData, 
+          reviewDate: reviewDate,
+          iteration: index 
+        };
+      });
+    }
+    if (selection === "DAILY") {
+      updatedDataArray = dailyDates.map((reviewDate, index) => {
+        // Create a new data object for each call with the updated reviewDate
+        return {
+          ...userCardData, 
+          reviewDate: reviewDate,
+          iteration: index 
+        };
+      });
+    }
+    // NOREVIEW is for backward compatibility
+    if (selection === "ONETIME" || selection === "NOREVIEW") {
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      updatedDataArray.push({
+        ...userCardData,
+        reviewDate: todayDate.toISOString(),
+        iteration: 0
+      })
+    }        
+    if (selection === "PERIODIC") {
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      const periodicDates = generateDatesForPeriodicCards(todayDate, periodInterval)
+      updatedDataArray = periodicDates.map((reviewDate, index) => {
+        // Create a new data object for each call with the updated reviewDate
+        return {
+          ...userCardData, 
+          reviewDate: reviewDate,
+          iteration: index 
+        };
+      });      
+    }
+    return updatedDataArray
+  }
+
+  /**
+   * get total iteration times based on card type
+   * 
+   * @returns {number}
+   */
+  const getTotal = () => {
+    if (selection === "GENERAL") {
+      return reviewDates.length
+    }
+    if (selection === "DAILY") {
+      return dailyDates.length
+    }
+    // NOREVIEW is for backward compatibility
+    if (selection === "ONETIME" || selection === "NOREVIEW") {
+      return ONETIMECOUNT
+    }        
+    if (selection === "PERIODIC") {
+      return PERIDOICCOUNT
+    }
+  }
+
   const createCardAndAddToDataBase = async () => {
     try {
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
-      // add task
-      const cardID = await createCardApi({
-        content: title, // Description or content of the card
-        tags: tags, // Array of tags associated with the card
-        type: selection, // Type of the card (e.g., DAILY, GENERAL, etc.)  
-        // Set total to -1 if selection is NOREVIEW, otherwise use reviewDates.length
-        total: selection === 'NOREVIEW' ? -1 : reviewDates.length 
+
+      const count = getTotal()
+
+      // create card
+      const cardID = await createCardApi(
+      {
+        content: title,
+        tags: tags,
+        type: selection, 
+        total: count
       })
+      
       // generate userCardDate
       const userCardData = {
         userID: userID,
         cardID: cardID,
-        reviewDuration: -1,             // init to -1
-        lastTimeReviewDuration: -1,
+        reviewDuration: DEFAULTDURATION,             
+        lastTimeReviewDuration: DEFAULTDURATION,
         isReviewed: false,
       }
-
-      // only card need review will add this
-      if (selection !== "NOREVIEW") {
-        // add reviewDate and iteration field
-        const updatedDataArray = reviewDates.map((reviewDate, index) => {
-          // Create a new data object for each call with the updated reviewDate
-          return {
-            ...userCardData, 
-            reviewDate: reviewDate,
-            iteration: index 
-          };
-        });
-        await createUserCardsBatchAPI(updatedDataArray)
-      }
+      
+      const updatedDataArray = addDateToCardData(userCardData)
+      await createUserCardsBatchAPI(updatedDataArray)
+      
     } catch (error) {
       console.log("error when creating new task: ", error)
       setLoading(false); // Stop loading on error
@@ -238,9 +341,6 @@ function AddMemory() {
               <MenuItem value="NOREVIEW">No Review Needed</MenuItem>
             </Select>
           </FormControl>
-
-                  
-          
           <Button
             variant="contained"
             color="primary"
