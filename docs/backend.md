@@ -1,7 +1,8 @@
 # Query
 
-- [x] get all cards of a user and their review information
-- [x] get all cards of a user of a specific date
+- [x] get all cardUser of a user and their review information
+- [x] get all cardUser of a user of a specific date
+- [ ] get all cards of a user
 
 # mutation
 

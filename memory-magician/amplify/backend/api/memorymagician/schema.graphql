@@ -18,6 +18,7 @@ type Card @model {
   tags: [String]
   type: CardType!         # {daily task, don't need review task, general task}
   total: Int              # how many times is needed for this card
+  deleted: Boolean
   users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
 }
 

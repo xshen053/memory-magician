@@ -1,3 +1,27 @@
+export const getCardsByUser = `
+query GetUserAndCards($cognitoID: ID!) {
+  getUser(cognitoID: $cognitoID) {
+    cognitoID
+    name
+    email
+    cards {
+      items {
+        card {
+          id
+          content
+          tags
+          type
+          total
+          deleted
+        }
+      }
+    }
+  }
+}
+
+`;
+
+
 export const getUserCardByCard = /* GraphQL */ `
   query GetCard($id: ID!) {
     getCard(id: $id) {
@@ -47,6 +71,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
           tags
           type
           total
+          deleted
           createdAt
           updatedAt
           __typename

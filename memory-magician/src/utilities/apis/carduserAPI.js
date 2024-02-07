@@ -188,7 +188,6 @@ export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
  
     let allItems = [];
     let nextToken = null;
-
     do {
       const input = {
         userID: user_id,
@@ -207,7 +206,7 @@ export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
       allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items);
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
     } while (nextToken)
-    
+    allItems = allItems.filter(item => !item.card.deleted || item.card.deleted === false);
     return allItems
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);
@@ -279,6 +278,7 @@ export const getAllUnreviewedCardsOfUser = async (user_id) => {
       allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items)
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
     } while (nextToken)
+    allItems = allItems.filter(item => !item.card.deleted || item.card.deleted === false);
 
     return allItems
   } catch (error) {
@@ -301,7 +301,7 @@ export const getAllUserCardsOfUser = async (user_id) => {
     let nextToken = null;
     do {
       const input = {
-        userID: user_id,
+        userID: user_id, 
         nextToken: nextToken
       }
       const r = await client.graphql({
@@ -311,10 +311,10 @@ export const getAllUserCardsOfUser = async (user_id) => {
       allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items)
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
     } while (nextToken)
-
+    allItems = allItems.filter(item => !item.card.deleted || item.card.deleted === false);
     return allItems
   } catch (error) {
-    console.error("Error during getAllUnreviewedCardsOfUser:", error);
+    console.error("Error during getAllUserCardsOfUser:", error);
     throw error;
   }
 }
@@ -352,7 +352,7 @@ export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
       allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items)
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
     } while (nextToken)
-
+    allItems = allItems.filter(item => !item.card.deleted || item.card.deleted === false);
     return allItems
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUser:", error);

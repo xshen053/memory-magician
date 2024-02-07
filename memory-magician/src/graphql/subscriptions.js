@@ -60,6 +60,7 @@ export const onCreateCard = /* GraphQL */ `
       tags
       type
       total
+      deleted
       users {
         nextToken
         __typename
@@ -78,6 +79,7 @@ export const onUpdateCard = /* GraphQL */ `
       tags
       type
       total
+      deleted
       users {
         nextToken
         __typename
@@ -96,6 +98,7 @@ export const onDeleteCard = /* GraphQL */ `
       tags
       type
       total
+      deleted
       users {
         nextToken
         __typename
@@ -129,6 +132,7 @@ export const onCreateUserCards = /* GraphQL */ `
         tags
         type
         total
+        deleted
         createdAt
         updatedAt
         __typename
@@ -167,6 +171,7 @@ export const onUpdateUserCards = /* GraphQL */ `
         tags
         type
         total
+        deleted
         createdAt
         updatedAt
         __typename
@@ -205,6 +210,7 @@ export const onDeleteUserCards = /* GraphQL */ `
         tags
         type
         total
+        deleted
         createdAt
         updatedAt
         __typename
