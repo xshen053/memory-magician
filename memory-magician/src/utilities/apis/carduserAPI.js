@@ -383,7 +383,9 @@ export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) =>
         return c.id
       }
     }
-    throw new Error("can't find cardID");
+    console.log("this is the last one for current card!")
+    return null
+    // throw new Error("can't find cardID");
   } catch (error) {
     console.error("Error during getOneCardUserFromUserIDCardID:", error);
     throw error;  

@@ -16,7 +16,7 @@ type Card @model {
   id: ID!
   content: String!
   tags: [String]
-  type: CardType!         # {daily task, don't need review task, general task}
+  type: CardType!         # {daily, general, onetime, periodic}
   total: Int              # how many times is needed for this card
   deleted: Boolean
   users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
@@ -31,7 +31,7 @@ type UserCards @model {
   iteration: Int!                   # the ith time to review
   isReviewed: Boolean! 
   reviewDuration: Int
-  lastTimeReviewDuration: Int       # last time review duration
+  lastTimeReviewDuration: Int       # last time review duration, ONETIME Card ignores this feature
   reviewDate: AWSDateTime
 }
 
@@ -40,4 +40,6 @@ enum CardType {
  DAILY
  GENERAL
  NOREVIEW
+ ONETIME
+ PERIODIC
 }
