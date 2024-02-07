@@ -176,7 +176,6 @@ function TodayReview() {
         <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime} </span> 
          minutes <br /> (excluding cards that are newly added and already reviewed)
       </Typography>  
-      
       <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
         Different card backgrounds represent different types of content: <br />
         <span style={{ backgroundColor: '#FFE0B2'}}> - [Orange daily cards]:</span> you want to review it every day <br />
@@ -199,8 +198,9 @@ function TodayReview() {
             return a.card.type === "DAILY" ? -1 : 1;
           }
 
+
           // If both review status and card type are the same, keep original order
-          return 0;
+          return a.card.content > b.card.content ? 1 : -1
         }).map((cardUser) => (
           <ListItem 
             key={cardUser.id} 

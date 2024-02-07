@@ -1,5 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
-import { createCard } from '../../graphql/mutations.js'
+import { createCard, updateCard } from '../../graphql/mutations.js'
 import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js'
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
@@ -98,4 +98,30 @@ export const getCardsInfoFromUserApi = async (user_id) => {
     console.error("Error during getCardsApi:", error);
     throw error;
   }
+}
+
+/**
+ * update cardInfo
+ * 
+ * @param {*} data 
+ * 
+ * const data = {
+ *  id: cardID,
+ *  content: "update test"
+ * }
+ */
+export const updateCardInfoApi = async (data) => {
+  try {
+    const r = await client.graphql({
+      query: updateCard,
+      variables: {
+        input: data
+      }
+    });
+  } catch (error) {
+    console.error("Error during getCardsApi:", error);
+    throw error;
+  }
+
+
 }
