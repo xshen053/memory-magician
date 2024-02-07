@@ -85,7 +85,7 @@ const SearchScreen = () => {
   
   return (
     <div>
-      <h2>Search your cards!</h2>
+      <h2>Search your memories!</h2>
       <div>
         <input
           type="text"
