@@ -53,6 +53,7 @@
 }
 
 /* Footer */
+/* contents are wrapped in site-container */
 
 .site-container {
   display: flex;
