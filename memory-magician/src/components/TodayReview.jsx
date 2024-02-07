@@ -142,13 +142,15 @@ function TodayReview() {
       }
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
-      if (type !== "NOREVIEW") {
+      if (type !== "NOREVIEW" || type !== "ONETIME") {
         const newIteration = iteration + 1
         const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
         // update next userCard's lastReviewDuration field
-        await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
+        // if it is the last one, will not update
+        if (!nextUserCardID) {
+          await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
+        }
       }
-      console.log(duration)
       setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
