@@ -44,6 +44,18 @@ const SearchScreen = () => {
     setOpenDialog(false); // Close the dialog after saving
     await fetchAllCards()
   };
+
+  const handleDeleteCard = async () => {
+    const data = {
+      id: editingCard.id,
+      deleted: true
+    }
+    await updateCardInfoApi(data)
+    setOpenDialog(false); // Close the dialog after saving
+    await fetchAllCards()
+  
+  }
+
   
   useEffect(() => {
     fetchAllCards();
@@ -144,6 +156,16 @@ const SearchScreen = () => {
             {/* Add more fields for tags or other properties here */}
           </DialogContent>
           <DialogActions>
+          <Button
+              onClick={() => {
+                if (window.confirm('After deleting the card, it will never show again in calendar or list')) {
+                  handleDeleteCard();
+                }
+              }}
+              style={{ color: "red" }}
+            >
+              Delete
+          </Button>         
             <Button onClick={() => setOpenDialog(false)} color="primary">
               Cancel
             </Button>

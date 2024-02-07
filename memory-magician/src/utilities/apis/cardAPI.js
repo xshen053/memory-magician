@@ -86,11 +86,12 @@ export const getCardsInfoFromUserApi = async (user_id) => {
 
     const cardIds = new Set(); // Initialize a Set to hold unique card IDs
     const cardInfos = []
+    console.log(allItems)
     allItems.forEach((item) => {
-      if (!cardIds.has(item.card.id)) {
+      if (!cardIds.has(item.card.id) && !item.card.deleted) {
         cardInfos.push(item.card)
+        cardIds.add(item.card.id); // Add each card's ID to the Set
       }
-      cardIds.add(item.card.id); // Add each card's ID to the Set
     });
     return cardInfos
     
