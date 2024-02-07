@@ -43,9 +43,6 @@ different types of card have different background so it's clear.
 - different tags: task number
 
 
-
-
-
 ## Calendar screen
 - [x] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
 - [x] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
@@ -59,7 +56,7 @@ different types of card have different background so it's clear.
 ## Search Screen
 - [x] Also search a task I created
 - [x] I want to update, change, search a task
-- [ ] delete
+- [x] delete
 
 
 ## No urgent

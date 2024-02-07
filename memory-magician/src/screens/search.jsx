@@ -40,7 +40,6 @@ const SearchScreen = () => {
       content: editingCard.content
     }
     await updateCardInfoApi(data)
-    console.log(editingCard); // For demonstration
     setOpenDialog(false); // Close the dialog after saving
     await fetchAllCards()
   };
@@ -76,7 +75,6 @@ const SearchScreen = () => {
   const handleSearch = () => {
     console.log(`Search for: ${searchTerm}`);
     const searchResults = search(); // Assuming search now returns the results
-    console.log(searchResults);
     setSearchResults(searchResults);
   };
   
