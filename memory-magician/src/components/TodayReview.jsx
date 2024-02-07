@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import Box from '@mui/material/Box';
+
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
 import '../css/style.css';
@@ -21,6 +23,25 @@ const StyledChip = styled(Chip)({
   marginLeft: '8px',
   
 });
+
+const textColors = {
+  ESTIMATE: "#E2F0CB",
+};
+
+
+const cardTypeColors = {
+  GENERAL: "transparent",
+  DAILY: "#FFE0B2", 
+  ONETIME: "#B3E5FC", 
+  PERIODIC: "#C8E6C9", 
+};
+
+const lines = [
+  { type: "DAILY", text: "Daily memory: you want to review it every day." },
+  { type: "ONETIME", text: "One-time memory: you want to record some ideas or memory and check them later, but no need to review it, e.g. a flash of inspiration, you name it!" },
+  { type: "PERIODIC", text: "Periodic memory: you want to review this memory periodically, e.g. once per 10 days." },
+  { type: "GENERAL", text: "General memory: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])." },
+];
 
 function TodayReview() {
   const { memoryAdded } = useMemory();
@@ -142,13 +163,15 @@ function TodayReview() {
       }
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
-      if (type !== "NOREVIEW") {
+      if (type !== "NOREVIEW" || type !== "ONETIME") {
         const newIteration = iteration + 1
         const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
         // update next userCard's lastReviewDuration field
-        await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
+        // if it is the last one, will not update
+        if (!nextUserCardID) {
+          await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
+        }
       }
-      console.log(duration)
       setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
@@ -169,19 +192,36 @@ function TodayReview() {
   return (
     <div style={{ textAlign: 'left' }}> {/* This div ensures everything inside is left-aligned */}
       <Typography variant="h5" gutterBottom style={{ marginTop: '50px', color: 'black' }} >
-        All cards for today: {todayCards.length}
+        All memories for today: {todayCards.length}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
         Estimated time left: 
-        <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime.toFixed(2)} </span> 
-         minutes <br /> (excluding cards that are newly added and already reviewed)
-      </Typography>  
-      <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
-        Different card backgrounds represent different types of content: <br />
-        <span style={{ backgroundColor: '#FFE0B2'}}> - [Orange daily cards]:</span> you want to review it every day <br />
-        <span > - [Transparent general card]: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span> <br />
-        <span> - [NoReview card]: you want to record some thing you finished but that's all, it won't show up in the list</span>
-      </Typography>                
+        <span style={{ backgroundColor: textColors["ESTIMATE"]}}> {estimateTime.toFixed(2)} </span> 
+         minutes <br /> (excluding memories that are newly added and already reviewed)
+         <br /><br />
+      </Typography>
+
+      Your memories will display in following order: <br />
+      <Box>
+      {lines.map((line, index) => (
+        <Box key={index} display="flex" alignItems="center" marginBottom="5px">
+          <Box
+            sx={{
+              width: 15,
+              height: 15,
+              bgcolor: cardTypeColors[line.type],
+              marginRight: '5px',
+              border: 1, // 1px solid border
+              borderColor: 'grey.500', // Customize the border color using the theme's color palette
+            }}
+          />
+          <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
+            {line.text}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+        
       <Divider sx={{ bgcolor: 'purple' }} />
 
       {/* <div className="list-container"> */}
@@ -228,9 +268,7 @@ function TodayReview() {
               width: '100%', // Adjust width as needed
               marginLeft: 'auto',
               marginRight: 'auto',
-              backgroundColor: cardUser.card.type === "GENERAL" ? "transparent" : "#FFE0B2" 
-              // backgroundColor: cardUser.isReviewed ? "#d3d3d3" : "transparent", // Grey out reviewed items
-              // textDecoration: cardUser.isReviewed ? "line-through" : "none", // Strikethrough if reviewed
+              backgroundColor: cardTypeColors[cardUser.card.type]
             }}
           > 
             <Checkbox

@@ -18,8 +18,14 @@ import TextField from '@mui/material/TextField';
 
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
-  
 });
+
+const cardTypeColors = {
+  GENERAL: "transparent",
+  DAILY: "#FFE0B2", 
+  ONETIME: "#B3E5FC", 
+  PERIODIC: "#C8E6C9", 
+};
 
 const SearchScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,7 +46,6 @@ const SearchScreen = () => {
       content: editingCard.content
     }
     await updateCardInfoApi(data)
-    console.log(editingCard); // For demonstration
     setOpenDialog(false); // Close the dialog after saving
     await fetchAllCards()
   };
@@ -53,7 +58,6 @@ const SearchScreen = () => {
     await updateCardInfoApi(data)
     setOpenDialog(false); // Close the dialog after saving
     await fetchAllCards()
-  
   }
 
   
@@ -76,7 +80,6 @@ const SearchScreen = () => {
   const handleSearch = () => {
     console.log(`Search for: ${searchTerm}`);
     const searchResults = search(); // Assuming search now returns the results
-    console.log(searchResults);
     setSearchResults(searchResults);
   };
   
@@ -87,7 +90,7 @@ const SearchScreen = () => {
   
   return (
     <div>
-      <h2>Search your cards!</h2>
+      <h2>Search your memories!</h2>
       <div>
         <input
           type="text"
@@ -128,7 +131,7 @@ const SearchScreen = () => {
                 width: '100%', // Adjust width as needed
                 marginLeft: 'auto',
                 marginRight: 'auto',
-                backgroundColor: card.type === "GENERAL" ? "transparent" : "#FFE0B2" 
+                backgroundColor: cardTypeColors[card.type]
               }}
             > 
               <ListItemText 
