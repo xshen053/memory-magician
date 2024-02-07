@@ -12,6 +12,7 @@ query GetUserAndCards($cognitoID: ID!) {
           tags
           type
           total
+          deleted
         }
       }
     }
@@ -70,6 +71,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
           tags
           type
           total
+          deleted
           createdAt
           updatedAt
           __typename

@@ -122,6 +122,4 @@ export const updateCardInfoApi = async (data) => {
     console.error("Error during getCardsApi:", error);
     throw error;
   }
-
-
 }
