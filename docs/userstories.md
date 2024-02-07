@@ -17,10 +17,10 @@ different types of card have different background so it's clear.
 - [x] if I don't start the timer, it means it can be finished in 1s
 - [x] add different background color of different type of cards
 - [x] for card I reviewed, make them doesn't appear, just cann't be selected
-- [ ] some card I added no need review, but just some usual task, I want to see them too
+- [x] some card I added no need review, but just some usual task, I want to see them too
 - [ ] for cards, I want to receive reminder like email or phone
-- [ ] I suddenly have a flash idea, I want to write it down, and check later (flash of inspiration)
-- [ ] I want to add a card (periodically showup, every 3 weeks..., now set half year)
+- [x] I suddenly have a flash idea, I want to write it down, and check later (flash of inspiration)
+- [x] I want to add a card (periodically showup, every 3 weeks..., now set half year)
 
 ### reminder functionaility
 
@@ -58,7 +58,7 @@ different types of card have different background so it's clear.
 - [x] Also search a task I created
 - [x] I want to update, change, search a task
 - [x] delete
-
+- [ ] advanced filter based on card type
 
 ## No urgent
 - [ ] As a user I want to change my review time cycle, like not from 00 to 00
