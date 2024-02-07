@@ -9,7 +9,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import AddMemory from "./components/AddMemory";
 import CodingProblemCount from "./components/IsCodingProblem";
-import CatchUpScreen from './screens/catchup'
+import HistoryScreen from './screens/history.jsx'
 import CalendarScreen from './screens/calendar';
 import TodayReviewScreen from './screens/todayreview';
 import HomeScreen from './screens/home';
@@ -75,7 +75,7 @@ const App = ({ signOut, user }) => {
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<HomeScreen />} />
-            <Route path="/catch-up" element={<CatchUpScreen />} />
+            <Route path="/history" element={<HistoryScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
             <Route path="/todayreview" element={<TodayReviewScreen />} /> 
           </Routes>
