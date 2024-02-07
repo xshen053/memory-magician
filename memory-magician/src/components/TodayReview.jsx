@@ -24,6 +24,9 @@ const StyledChip = styled(Chip)({
   
 });
 
+const textColors = {
+  ESTIMATE: "#E2F0CB",
+};
 
 
 const cardTypeColors = {
@@ -193,7 +196,7 @@ function TodayReview() {
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
         Estimated time left: 
-        <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime.toFixed(2)} </span> 
+        <span style={{ backgroundColor: textColors["ESTIMATE"]}}> {estimateTime.toFixed(2)} </span> 
          minutes <br /> (excluding memories that are newly added and already reviewed)
          <br /><br />
       </Typography>
