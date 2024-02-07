@@ -11,11 +11,12 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import '../css/style.css';
 import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
+import '../css/style.css';
+
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
   
