@@ -117,7 +117,7 @@ function AddMemory() {
    * - reviewDate: Date of the review (format description, e.g., ISO 8601 string).
    * - iteration: Number indicating the review iteration.
    */
-  const addDateToCardData = async (userCardData) => {
+  const addDateToCardData = (userCardData) => {
     let updatedDataArray = []
     if (selection === "GENERAL") {
       updatedDataArray = reviewDates.map((reviewDate, index) => {
@@ -209,7 +209,6 @@ function AddMemory() {
         lastTimeReviewDuration: DEFAULTDURATION,
         isReviewed: false,
       }
-      
       const updatedDataArray = addDateToCardData(userCardData)
       await createUserCardsBatchAPI(updatedDataArray)
       
