@@ -15,7 +15,7 @@ import TodayReviewScreen from './screens/todayreview';
 import HomeScreen from './screens/home';
 import NavBar from './components/NavigationBar';
 import { MemoryProvider } from './context/MemoryContext.jsx';
-
+import Footer from './components/Footer.jsx'
 const initialState = { name: '', description: '' };
 const client = generateClient();
 
@@ -69,6 +69,8 @@ const App = ({ signOut, user }) => {
         </div>      
         <NavBar /> {/* NavBar is always displayed */}
         <div className="App">
+        <div className="site-container">
+        <div className="content-wrap">
           {/* Main content */}
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
@@ -79,7 +81,11 @@ const App = ({ signOut, user }) => {
           </Routes>
         </div>
         <AddMemory />
+        </div>
+
       </div>
+      <Footer />
+    </div>
     </MemoryProvider>
   );
 }

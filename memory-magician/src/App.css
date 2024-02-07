@@ -52,3 +52,24 @@
   color: #888;
 }
 
+/* Footer */
+/* contents are wrapped in site-container */
+
+.site-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrap {
+  flex: 1;
+  /* This ensures that the content expands to take up available space, pushing the footer to the bottom */
+}
+
+footer {
+  background-color: #f0f0f0; /* Adjust the color as needed */
+  color: #333; /* Adjust text color as needed */
+  text-align: center;
+  padding: 10px 0; /* Adjust padding as needed */
+}
+

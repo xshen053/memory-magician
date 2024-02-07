@@ -12,8 +12,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import '../css/style.css';
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
@@ -25,48 +24,44 @@ const StyledChip = styled(Chip)({
 function TodayReview() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
-  const [reviewDuration, setDuration] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
-
-  // Function to update the duration for a specific id
-  const updateDuration = (id, duration) => {
-    setDuration(prevDurations => {
-    // Check if the id already exists in the state
-    const existingDuration = prevDurations[id] || 0;
-    return {
-      ...prevDurations,
-      [id]: existingDuration + duration
-    };
-    });
-  };
+  const [curCardDuration, setCurCardDuration] = useState(0)
 
   // Add a state to track the timer for each cardUser
   const [timers, setTimers] = useState({}); // Object with cardUser.id as key and timer info as value
+
 
   // Start the timer
   const startTimer = (id) => {
     setTimers(prevTimers => ({
       ...prevTimers,
-      [id]: { startTime: new Date(), isRunning: true }
+      [id]: {
+        ...prevTimers[id],
+        startTime: new Date(),
+        isRunning: true,
+        elapsedTime: prevTimers[id] && prevTimers[id].elapsedTime ? prevTimers[id].elapsedTime : 0 // Initialize if not present
+      }
     }));
   };
   
   // Stop the timer and log the duration
   const stopTimer = (id) => {
-    const timer = timers[id];
-    if (timer && timer.isRunning) {
-      const duration = new Date() - timer.startTime;
-      console.log(`Timer for ${id} stopped. Duration: ${duration} ms`);
+    setTimers(prevTimers => {
+      const timer = prevTimers[id];
+      if (timer && timer.isRunning) {
+        const duration = new Date() - timer.startTime;
+        const elapsedTime = (timer.elapsedTime || 0) + duration; // Update elapsed time
+        console.log(`Timer for ${id} stopped. Duration: ${duration} ms, Total elapsed: ${elapsedTime} ms`);
 
-      // record the mapping between id -> duration
-      updateDuration(id, duration)
-      // Reset the timer
-      setTimers(prevTimers => ({
-        ...prevTimers,
-        [id]: { ...timer, isRunning: false }
-      }));
-    }
+        // Update the timer object with the new elapsed time and stop the timer
+        return {
+          ...prevTimers,
+          [id]: { ...timer, isRunning: false, elapsedTime }
+        };
+      }
+      return prevTimers; // Return the timers unchanged if the condition is not met
+    });
   };
 
   const resetTimer = (userId) => {
@@ -76,32 +71,8 @@ function TodayReview() {
     }));
   };  
 
-
-  function triggerTestSnackbar() {
-    setSnackbarOpen(true);
-  }
   
   useEffect(() => {
-    const fetchTodaysMemories = async () => {
-      try {
-        const currentUser = await fetchUserAttributes()
-        const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
-        let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
-          if (!cardUser.isReviewed) {
-            return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
-          }
-          return accumulator;
-        }, 0);
-        setTodayCards(r)
-        totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
-        setEstimateTime(totalEstimatedTime)
-        console.log("I am in fetchTodaysMemories")
-      } catch (error) {
-        console.log("Error during fetchTodaysMemories: ", error)
-        throw error
-      }
-    }
-
     fetchTodaysMemories(); // call it when first render
     if (memoryAdded) {
       fetchTodaysMemories(); // call it when a new card is created
@@ -109,30 +80,41 @@ function TodayReview() {
   }, [memoryAdded]);
 
   useEffect(() => {
+    // Update real-time interval
     const interval = setInterval(() => {
       setTimers(prevTimers => {
         const updatedTimers = { ...prevTimers };
         Object.keys(updatedTimers).forEach(id => {
           if (updatedTimers[id].isRunning) {
-            updatedTimers[id].elapsedTime = new Date() - updatedTimers[id].startTime;
+            // Calculate the time difference since the timer was started
+            const timeSinceStart = new Date() - updatedTimers[id].startTime;
+            // Add this difference to the existing elapsedTime to accumulate properly
+            updatedTimers[id].elapsedTime = (updatedTimers[id].elapsedTime || 0) + timeSinceStart;
+            // Reset startTime to now for the next interval calculation
+            updatedTimers[id].startTime = new Date();
           }
         });
         return updatedTimers;
       });
     }, 1000); // Update every second
-
-    return () => clearInterval(interval); // Clear interval on component unmount
+  
+    // Clear the interval on component unmount
+    return () => clearInterval(interval);
   }, []);
+  
 
   const fetchTodaysMemories = async () => {
     try {
       const currentUser = await fetchUserAttributes()
       const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
       let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
-        return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0); // Adding 0 if cardUser.duration is undefined or null
+        if (!cardUser.isReviewed) {
+          return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
+        }
+        return accumulator;
       }, 0);
       setTodayCards(r)
-      totalEstimatedTime = totalEstimatedTime / 1000 // convert to minute
+      totalEstimatedTime = totalEstimatedTime / 60000 // convert to minute
       setEstimateTime(totalEstimatedTime)
       console.log("I am in fetchTodaysMemories")
     } catch (error) {
@@ -151,10 +133,11 @@ function TodayReview() {
    */
   const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
     try {
-      console.log("called")
       let duration = 1000
-      if (reviewDuration[userCardID] !== undefined) {
-        duration = reviewDuration[userCardID]
+      if (timers[userCardID]) {
+        console.log("duration")
+        duration = timers[userCardID].elapsedTime
+        console.log(duration)
       }
       // update this userCard
       await markOneUserCardReviewedWithDuration(userCardID, duration)
@@ -164,6 +147,8 @@ function TodayReview() {
         // update next userCard's lastReviewDuration field
         await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
       }
+      console.log(duration)
+      setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
@@ -193,9 +178,9 @@ function TodayReview() {
       
       <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
         Different card backgrounds represent different types of content: <br />
-        <span style={{ backgroundColor: '#FFE0B2'}}> - Orange daily cards:</span> you want to review it every day <br />
-        <span > - Transparent general card: review it according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span> <br />
-        <span> - No Review card will not show up, just in case you want to record some thing you finished but that's all!</span>
+        <span style={{ backgroundColor: '#FFE0B2'}}> - [Orange daily cards]:</span> you want to review it every day <br />
+        <span > - [Transparent general card]: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])</span> <br />
+        <span> - [NoReview card]: you want to record some thing you finished but that's all, it won't show up in the list</span>
       </Typography>                
       <Divider sx={{ bgcolor: 'purple' }} />
 
@@ -268,25 +253,19 @@ function TodayReview() {
               primary={cardUser.card.content}
               secondary = {
                 cardUser.lastTimeReviewDuration >= 0
-                ? `est: ${(cardUser.lastTimeReviewDuration / 1000).toFixed(2)} min`
+                ? `est: ${(cardUser.lastTimeReviewDuration / 60000).toFixed(2)} min`
                 : 'first time review'}
               style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
-
               />
           </ListItem>
         ))}
       </List>
       {/* </div> */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} severity="success">
-          Good Job!
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        snackbarOpen={snackbarOpen}
+        setSnackbarOpen={setSnackbarOpen}
+        curCardDuration={curCardDuration}
+      />
     </div>
   );
 }
