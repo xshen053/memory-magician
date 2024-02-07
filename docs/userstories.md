@@ -17,6 +17,14 @@ different types of card have different background so it's clear.
 - [x] if I don't start the timer, it means it can be finished in 1s
 - [x] add different background color of different type of cards
 - [x] for card I reviewed, make them doesn't appear, just cann't be selected
+- [ ] some card I added no need review, but just some usual task, I want to see them too
+- [ ] for cards, I want to receive reminder like email or phone
+- [ ] I suddenly have an idea, I want to write it down, and check later
+
+### reminder functionaility
+
+- [x] I want to set other task that need to review perioridcally
+
 
 ### No urgent
 - [ ] As a user, if I accidentally review a memory, I can withdraw (no urgent)
@@ -41,13 +49,17 @@ different types of card have different background so it's clear.
 ## Calendar screen
 - [x] As a user, I want to have a calendar to know what I need to review everyday (calendar screen)
 - [x] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
+- [ ] for passed tasks, change background color to some obvious color
+- [ ] for today, the background becomes more obvious
+
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
 
-## History Screen
-- [ ] Also search a task I created
-- [ ] I want to update, change, delete, search a task
+## Search Screen
+- [x] Also search a task I created
+- [x] I want to update, change, search a task
+- [ ] delete
 
 
 ## No urgent
