@@ -173,7 +173,7 @@ function TodayReview() {
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
         Estimated time left: 
-        <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime} </span> 
+        <span style={{ backgroundColor: '#E2F0CB'}}> {estimateTime.toFixed(2)} </span> 
          minutes <br /> (excluding cards that are newly added and already reviewed)
       </Typography>  
       <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
