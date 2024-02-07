@@ -32,13 +32,13 @@ export const generateDatesForPeriodicCards = (todayDate, n) => {
 }
 
 /**
- * generate 180 dates
+ * generate 90 dates
  * 
  * @param {*} todayDate 
  */
 export const generateDatesForDailyCards = (todayDate) => {
   const dailyDates = []
-  for (let i = 0; i < 180; i++) {
+  for (let i = 0; i < 90; i++) {
     const nextDate = new Date(todayDate)
     nextDate.setDate(todayDate.getDate() + i)
     dailyDates.push(nextDate.toISOString())
