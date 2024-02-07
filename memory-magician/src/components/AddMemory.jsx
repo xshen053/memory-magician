@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import { InputAdornment } from '@mui/material';
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
@@ -12,8 +13,6 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Chip from '@mui/material/Chip';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -38,14 +37,16 @@ function AddMemory() {
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selection, setSelection] = useState("GENERAL"); // Initialize with a default value
+  const [selection, setSelection] = useState("ONETIME"); // Initialize with a default value
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
   const [reviewDates, setReviewDates] = useState([])
   const [dailyDates, setDailyDates] = useState([])
-  const [periodInterval, setPeriodInterval] = useState()
-
   const [loading, setLoading] = useState(false);
+  const [showRepeatDuration, setShowRepeatDuration] = useState(false);
+  const [repeatDuration, setRepeatDuration] = useState('');
+  const [titleError, setTitleError] = useState(false);
+
   
 
 
@@ -70,6 +71,8 @@ function AddMemory() {
   
   const handleChange = (event) => {
     setSelection(event.target.value);
+    setShowRepeatDuration(event.target.value === 'PERIODIC');
+
   };
 
   const handleAddTag = () => {
@@ -128,7 +131,6 @@ function AddMemory() {
     }
     if (selection === "DAILY") {
       updatedDataArray = dailyDates.map((reviewDate, index) => {
-        // Create a new data object for each call with the updated reviewDate
         return {
           ...userCardData, 
           reviewDate: reviewDate,
@@ -149,11 +151,10 @@ function AddMemory() {
     if (selection === "PERIODIC") {
       const todayDate = new Date();
       todayDate.setHours(0, 0, 0, 0);
-      const periodicDates = generateDatesForPeriodicCards(todayDate, periodInterval)
+      const periodicDates = generateDatesForPeriodicCards(todayDate, repeatDuration)
       updatedDataArray = periodicDates.map((reviewDate, index) => {
-        // Create a new data object for each call with the updated reviewDate
         return {
-          ...userCardData, 
+          ...userCardData,
           reviewDate: reviewDate,
           iteration: index 
         };
@@ -228,7 +229,16 @@ function AddMemory() {
         setTitle("")
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    // Check if the title is empty
+    if (!title.trim()) {
+      setTitleError(true); // Show validation error
+      return; // Prevent further processing
+    }
+    // Reset validation state if the title passes validation
+    setTitleError(false);
+
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
@@ -287,7 +297,13 @@ function AddMemory() {
             variant="outlined"
             label="Add New Card"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              // Optionally reset validation state on change
+              if (titleError && e.target.value.trim() !== '') setTitleError(false);
+            }}
+            error={titleError} // Show error styling if titleError is true
+            helperText={titleError ? "This field cannot be empty." : ""} // Show helper text when there's an error
             style={{ marginBottom: "20px" }}
           />
 
@@ -336,15 +352,29 @@ function AddMemory() {
               label="Options"
               onChange={handleChange}
               >
+              <MenuItem value="ONETIME">One-time</MenuItem>
               <MenuItem value="GENERAL">General</MenuItem>
               <MenuItem value="DAILY">Daily</MenuItem>
-              <MenuItem value="NOREVIEW">No Review Needed</MenuItem>
+              <MenuItem value="PERIODIC">Repeat</MenuItem>
             </Select>
           </FormControl>
+          {showRepeatDuration && (
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Repeat every ..."
+              value={repeatDuration}
+              onChange={(e) => setRepeatDuration(e.target.value)}
+              style={{ marginBottom: "20px" }}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">days</InputAdornment>,
+              }}              
+            />
+          )}
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSubmit}
+            onClick={(e) => handleSubmit(e)}
             fullWidth
             style={{
               padding: "10px",
