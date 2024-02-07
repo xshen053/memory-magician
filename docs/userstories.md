@@ -19,7 +19,8 @@ different types of card have different background so it's clear.
 - [x] for card I reviewed, make them doesn't appear, just cann't be selected
 - [ ] some card I added no need review, but just some usual task, I want to see them too
 - [ ] for cards, I want to receive reminder like email or phone
-- [ ] I suddenly have an idea, I want to write it down, and check later
+- [ ] I suddenly have a flash idea, I want to write it down, and check later (flash of inspiration)
+- [ ] I want to add a card (periodically showup, every 3 weeks..., now set half year)
 
 ### reminder functionaility
 
