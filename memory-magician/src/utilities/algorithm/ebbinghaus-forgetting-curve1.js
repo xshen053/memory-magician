@@ -16,14 +16,14 @@ export const generateAllReviewDates = (todayDate, intervals = [0, 1, 5, 10, 20, 
 }
 
 /**
- * repeat a card 50 times periodically
+ * repeat a card 20 times periodically
  * 
  * @param {*} todayDate 
  * @param {*} n repeat every n days
  */
 export const generateDatesForPeriodicCards = (todayDate, n) => {
   const periodicDates = []
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 20; i++) {
     const nextDate = new Date(todayDate)
     nextDate.setDate(todayDate.getDate() + i * n)
     periodicDates.push(nextDate.toISOString())
