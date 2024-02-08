@@ -10,10 +10,34 @@ import { AmplifyDependentResourcesAttributes } from '../../types/amplify-depende
 //import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 const requestVTL = `
-<YOUR CUSTOM VTL REQUEST MAPPING TEMPLATE HERE>
+## [Start] Initialization default values. **
+$util.qr($ctx.stash.put("defaultValues", $util.defaultIfNull($ctx.stash.defaultValues, {})))
+#set( $createdAt = $util.time.nowISO8601() )
+#set($UserCardsArray = [])
+#foreach($item in \${ctx.args.usrcards})
+  $util.qr($item.put("id", $util.defaultIfNullOrBlank($item.id, $util.autoId())))
+  $util.qr($item.put("createdAt", $util.defaultIfNull($item.createdAt, $createdAt)))
+  $util.qr($item.put("updatedAt", $util.defaultIfNull($item.updatedAt, $createdAt)))
+  $util.qr($item.put("__typename", "UserCards"))
+  $util.qr($UserCardsArray.add($util.dynamodb.toMapValues($item)))
+#end
+## [End] Initialization default values. **
+$util.toJson( {
+  "version": "2018-05-29",
+  "operation": "BatchPutItem",
+  "tables": {
+    "UserCards-yipm7oruzjesxinjxlbzlukqbe-dev": $UserCardsArray
+  }
+} )
 `;
 const responseVTL = `
-<YOUR CUSTOM VTL RESPONSE MAPPING TEMPLATE HERE>
+## [Start] ResponseTemplate. **
+#if( $ctx.error )
+  $util.error($ctx.error.message, $ctx.error.type)
+#else
+  $util.toJson($ctx.result.data.UserCards-yipm7oruzjesxinjxlbzlukqbe-dev)
+#end
+## [End] ResponseTemplate. **
 `;
 
 export class cdkStack extends Stack {
@@ -30,7 +54,7 @@ export class cdkStack extends Stack {
       amplifyResourceProps.resourceName, 
       [{
         category: "api",
-        resourceName: "<YOUR-API-NAME>"
+        resourceName: "memorymagician"
       }]
     );
 
@@ -94,11 +118,11 @@ export class cdkStack extends Stack {
       // If you use Amplify you can access the parameter via Ref since it's a CDK parameter passed from the root stack.
       // Previously the ApiId is the variable Name which is wrong , it should be variable value as below
       apiId: Fn.ref(retVal.api.memorymagician.GraphQLAPIIdOutput),
-      fieldName: 'querySomething',
+      fieldName: 'batchCreateUserCards',
       typeName: 'Mutation', // Query | Mutation | Subscription
       requestMappingTemplate: requestVTL,
       responseMappingTemplate: responseVTL,
-      dataSourceName: 'UserCardsTable' // DataSource name
+      dataSourceName: 'UserCards' // DataSource name
     });
     
   }
