@@ -14,7 +14,7 @@ const requestVTL = `
 $util.qr($ctx.stash.put("defaultValues", $util.defaultIfNull($ctx.stash.defaultValues, {})))
 #set( $createdAt = $util.time.nowISO8601() )
 #set($UserCardsArray = [])
-#foreach($item in \${ctx.args.usrcards})
+#foreach($item in \${ctx.args.reviews})
   $util.qr($item.put("id", $util.defaultIfNullOrBlank($item.id, $util.autoId())))
   $util.qr($item.put("createdAt", $util.defaultIfNull($item.createdAt, $createdAt)))
   $util.qr($item.put("updatedAt", $util.defaultIfNull($item.updatedAt, $createdAt)))
@@ -118,11 +118,11 @@ export class cdkStack extends Stack {
       // If you use Amplify you can access the parameter via Ref since it's a CDK parameter passed from the root stack.
       // Previously the ApiId is the variable Name which is wrong , it should be variable value as below
       apiId: Fn.ref(retVal.api.memorymagician.GraphQLAPIIdOutput),
-      fieldName: 'batchCreateUserCards',
+      fieldName: 'batchCreateReview',
       typeName: 'Mutation', // Query | Mutation | Subscription
       requestMappingTemplate: requestVTL,
       responseMappingTemplate: responseVTL,
-      dataSourceName: 'UserCards' // DataSource name
+      dataSourceName: 'UserCardsTable' // DataSource name
     });
     
   }

@@ -35,6 +35,20 @@ type UserCards @model {
   reviewDate: AWSDateTime
 }
 
+type Mutation {
+  batchCreateReview(reviews: [BatchCreateReview]): [UserCards]
+}
+
+input BatchCreateReview {
+  id: ID
+  userID: String!
+  cardID: String!
+  reviewDuration: Int             
+  lastTimeReviewDuration: Int
+  isReviewed: Boolean!
+  reviewDate: AWSDateTime
+  iteration: Int!
+}
 
 enum CardType {
  DAILY
