@@ -1,6 +1,6 @@
 import { generateClient } from 'aws-amplify/api';
 import { userCardsByUserIDAndCardID, getUserCardByCard } from '../../graphql/customizedQueries.js';
-import { createUserCards, updateUserCards } from '../../graphql/mutations.js';
+import { batchCreateReview, updateUserCards } from '../../graphql/mutations.js';
 import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
@@ -100,21 +100,38 @@ export const updateOneUserCardLastTimeReviewDuration = async (id, duration) => {
  * ]
  * createUserCardsBatchAPI(cardData)
  */
-export const createUserCardsBatchAPI = async (dataArray) => {
+export const createUserCardsBatchAPI = async (dataArray, numberOfSplits = 5) => {
   try {
-    for (const data of dataArray) {
+    console.log("I am in createUserCardsBatchAPI");
+    if (dataArray.length < 20) {
+      numberOfSplits = 1
+    }
+    // Calculate the size of each segment based on the desired number of splits
+    const segmentSize = Math.ceil(dataArray.length / numberOfSplits);
+    for (let i = 0; i < numberOfSplits; i++) {
+      // Calculate start and end indices for each segment
+      const start = i * segmentSize;
+      const end = start + segmentSize;
+
+      // Create each segment by slicing the dataArray
+      const segment = dataArray.slice(start, end);
+
+      // Optionally, log or process each segment
+      console.log(`Segment ${i + 1} of dataArray:`, segment);
+
+      // Call the GraphQL mutation for each segment
       await client.graphql({
-        query: createUserCards,
+        query: batchCreateReview,
         variables: {
-          input: data
+          reviews: segment
         }
       });
     }
   } catch (error) {
-    console.error("Error during createUserCardsApi:", error);
+    console.error("Error during createUserCardsBatchAPI:", error);
     throw error;
   }
-}
+};
 
 
 
