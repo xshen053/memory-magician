@@ -8,3 +8,14 @@ const cardTypeColors = {
 };
 
 ```
+
+color of the chip
+
+```
+<StyledChip 
+label={`${cardUser.iteration + 1}/${cardUser.card.total}`} 
+style={{ backgroundColor: '#E6F7FF', position: 'absolute', marginTop: 15, right:100 }} 
+/>
+                
+
+```
