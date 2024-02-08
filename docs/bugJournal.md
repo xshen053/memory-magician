@@ -3,7 +3,7 @@
 
 - [API Efficiency](#linkedlist)
 - [useEffect](#useEffect)
-
+- [graphql resolver](#resolver)
 
 # API Efficiency
 
@@ -129,4 +129,109 @@ it doesn't exist in the table!! after I passed the correct id, it works
 
 
 
+# Resolver
 
+Argument of type 'this' is not assignable to parameter of type 'Construct
+
+
+## problem
+> cdk v1, v2 mismatch
+
+
+```js
+// V2
+import { Construct } from 'constructs'; // construct is in a separate package
+import { Stack, StackProps, aws_s3 as s3 } from 'aws-cdk-lib'; // common package for stable construct
+import * as appsync from '@aws-cdk/aws-appsync-alpha'  // alpha constructs in separate packages
+
+// V1 - separate packages core and for each service
+import * as cdk from '@aws-cdk/core';
+import * as appsync from '@aws-cdk/aws-appsync';
+```
+
+正确方法
+```
+// The code below shows an example of how to instantiate this type.
+// The values are placeholders you should change.
+import { aws_appsync as appsync } from 'aws-cdk-lib';
+const cfnResolver = new appsync.CfnResolver(this, 'MyCfnResolver', {
+  apiId: 'apiId',
+  fieldName: 'fieldName',
+  typeName: 'typeName',
+
+  // the properties below are optional
+  cachingConfig: {
+    ttl: 123,
+
+    // the properties below are optional
+    cachingKeys: ['cachingKeys'],
+  },
+  code: 'code',
+  codeS3Location: 'codeS3Location',
+  dataSourceName: 'dataSourceName',
+  kind: 'kind',
+  maxBatchSize: 123,
+  pipelineConfig: {
+    functions: ['functions'],
+  },
+  requestMappingTemplate: 'requestMappingTemplate',
+  requestMappingTemplateS3Location: 'requestMappingTemplateS3Location',
+  responseMappingTemplate: 'responseMappingTemplate',
+  responseMappingTemplateS3Location: 'responseMappingTemplateS3Location',
+  runtime: {
+    name: 'name',
+    runtimeVersion: 'runtimeVersion',
+  },
+  syncConfig: {
+    conflictDetection: 'conflictDetection',
+
+    // the properties below are optional
+    conflictHandler: 'conflictHandler',
+    lambdaConflictHandlerConfig: {
+      lambdaConflictHandlerArn: 'lambdaConflictHandlerArn',
+    },
+  },
+});
+```
+
+```
+// import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { Fn, Stack, StackProps, CfnParameter, aws_appsync as appsync } from 'aws-cdk-lib';                 // core constructs
+import * as AmplifyHelpers from '@aws-amplify/cli-extensibility-helper';
+import { AmplifyDependentResourcesAttributes } from '../../types/amplify-dependent-resources-ref';
+
+```
+
+经验：每个function，直接google在哪个包里面
+
+
+# naming problem
+
+```
+wrong: apiId: Fn.ref(retVal.api.memorymagician-dev.GraphQLAPIIdOutput),
+
+correct: apiId: Fn.ref('retVal.api.memorymagician-dev.GraphQLAPIIdOutput'),
+```
+
+# solution
+
+https://stackoverflow.com/questions/58168051/aws-amplify-resource-is-not-in-the-state-stackupdatecomplete
+
+```
+Just to give some background about this error - what does Resource is not in the state stackUpdateComplete actually mean?
+
+Well basically Amplify is telling you that one of the stacks in your app did not deploy correctly, but it doesn't know why (which is remarkably unhelpful, but in fairness it's deploying a lot of potentially complex resources).
+
+This can make diagnosing and fixing the issue really problematic, so I've compiled this kind of mental checklist that I go through to fix it. Each of the techniques will work some of the time, but I don't think there are any that will work all of the time. This list is not intended to help you diagnose what causes this issue, it's literally just designed to get you back up and running.
+
+The fast options (will solve most problems)
+Check the AWS Console! Sometimes the amplify-cli will show an error, but it actually did what you asked it to in the cloud. Before proceeding, always check to make sure the error was actually fatal.
+If you're sure your deployment is definitely failing, then next step is to MAKE A BACKUP OF YOUR LOCAL WORK before proceeding with any of the following steps.
+Firstly, you can try to restore your env from the one in the last working deployment in the cloud by running amplify env pull --restore.
+Try running amplify push --iterative-rollback. It's supposed to roll your environment back to the last successful deployment, but tbh it rarely works.
+Try running amplify push --force. Although counter-intuitive, this is actually a rollback method. It basically does what you think --iterative-rollback will do, but works more frequently.
+In the AWS console, go to the deployment bucket for your environment (the bucket will be named amplify-${project_name}-${environment_name}-${some_random_numbers}-deployment). If there is a file called deployment-state.json, delete it and try amplify push again from the CLI.
+If you are working in a team of more than one developer, or have your environment in several different repos locally, or across multiple different machines, your amplify/team-provider-info.json file might be out of sync. Usually this is caused by the environment variable(s) in an Amplify Lambda function being set in one of the files but not in another. The resolution will depend on how out of sync these files are, but you can normally just copy the contents of the last working team-provider-info.json file across to the other repo (from where the deployment is failing) and run the deployment again. However, if you've got multiple devs/machines/repos, you might be better off diffing the files and checking where the differences are.
+If any of these worked, you can then re-add the any changes that were lost by diffing your repo again the backup you made and copying the changes back over.
+```
