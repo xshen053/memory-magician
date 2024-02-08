@@ -14,7 +14,7 @@ import Divider from '@mui/material/Divider';
 import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import Box from '@mui/material/Box';
-
+import CheckIcon from '@mui/icons-material/Check';
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
 import '../css/style.css';
@@ -37,18 +37,35 @@ const cardTypeColors = {
 };
 
 const lines = [
-  { type: "DAILY", text: "Daily memory: you want to review it every day." },
-  { type: "ONETIME", text: "One-time memory: you want to record some ideas or memory and check them later, but no need to review it, e.g. a flash of inspiration, you name it!" },
-  { type: "PERIODIC", text: "Periodic memory: you want to review this memory periodically, e.g. once per 10 days." },
-  { type: "GENERAL", text: "General memory: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])." },
+  { id: 0, type: "DAILY", text: "Daily memory: you want to review it every day." },
+  { id: 1, type: "ONETIME", text: "One-time memory: you want to record some ideas or memory and check them later, but no need to review it, e.g. a flash of inspiration, you name it!" },
+  { id: 2, type: "PERIODIC", text: "Periodic memory: you want to review this memory periodically, e.g. once per 10 days." },
+  { id: 3, type: "GENERAL", text: "General memory: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])." },
 ];
+
+
+const boxSize = 15; // You can set the size you want for the box and the icon here
 
 function TodayReview() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
+  const [todayFilteredCards, setTodayFilteredCards] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
   const [curCardDuration, setCurCardDuration] = useState(0)
+  const [selectedItems, setSelectedItems] = useState(() => {
+    const initialState = {};
+    lines.forEach((line) => {
+      initialState[line.id] = true; // Initialize each line as selected (true)
+    });
+    return initialState;
+  });
+  
+  const toggleItemSelection = (id) => {
+    // Toggle the selection state for the item
+    setSelectedItems({ ...selectedItems, [id]: !selectedItems[id] });
+  };
+
 
   // Add a state to track the timer for each cardUser
   const [timers, setTimers] = useState({}); // Object with cardUser.id as key and timer info as value
@@ -102,6 +119,10 @@ function TodayReview() {
   }, [memoryAdded]);
 
   useEffect(() => {
+    setTodayFilteredCards(filter(todayCards))
+  }, [selectedItems])
+
+  useEffect(() => {
     // Update real-time interval
     const interval = setInterval(() => {
       setTimers(prevTimers => {
@@ -136,6 +157,8 @@ function TodayReview() {
         return accumulator;
       }, 0);
       setTodayCards(r)
+      const filteredCards = filter(r)
+      setTodayFilteredCards(filteredCards)
       totalEstimatedTime = totalEstimatedTime / 60000 // convert to minute
       setEstimateTime(totalEstimatedTime)
       console.log("I am in fetchTodaysMemories")
@@ -143,6 +166,21 @@ function TodayReview() {
       console.log("Error during fetchTodaysMemories: ", error)
       throw error
     }
+  }
+
+  const filter = (r) => {
+    const chosedType = new Set(); // Note: Corrected 'set()' to 'new Set()'
+    lines.forEach((line) => {
+      if (selectedItems[line.id] === true) {
+        chosedType.add(line.type);
+      }
+    });
+    const filterdCards = r.filter((cardUser) => {
+      return chosedType.has(cardUser.card.type);
+    })
+
+    return filterdCards
+  
   }
 
   /**
@@ -201,20 +239,38 @@ function TodayReview() {
          <br /><br />
       </Typography>
 
-      Your memories will display in following order: <br />
+      <Typography variant="subtitle1" style={{ marginTop: '0px', color: 'red' }}>
+      Uncheck the box to filter your memories, your memories will display in following order: 
+          </Typography> 
+      {/* <br /> */}
+
       <Box>
       {lines.map((line, index) => (
         <Box key={index} display="flex" alignItems="center" marginBottom="5px">
           <Box
             sx={{
-              width: 15,
-              height: 15,
+              width: boxSize,
+              height: boxSize, // Set the height to auto
+              aspectRatio: '1 / 1', // Maintain the aspect ratio of 1:1
               bgcolor: cardTypeColors[line.type],
-              marginRight: '5px',
               border: 1, // 1px solid border
-              borderColor: 'grey.500', // Customize the border color using the theme's color palette
+              borderColor: 'grey.500', // Customize the border color
+              cursor: 'pointer', // Change cursor to pointer to indicate the box is clickable
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: '5px'
             }}
-          />
+            onClick={() => toggleItemSelection(line.id)} // Update selection state on click
+          >
+            {selectedItems[index] && (
+              <CheckIcon
+                sx={{
+                  fontSize: boxSize * 0.9, // Use 'fontSize' to scale the icon size
+                }}
+              />
+            )}
+          </Box>
           <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
             {line.text}
           </Typography>
@@ -227,7 +283,7 @@ function TodayReview() {
       {/* <div className="list-container"> */}
       
       <List>
-        {todayCards.sort((a, b) => {
+        {todayFilteredCards.sort((a, b) => {
           // First, sort by review status (unreviewed first)
           if (a.isReviewed !== b.isReviewed) {
             return a.isReviewed ? 1 : -1;

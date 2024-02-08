@@ -117,7 +117,7 @@ export const createUserCardsBatchAPI = async (dataArray, numberOfSplits = 5) => 
       const segment = dataArray.slice(start, end);
 
       // Optionally, log or process each segment
-      console.log(`Segment ${i + 1} of dataArray:`, segment);
+      // console.log(`Segment ${i + 1} of dataArray:`, segment);
 
       // Call the GraphQL mutation for each segment
       await client.graphql({

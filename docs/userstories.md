@@ -28,7 +28,9 @@ different types of card have different background so it's clear.
 - [x] I suddenly have a flash idea, I want to write it down, and check later (flash of inspiration)
 - [x] I want to add a card (periodically showup, every 3 weeks..., now set half year)
 - [ ] for card I checked, instead of showing the timer, show the time I spent on it
-- [ ] filter card to display, e.g., only want to see general card
+- [x] filter card to display, e.g., only want to see general card
+- [x] reduce the time to send data, batch
+
 
 ### reminder functionaility
 
