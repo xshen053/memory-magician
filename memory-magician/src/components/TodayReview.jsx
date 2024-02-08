@@ -43,6 +43,12 @@ const lines = [
   { id: 3, type: "GENERAL", text: "General memory: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])." },
 ];
 
+const order = {
+  "DAILY" : 0,
+  "ONETIME" : 1,
+  "PERIODIC" : 2,
+  "GENERAL" : 3
+}
 
 const boxSize = 15; // You can set the size you want for the box and the icon here
 
@@ -291,9 +297,8 @@ function TodayReview() {
 
           // If review status is the same, then sort by card type (daily first)
           if (a.card.type !== b.card.type) {
-            return a.card.type === "DAILY" ? -1 : 1;
+            return order[a.card.type] > order[b.card.type] ? 1 : -1;
           }
-
 
           // If both review status and card type are the same, keep original order
           return a.card.content > b.card.content ? 1 : -1
@@ -304,20 +309,33 @@ function TodayReview() {
             secondaryAction={
               <>
               <StyledChip 
-                // TODO: 0th / 11 
-                label={`${cardUser.iteration}/${cardUser.card.total}`} 
-                style={{ backgroundColor: 'transparent' }} // Replace #yourColor with your desired color
-              />
-              <IconButton onClick={() => timers[cardUser.id]?.isRunning ? stopTimer(cardUser.id) : startTimer(cardUser.id)}>
-                {timers[cardUser.id]?.isRunning ? <StopIcon /> : <PlayArrowIcon />}
-              </IconButton>
-
-              <IconButton onClick={() => resetTimer(cardUser.id)}>
-                <ReplayIcon /> 
-              </IconButton>
-              <Typography variant="body2">
-                  Timer: {timers[cardUser.id] ? formatTime(timers[cardUser.id].elapsedTime) : '0:00'}
+                // TODO: 1th / 11 times
+                label={`${cardUser.iteration + 1}/${cardUser.card.total}`} 
+                style={{ backgroundColor: '#E6F7FF', position: 'absolute', marginTop: 15, right:100 }} 
+                />
+                
+              {cardUser.isReviewed && (
+              <>
+                <Typography variant="body2" style={{ marginTop: 55 }}>
+                Time spent: {(cardUser.reviewDuration / 60000).toFixed(2)} min
               </Typography>
+              </>
+                )}
+
+              { !cardUser.isReviewed && (
+                <>
+                  <IconButton onClick={() => timers[cardUser.id]?.isRunning ? stopTimer(cardUser.id) : startTimer(cardUser.id)}>
+                    {timers[cardUser.id]?.isRunning ? <StopIcon /> : <PlayArrowIcon />}
+                  </IconButton>
+
+                  <IconButton onClick={() => resetTimer(cardUser.id)}>
+                    <ReplayIcon /> 
+                  </IconButton>
+                  <Typography variant="body2">
+                    Timer: {timers[cardUser.id] ? formatTime(timers[cardUser.id].elapsedTime) : '0:00'}
+                  </Typography>
+                </>
+              )}
             </>
             }
             // define the color
