@@ -1,10 +1,16 @@
 # User stories
 
 
+## authentication
+- [ ] user log in using phone number
+- [ ] log in using social account
+
 ## All the screens
 - [x] As a user, I want to create new memories. (all the screens)
 - [x] When creating memory, I want to give them tags, e.g. leetcode 3, it is {blind 75, amazon, strings}
 - [x] Add a component to show a user's information, like hello xxx
+
+
 
 ## Today's review screen
 - [x] As a user, I want to know what memories I want to review today. (today's review screen)
@@ -21,6 +27,8 @@ different types of card have different background so it's clear.
 - [ ] for cards, I want to receive reminder like email or phone
 - [x] I suddenly have a flash idea, I want to write it down, and check later (flash of inspiration)
 - [x] I want to add a card (periodically showup, every 3 weeks..., now set half year)
+- [ ] for card I checked, instead of showing the timer, show the time I spent on it
+
 
 ### reminder functionaility
 
@@ -49,7 +57,7 @@ different types of card have different background so it's clear.
 - [x] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
 - [ ] for passed tasks, change background color to some obvious color
 - [ ] for today, the background becomes more obvious
-
+- [ ] add a filter for each type of cards
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them

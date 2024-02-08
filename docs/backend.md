@@ -8,7 +8,8 @@
 
 - [x] create a new task 
 - [x] associate that task to review dates
-- [ ] mark a reviewcard reviewed
+- [x] mark a reviewcard reviewed
+- [ ] instead of creating one row once, create mutli rows once
 
 
 # other
@@ -20,7 +21,7 @@
 - [ ] custom batch resolver
 
 # config auth of graphql
-
+- [ ] make sure graphql is safe and access is right
 
 # add card
 
