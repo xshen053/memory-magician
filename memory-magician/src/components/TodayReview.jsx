@@ -248,6 +248,7 @@ function TodayReview() {
             secondaryAction={
               <>
               <StyledChip 
+                // TODO: 0th / 11 
                 label={`${cardUser.iteration}/${cardUser.card.total}`} 
                 style={{ backgroundColor: 'transparent' }} // Replace #yourColor with your desired color
               />
