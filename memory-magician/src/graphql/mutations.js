@@ -1,6 +1,43 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const batchCreateReview = /* GraphQL */ `
+  mutation BatchCreateReview($reviews: [BatchCreateReview]) {
+    batchCreateReview(reviews: $reviews) {
+      id
+      userID
+      cardID
+      user {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        __typename
+      }
+      card {
+        id
+        content
+        tags
+        type
+        total
+        deleted
+        createdAt
+        updatedAt
+        __typename
+      }
+      iteration
+      isReviewed
+      reviewDuration
+      lastTimeReviewDuration
+      reviewDate
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
     $input: CreateUserInput!

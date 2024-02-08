@@ -37,4 +37,9 @@ the getcard
 
 
 
+amplify add custom
+
+- api
+- custom
+- auth
 

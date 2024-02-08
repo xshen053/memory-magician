@@ -23,6 +23,9 @@
           "appId": "d9gd5jz26at7e",
           "type": "manual"
         }
+      },
+      "custom": {
+        "MyCustomResolvers": {}
       }
     }
   }
