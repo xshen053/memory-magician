@@ -15,6 +15,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import MemoryFilter from '../components/MemoryFilter';
 
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
@@ -34,6 +35,11 @@ const SearchScreen = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   
+  const handleFilterChange = (selectedItems) => {
+    // everytime we apply new filter to all events
+    console.log("handle")
+  };
+
   const handleEditClick = (card) => {
     setEditingCard(card);
     setOpenDialog(true);
@@ -99,6 +105,7 @@ const SearchScreen = () => {
           placeholder="Search for a card..."
         />
         <button onClick={handleSearch}>Filter</button>
+        <MemoryFilter onSelectionChange={handleFilterChange} />
         <Typography variant="h6" style={{ marginTop: '5px', color: 'black', textAlign: 'left' }}>
         Click a card to modify it!
       </Typography>
