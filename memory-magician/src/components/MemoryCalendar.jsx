@@ -8,7 +8,7 @@ import "../css/MemoryCalendar.css";
 import { getAllUserCardsOfUser } from '../utilities/apis/carduserAPI';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useMemory } from "../context/MemoryContext.jsx"
-import CalendarFilter from './CalendarFilter.jsx';
+import MemoryFilter from './MemoryFilter.jsx';
 
 const cardTypeColors = {
   HELP: "#FCE4EC",
@@ -125,7 +125,7 @@ function MemoryCalendar(props) {
 
   return (
     <div>
-    <CalendarFilter onSelectionChange={handleFilterChange} />
+    <MemoryFilter onSelectionChange={handleFilterChange} />
     <div style={props.style}>
       <Calendar
         localizer={localizer}

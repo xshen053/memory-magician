@@ -5,34 +5,17 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
 
-const textColors = {
-  ESTIMATE: "#E2F0CB",
-};
+import {cardTypeColors} from '../theme/colors'
 
-
-const cardTypeColors = {
-  HELP: "#FCE4EC",
-  GENERAL: "transparent",
-  DAILY: "#FFE0B2", 
-  ONETIME: "#B3E5FC", 
-  PERIODIC: "#C8E6C9", 
-};
-
-const lines = [
-  { id: -1, type: "HELP", text: "Select / Deselect all memories"},
-  { id: 0, type: "DAILY", text: "Daily memory" },
-  { id: 1, type: "ONETIME", text: "One-time memory" },
-  { id: 2, type: "PERIODIC", text: "Periodic memory" },
-  { id: 3, type: "GENERAL", text: "General memory" },
-];
+import { memoryWithoutExplanation } from '../theme/text';
 
 
 const boxSize = 15; // You can set the size you want for the box and the icon here
 
-function CalendarFilter({ onSelectionChange }) {
+function MemoryFilter({ onSelectionChange }) {
   const [selectedItems, setSelectedItems] = useState(() => {
     const initialState = {};
-    lines.forEach((line) => {
+    memoryWithoutExplanation.forEach((line) => {
       initialState[line.id] = true; // Initialize each line as selected (true)
     });
     return initialState;
@@ -67,7 +50,7 @@ function CalendarFilter({ onSelectionChange }) {
 return (
   <div style={{ textAlign: 'left', marginTop: '20px'}}>
     <Box display="flex" flexDirection="row" >
-      {lines.map((line, index) => (
+      {memoryWithoutExplanation.map((line, index) => (
         <Box key={line.id} display="flex" alignItems="center" marginBottom="5px">
           <Box
             sx={{
@@ -105,4 +88,4 @@ return (
 }
 
 
-export default CalendarFilter
+export default MemoryFilter
