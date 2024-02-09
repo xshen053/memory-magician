@@ -155,10 +155,16 @@ const SearchScreen = () => {
               key={card.id}
               className={`list-item-container list-item-hover : ''}`}
               secondaryAction = {
+                <div style={{ display: 'flex', width: '100%' }}>
+                <StyledChip 
+                  label={`Created at (local time): ${new Date(card.createdAt).toLocaleString()}`} 
+                  style={{ backgroundColor: 'transparent', flex: 1 }} // flex 1 allows this chip to grow
+                />
                 <StyledChip 
                   label={`${card.type.toLowerCase()}`} 
-                  style={{ backgroundColor: 'transparent' }} // Replace #yourColor with your desired color
+                  style={{ backgroundColor: 'transparent', flex: 1, justifyContent: 'flex-start' }} // flex 1 allows this chip to grow
                 />
+              </div>
               }
               onClick={() => handleEditClick(card)} // Add this line
               // define the color
