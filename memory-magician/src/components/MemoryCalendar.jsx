@@ -10,6 +10,20 @@ import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useMemory } from "../context/MemoryContext.jsx"
 import CalendarFilter from './CalendarFilter.jsx';
 
+const cardTypeColors = {
+  HELP: "#FCE4EC",
+  GENERAL: "transparent",
+  DAILY: "#FFE0B2", 
+  ONETIME: "#B3E5FC", 
+  PERIODIC: "#C8E6C9", 
+};
+
+const order = {
+  "DAILY" : 0,
+  "ONETIME" : 1,
+  "PERIODIC" : 2,
+  "GENERAL" : 3
+}
 
 const lines = [
   { id: -1, type: "HELP", text: "Select / Deselect all memories"},
@@ -48,7 +62,8 @@ function MemoryCalendar(props) {
               end: new Date(
                 moment(cardUser.reviewDate).utc().toDate()
               ),
-              color: cardUser.isReviewed ? "#F5F5F5" : "#c5b4e3",
+              // color: cardUser.isReviewed ? "#F5F5F5" : "#c5b4e3",
+              color: cardTypeColors[cardUser.card.type],
               isCompleted: cardUser.isReviewed,
               type: cardUser.card.type
             });
@@ -56,7 +71,19 @@ function MemoryCalendar(props) {
         formattedEvents.sort((a, b) => {
           // Assuming isCompleted: true means the task is completed,
           // so false (not completed) should come before true (completed)
-          return a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1;
+          if (a.isCompleted !== b.isCompleted) {
+            return a.isCompleted ? 1 : -1
+          }
+          
+          if (a.type !== b.type) {
+            return order[a.type] > order[b.type] ? 1 : -1;
+          }
+
+
+
+          return a.title > b.title
+
+          // return a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1;
         });
         // at the beginning, they are the same
         setEvents(formattedEvents)
@@ -69,7 +96,7 @@ function MemoryCalendar(props) {
     fetchCards()
     if (memoryAdded) {
       fetchCards(); // call it when a new card is created
-    }    
+    }
   }, [memoryAdded]);
 
   const filter = (events, filteredResults) => {
@@ -103,12 +130,14 @@ function MemoryCalendar(props) {
       <Calendar
         localizer={localizer}
         events={filteredEvents}
+        showAllEvents= {true}
         startAccessor="start"
         endAccessor="end"
         className="responsiveCalendar"
         eventPropGetter={eventStyleGetter}
       />
     </div>
+    
     </div>
   );
 }

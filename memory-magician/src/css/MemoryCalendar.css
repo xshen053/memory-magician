@@ -25,10 +25,15 @@
   color: black;
 }
 
+
 .rbc-day-bg.rbc-today {
   /* background-image: url("/2.jpeg"); /* Adjust the path to point to your image */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-position: center center; /* Centers the background image */
+}
+/* Apply the background color only to today's date cell */
+.rbc-date-cell.rbc-now.rbc-current {
+  background-color: #ebfffd;
 }
 
 .rbc-day-bg.rbc-off-range-bg {
@@ -53,11 +58,17 @@
   background-color: transparent !important;
 }
 
+
+
+
 .responsiveCalendar {
   width: 100%;
   height: 800px; /* or use vh for view-height based sizing */
   margin: 0 auto;
 }
+
+
+
 
 @media only screen and (max-width: 600px) {
   .responsiveCalendar {
