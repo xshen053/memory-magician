@@ -30,6 +30,7 @@ const textColors = {
 
 
 const cardTypeColors = {
+  HELP: "#FCE4EC",
   GENERAL: "transparent",
   DAILY: "#FFE0B2", 
   ONETIME: "#B3E5FC", 
@@ -37,6 +38,7 @@ const cardTypeColors = {
 };
 
 const lines = [
+  { id: -1, type: "HELP", text: "Select / Deselect all memories"},
   { id: 0, type: "DAILY", text: "Daily memory: you want to review it every day." },
   { id: 1, type: "ONETIME", text: "One-time memory: you want to record some ideas or memory and check them later, but no need to review it, e.g. a flash of inspiration, you name it!" },
   { id: 2, type: "PERIODIC", text: "Periodic memory: you want to review this memory periodically, e.g. once per 10 days." },
@@ -69,7 +71,22 @@ function TodayReview() {
   
   const toggleItemSelection = (id) => {
     // Toggle the selection state for the item
-    setSelectedItems({ ...selectedItems, [id]: !selectedItems[id] });
+    if (id === -1) {
+      // If id is -1, set all items to the same state as selectedItems[id]
+      const nextState = !selectedItems[-1];
+      const updatedSelections = {};
+  
+      for (const itemId in selectedItems) {
+        if (selectedItems.hasOwnProperty(itemId)) {
+          updatedSelections[itemId] = nextState;
+        }
+      }
+  
+      setSelectedItems(updatedSelections);
+    } else {
+      // Toggle the selection state for the specified item
+      setSelectedItems({ ...selectedItems, [id]: !selectedItems[id] });
+    }
   };
 
 
@@ -252,7 +269,7 @@ function TodayReview() {
 
       <Box>
       {lines.map((line, index) => (
-        <Box key={index} display="flex" alignItems="center" marginBottom="5px">
+        <Box key={line.id} display="flex" alignItems="center" marginBottom="5px">
           <Box
             sx={{
               width: boxSize,
@@ -269,7 +286,7 @@ function TodayReview() {
             }}
             onClick={() => toggleItemSelection(line.id)} // Update selection state on click
           >
-            {selectedItems[index] && (
+            {selectedItems[line.id] && (
               <CheckIcon
                 sx={{
                   fontSize: boxSize * 0.9, // Use 'fontSize' to scale the icon size
@@ -344,14 +361,24 @@ function TodayReview() {
               marginLeft: 'auto',
               marginRight: 'auto',
               backgroundColor: cardTypeColors[cardUser.card.type]
+              // backgroundColor: 'transparent'
             }}
           > 
+          
             <Checkbox
+            // sx={{
+            //   color: cardTypeColors[cardUser.card.type] === "transparent" ? 'black' : cardTypeColors[cardUser.card.type],
+            //   '&.Mui-checked': {
+            //     color: cardTypeColors[cardUser.card.type] === "transparent" ? 'black' : cardTypeColors[cardUser.card.type],
+            //   },
+            //   fontWeight: 'bold'
+            // }}
               edge="start"
               checked = {cardUser.isReviewed}
               disabled={cardUser.isReviewed} // Disable the checkbox if it's already reviewed
               tabIndex={-1}
               disableRipple
+              size="medium" // Set the size to "small"
               inputProps={{ 'aria-labelledby': `checkbox-list-label-${cardUser.id}` }}
               onClick={() => {
                 // Check if timer is not running before marking as reviewed
