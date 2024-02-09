@@ -60,6 +60,7 @@ different types of card have different background so it's clear.
 - [ ] for passed tasks, change background color to some obvious color
 - [ ] for today, the background becomes more obvious
 - [ ] add a filter for each type of cards
+- [ ] also color should be the same
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
