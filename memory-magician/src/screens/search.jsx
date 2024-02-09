@@ -17,7 +17,8 @@ import TextField from '@mui/material/TextField';
 import MemoryFilter from '../components/MemoryFilter';
 import { StyledChip } from '../theme/componentsStyle';
 import { cardTypeColors } from '../theme/colors';
-import { memoryWithoutExplanation } from '../theme/text';
+import { typeOrder } from '../theme/constants'
+import { memoryWithoutExplanation } from '../theme/text'
 
 const SearchScreen = () => {
   const [searchTerm, setSearchTerm] = useState(''); // only usage is update the box
@@ -25,11 +26,34 @@ const SearchScreen = () => {
   const [allCardsOfUser, setCards] = useState([])
   const [openDialog, setOpenDialog] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
-  
+  const [selectedItems, setSelectedItems] = useState([])
+
   const handleFilterChange = (selectedItems) => {
-    // everytime we apply new filter to all events
-    console.log("handle")
+    setSelectedItems(selectedItems)
+    const resultAfterSearch = search(searchTerm, allCardsOfUser)
+    const resultAfterFilterAndSearch = filt(selectedItems, resultAfterSearch)
+    setSearchResults(resultAfterFilterAndSearch)
   };
+
+  /**
+   * filter inputData using filter
+   * 
+   * @param {*} inputfilter 
+   * @param {*} inputData 
+   * @returns 
+   */
+  const filt = (inputfilter, inputData) => {
+    const chosedType = new Set(); // Note: Corrected 'set()' to 'new Set()'
+    memoryWithoutExplanation.forEach((memory) => {
+      if (inputfilter[memory.id] === true) {
+        chosedType.add(memory.type);
+      }
+    });
+    const filteredResults = inputData.filter((cardUser) => {
+      return chosedType.has(cardUser.type);
+    })
+    return filteredResults
+}  
 
   const handleEditClick = (card) => {
     setEditingCard(card);
@@ -53,9 +77,15 @@ const SearchScreen = () => {
       deleted: true
     }
     await updateCardInfoApi(data)
-    setSearchTerm('')
     setOpenDialog(false); // Close the dialog after saving
-    await fetchAllCards()
+    const sr = searchResults.filter((r) => {
+      return r.id !== editingCard.id
+    })
+    const ar = allCardsOfUser.filter((r) => {
+      return r.id !== editingCard.id
+    })
+    setSearchResults(sr)
+    setCards(ar)
   }
 
   
@@ -71,20 +101,26 @@ const SearchScreen = () => {
     console.log("I am in fetchAllCards")
   }
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value); // sync
-    console.log(`Search for: ${e.target.value}`);
-    const searchResults = search(e.target.value); // Assuming search now returns the results
-    setSearchResults(searchResults);    
+  /**
+   * update seaerchResults to display results in real-time
+   * 
+   * @param {*} value serachTerm
+   * don't need update searchResults
+   */
+  const handleSearchChange = (value) => {
+    setSearchTerm(value); // sync
+    const resultAfterFilter = filt(selectedItems, allCardsOfUser)
+    const searchResults = search(value, resultAfterFilter); // Assuming search now returns the results
+    setSearchResults(searchResults);
   };
 
   
-  const search = (term) => {
+  const search = (term, inputData) => {
     if (!term) {
-      return allCardsOfUser
+      return inputData
     }
     const normalizedSearchTerm = term.trim().toLowerCase();
-    return allCardsOfUser.filter(card => card.content.trim().toLowerCase().includes(normalizedSearchTerm));
+    return inputData.filter(card => card.content.trim().toLowerCase().includes(normalizedSearchTerm));
   };
   
   return (
@@ -94,7 +130,7 @@ const SearchScreen = () => {
         <input
           type="text"
           value={searchTerm}
-          onChange={handleSearchChange}
+          onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search for a card..."
         />
         <MemoryFilter onSelectionChange={handleFilterChange} />
