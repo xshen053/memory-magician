@@ -6,8 +6,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import Chip from '@mui/material/Chip';
-import { styled } from '@mui/material/styles';
+
 import '../css/style.css';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -16,20 +15,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import MemoryFilter from '../components/MemoryFilter';
-
-const StyledChip = styled(Chip)({
-  marginLeft: '8px',
-});
-
-const cardTypeColors = {
-  GENERAL: "transparent",
-  DAILY: "#FFE0B2", 
-  ONETIME: "#B3E5FC", 
-  PERIODIC: "#C8E6C9", 
-};
+import { StyledChip } from '../theme/componentsStyle';
+import { cardTypeColors } from '../theme/colors';
+import { memoryWithoutExplanation } from '../theme/text';
 
 const SearchScreen = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // only usage is update the box
   const [searchResults, setSearchResults] = useState([]);
   const [allCardsOfUser, setCards] = useState([])
   const [openDialog, setOpenDialog] = useState(false);
@@ -62,6 +53,7 @@ const SearchScreen = () => {
       deleted: true
     }
     await updateCardInfoApi(data)
+    setSearchTerm('')
     setOpenDialog(false); // Close the dialog after saving
     await fetchAllCards()
   }
@@ -80,17 +72,18 @@ const SearchScreen = () => {
   }
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+    setSearchTerm(e.target.value); // sync
+    console.log(`Search for: ${e.target.value}`);
+    const searchResults = search(e.target.value); // Assuming search now returns the results
+    setSearchResults(searchResults);    
   };
 
-  const handleSearch = () => {
-    console.log(`Search for: ${searchTerm}`);
-    const searchResults = search(); // Assuming search now returns the results
-    setSearchResults(searchResults);
-  };
   
-  const search = () => {
-    const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const search = (term) => {
+    if (!term) {
+      return allCardsOfUser
+    }
+    const normalizedSearchTerm = term.trim().toLowerCase();
     return allCardsOfUser.filter(card => card.content.trim().toLowerCase().includes(normalizedSearchTerm));
   };
   
@@ -104,7 +97,6 @@ const SearchScreen = () => {
           onChange={handleSearchChange}
           placeholder="Search for a card..."
         />
-        <button onClick={handleSearch}>Filter</button>
         <MemoryFilter onSelectionChange={handleFilterChange} />
         <Typography variant="h6" style={{ marginTop: '5px', color: 'black', textAlign: 'left' }}>
         Click a card to modify it!
