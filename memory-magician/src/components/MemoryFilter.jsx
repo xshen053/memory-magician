@@ -29,7 +29,7 @@ const lines = [
 
 const boxSize = 15; // You can set the size you want for the box and the icon here
 
-function CalendarFilter({ onSelectionChange }) {
+function MemoryFilter({ onSelectionChange }) {
   const [selectedItems, setSelectedItems] = useState(() => {
     const initialState = {};
     lines.forEach((line) => {
@@ -105,4 +105,4 @@ return (
 }
 
 
-export default CalendarFilter
+export default MemoryFilter
