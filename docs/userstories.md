@@ -71,7 +71,7 @@ different types of card have different background so it's clear.
 - [x] delete
 - [ ] advanced filter based on card type
 - [ ] integrate context api in this screen too
-
+- [ ] add create date for each card
 
 ## No urgent
 - [ ] As a user I want to change my review time cycle, like not from 00 to 00
