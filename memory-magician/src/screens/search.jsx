@@ -28,7 +28,7 @@ const SearchScreen = () => {
   const [editingCard, setEditingCard] = useState(null);
   const [selectedItems, setSelectedItems] = useState([])
 
-  const handleFilterChange = (selectedItems) => {
+  const handleTypeChange = (selectedItems) => {
     setSelectedItems(selectedItems)
     const resultAfterSearch = search(searchTerm, allCardsOfUser)
     const resultAfterFilterAndSearch = filt(selectedItems, resultAfterSearch)
@@ -110,8 +110,8 @@ const SearchScreen = () => {
   const handleSearchChange = (value) => {
     setSearchTerm(value); // sync
     const resultAfterFilter = filt(selectedItems, allCardsOfUser)
-    const searchResults = search(value, resultAfterFilter); // Assuming search now returns the results
-    setSearchResults(searchResults);
+    const resultAfterSearchAndFilter = search(value, resultAfterFilter); // Assuming search now returns the results
+    setSearchResults(resultAfterSearchAndFilter);
   };
 
   
@@ -133,7 +133,7 @@ const SearchScreen = () => {
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search for a card..."
         />
-        <MemoryFilter onSelectionChange={handleFilterChange} />
+        <MemoryFilter onSelectionChange={handleTypeChange} />
         <Typography variant="h6" style={{ marginTop: '5px', color: 'black', textAlign: 'left' }}>
         Click a card to modify it!
       </Typography>
