@@ -135,7 +135,7 @@ const SearchScreen = () => {
         />
         <MemoryFilter onSelectionChange={handleTypeChange} />
         <Typography variant="h6" style={{ marginTop: '5px', color: 'black', textAlign: 'left' }}>
-        Click a card to modify it!
+        Click a memory to modify it!
       </Typography>
       <Divider sx={{ bgcolor: 'purple' }} />
       </div>
