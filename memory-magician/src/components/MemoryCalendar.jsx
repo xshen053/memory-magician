@@ -25,16 +25,12 @@ function MemoryCalendar(props) {
   const { memoryAdded } = useMemory();
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([])
-  const [filterState, setFilterState] = useState(() => {
-    const initialState = {};
-    lines.forEach((line) => {
-      initialState[line.id] = true; // Initialize each line as selected (true)
-    });
-    return initialState;
-  });
 
-  const handleFilterChange = (items) => {
-    setFilterState(items)
+  const handleFilterChange = (selectedItems) => {
+    // everytime we apply new filter to all events
+    const filteredFormattedEvents = filter(events, selectedItems)
+    // and update filtered one
+    setFilteredEvents(filteredFormattedEvents);
   };
 
   useEffect(() => {
@@ -62,11 +58,9 @@ function MemoryCalendar(props) {
           // so false (not completed) should come before true (completed)
           return a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1;
         });
-        // back up the original one
+        // at the beginning, they are the same
         setEvents(formattedEvents)
-        const filteredFormattedEvents = filter(formattedEvents)
-        // filtered one
-        setFilteredEvents(filteredFormattedEvents);
+        setFilteredEvents(formattedEvents);
       } catch (error) {
         console.log("Error during fetchCards: ", error)
         throw error
@@ -78,19 +72,10 @@ function MemoryCalendar(props) {
     }    
   }, [memoryAdded]);
 
-
-  useEffect(() => {
-    // everytime we apply new filter to all events
-    const filteredFormattedEvents = filter(events)
-    // and update filtered one
-    setFilteredEvents(filteredFormattedEvents);
-  }, [filterState])
-
-
-  const filter = (events) => {
+  const filter = (events, filteredResults) => {
       const chosedType = new Set(); // Note: Corrected 'set()' to 'new Set()'
       lines.forEach((line) => {
-        if (filterState[line.id] === true) {
+        if (filteredResults[line.id] === true) {
           chosedType.add(line.type);
         }
       });
