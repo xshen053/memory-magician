@@ -16,7 +16,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Chip from '@mui/material/Chip';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { createCardApi } from '../utilities/apis/cardAPI';
@@ -46,27 +47,28 @@ function AddMemory() {
   const [showRepeatDuration, setShowRepeatDuration] = useState(false);
   const [repeatDuration, setRepeatDuration] = useState('');
   const [titleError, setTitleError] = useState(false);
-
+  const [startDate, setStartDate] = useState(new Date());
   
-
+  /**
+   * If no date pass, it use today date, otherwise, reset the date based on input date
+   * 
+   * @param {*} date The memory start on that date
+   */
+  const prepareForReviewDatesForNewTask = (date = new Date()) => {
+    console.log("inside date")
+    console.log(date)
+    date.setHours(0, 0, 0, 0);
+    const rd = generateAllReviewDates(date);
+    setReviewDates(rd);
+    const dd = generateDatesForDailyCards(date);
+    setDailyDates(dd)
+    console.log("I am in prepareForReviewDatesForNewTask")
+  };
 
   useEffect(() => {
     // one day only calculate once
     // TODO: will change in the future if allow customized learning interval
-    const prepareForReviewDatesForTodayNewTask = () => {
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      if (reviewDates.length === 0) {
-        const rd = generateAllReviewDates(todayDate);
-        setReviewDates(rd);
-      }
-      if (dailyDates.length === 0) {
-        const dd = generateDatesForDailyCards(todayDate);
-        setDailyDates(dd)
-      }
-      console.log("I am in prepareForReviewDatesForTodayNewTask")
-    };
-    prepareForReviewDatesForTodayNewTask();
+    prepareForReviewDatesForNewTask();
   }, []); // Runs only once on component mount
   
   const handleChange = (event) => {
@@ -95,7 +97,7 @@ function AddMemory() {
    * - create using {@link dailyDates}
    * 
    * ONETIME task:
-   * - create using todayDate
+   * - create using todayDate (new Date())
    * 
    * PERIODIC task:
    * - create PeriodicDates first
@@ -140,18 +142,18 @@ function AddMemory() {
     }
     // NOREVIEW is for backward compatibility
     if (selection === "ONETIME" || selection === "NOREVIEW") {
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
+      const date = startDate
+      date.setHours(0, 0, 0, 0);
       updatedDataArray.push({
         ...userCardData,
-        reviewDate: todayDate.toISOString(),
+        reviewDate: date.toISOString(),
         iteration: 0
       })
     }        
     if (selection === "PERIODIC") {
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      const periodicDates = generateDatesForPeriodicCards(todayDate, repeatDuration)
+      const date = startDate
+      date.setHours(0, 0, 0, 0);
+      const periodicDates = generateDatesForPeriodicCards(date, repeatDuration)
       updatedDataArray = periodicDates.map((reviewDate, index) => {
         return {
           ...userCardData,
@@ -184,8 +186,26 @@ function AddMemory() {
     }
   }
 
+  const isSameDay = (date1, date2) => {
+    return date1.getDate() === date2.getDate() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getFullYear() === date2.getFullYear();
+  }
+  
+  /**
+   * will add date to cards and store them in the db
+   */
   const createCardAndAddToDataBase = async () => {
     try {
+      const today = new Date(); // Today's date   
+      console.log("start date")   
+      console.log(startDate)
+      console.log("today")
+      console.log(today)
+      if (!isSameDay(startDate, today)) {
+        prepareForReviewDatesForNewTask(startDate)
+      }
+        
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
@@ -291,6 +311,7 @@ function AddMemory() {
           >
             Add Card
           </Typography>
+
           <TextField
             fullWidth
             variant="outlined"
@@ -305,7 +326,15 @@ function AddMemory() {
             helperText={titleError ? "This field cannot be empty." : ""} // Show helper text when there's an error
             style={{ marginBottom: "20px" }}
           />
-
+        
+        <FormControl fullWidth style={{ marginBottom: "20px" }}>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            customInput={<TextField label="Memory starts on" fullWidth variant="outlined"/>}
+            dateFormat="MMMM d, yyyy"
+          />
+        </FormControl>              
         <TextField
           fullWidth
           variant="outlined"
@@ -319,10 +348,12 @@ function AddMemory() {
             }
           }}
           style={{ marginBottom: "20px" }}
-        />
+        />        
+
         <Button onClick={handleAddTag} style={{ marginBottom: "5px" }}>
           Add Tag
         </Button>
+        
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: "20px" }}>
           {tags.map((tag, index) => (
             <Chip
@@ -356,7 +387,7 @@ function AddMemory() {
               <MenuItem value="DAILY">Daily</MenuItem>
               <MenuItem value="PERIODIC">Repeat</MenuItem>
             </Select>
-          </FormControl>
+          </FormControl>          
           {showRepeatDuration && (
             <TextField
               fullWidth
@@ -370,6 +401,7 @@ function AddMemory() {
               }}              
             />
           )}
+      
           <Button
             variant="contained"
             color="primary"
