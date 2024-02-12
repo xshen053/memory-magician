@@ -8,8 +8,6 @@
  * @returns {string[]} An array of review dates in ISO string format.
  */
 export const generateAllReviewDates = (todayDate, intervals = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150]) => {
-  console.log("inside generateAllReviewDates")
-  console.log(todayDate)
   return intervals.map(interval => {
     let date = new Date(todayDate); // Create a new Date object for each interval
     date.setDate(date.getDate() + interval); // Add the interval to the new date

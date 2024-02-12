@@ -54,7 +54,7 @@ function AddMemory() {
    * 
    * @param {*} date The memory start on that date
    */
-  const prepareForReviewDatesForNewTask = (date = new Date()) => {
+  const prepareForReviewDatesForNewTask = (date) => {
     console.log("inside date")
     console.log(date)
     date.setHours(0, 0, 0, 0);
@@ -68,7 +68,7 @@ function AddMemory() {
   useEffect(() => {
     // one day only calculate once
     // TODO: will change in the future if allow customized learning interval
-    prepareForReviewDatesForNewTask();
+    prepareForReviewDatesForNewTask(startDate);
   }, []); // Runs only once on component mount
   
   const handleChange = (event) => {
@@ -201,14 +201,7 @@ function AddMemory() {
   const createCardAndAddToDataBase = async () => {
     try {
       const today = new Date(); // Today's date   
-      console.log("start date")   
-      console.log(startDate)
-      console.log("today")
-      console.log(today)
-      if (!isSameDay(startDate, today)) {
-        prepareForReviewDatesForNewTask(startDate)
-      }
-        
+      prepareForReviewDatesForNewTask(startDate)
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
@@ -233,7 +226,6 @@ function AddMemory() {
         isReviewed: false,
       }
       const updatedDataArray = addDateToCardData(userCardData)
-      console.log(updatedDataArray)
       await createUserCardsBatchAPI(updatedDataArray)
       
     } catch (error) {
