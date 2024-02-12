@@ -82,7 +82,13 @@ const SearchScreen = () => {
     }
     await updateCardInfoApi(data)
     setOpenDialog(false); // Close the dialog after saving
-    await fetchAllCards()
+    const newSearchResults = searchResults
+    newSearchResults.filter((cards) => {
+      if (cards.id === editingCard.id) {
+        cards.content = editingCard.content
+      }
+    })
+    setSearchResults(newSearchResults)
   };
 
   const handleDeleteCard = async () => {
