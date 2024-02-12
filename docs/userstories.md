@@ -4,6 +4,7 @@
 ## authentication
 - [ ] user log in using phone number
 - [ ] log in using social account
+- [ ] change token expiration time
 
 ## All the screens
 - [x] As a user, I want to create new memories. (all the screens)
@@ -27,7 +28,7 @@ different types of card have different background so it's clear.
 - [ ] for cards, I want to receive reminder like email or phone
 - [x] I suddenly have a flash idea, I want to write it down, and check later (flash of inspiration)
 - [x] I want to add a card (periodically showup, every 3 weeks..., now set half year)
-- [ ] for card I checked, instead of showing the timer, show the time I spent on it
+- [x] for card I checked, instead of showing the timer, show the time I spent on it
 - [x] filter card to display, e.g., only want to see general card
 - [x] reduce the time to send data, batch
 
@@ -59,7 +60,7 @@ different types of card have different background so it's clear.
 - [x] As a user, I want to see all tasks on the calendar, but use strikethrough for task I reviewed
 - [ ] for passed tasks, change background color to some obvious color
 - [ ] for today, the background becomes more obvious
-- [ ] add a filter for each type of cards
+- [x] add a filter for each type of cards
 - [ ] also color should be the same
 
 ## Catch up screen
