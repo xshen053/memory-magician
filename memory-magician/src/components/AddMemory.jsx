@@ -90,6 +90,8 @@ function AddMemory() {
   };
 
   /**
+   * Add dates to cards based on {@link startDate} that user chose
+   * 
    * GENERAL task:
    * - create using {@link reviewDates}
    * 
@@ -97,10 +99,10 @@ function AddMemory() {
    * - create using {@link dailyDates}
    * 
    * ONETIME task:
-   * - create using todayDate (new Date())
+   * - create using {@link startDate}
    * 
    * PERIODIC task:
-   * - create PeriodicDates first
+   * - create PeriodicDates first using {@link startDate}
    * - create using PeriodicDates
    * 
    * @param {Object} userCardData - The data for a user's review card.
@@ -122,6 +124,7 @@ function AddMemory() {
   const addDateToCardData = (userCardData) => {
     let updatedDataArray = []
     if (selection === "GENERAL") {
+      console.log(reviewDates)
       updatedDataArray = reviewDates.map((reviewDate, index) => {
         // Create a new data object for each call with the updated reviewDate
         return {
@@ -211,7 +214,7 @@ function AddMemory() {
       const userID = currentUser["sub"]
 
       const count = getTotal()
-
+      
       // create card
       const cardID = await createCardApi(
       {
@@ -230,6 +233,7 @@ function AddMemory() {
         isReviewed: false,
       }
       const updatedDataArray = addDateToCardData(userCardData)
+      console.log(updatedDataArray)
       await createUserCardsBatchAPI(updatedDataArray)
       
     } catch (error) {
