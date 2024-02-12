@@ -223,8 +223,11 @@ function TodayReview() {
         console.log(duration)
       }
       // update this userCard
+      console.log("Hey I am here")
       await markOneUserCardReviewedWithDuration(userCardID, duration)
-      if (type !== "NOREVIEW" || type !== "ONETIME") {
+      console.log("Hey I am hereeee")
+      console.log(type)
+      if (type !== "NOREVIEW" && type !== "ONETIME") {
         const newIteration = iteration + 1
         const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
         // update next userCard's lastReviewDuration field
