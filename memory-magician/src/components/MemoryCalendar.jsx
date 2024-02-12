@@ -57,10 +57,10 @@ function MemoryCalendar(props) {
             formattedEvents.push({
               title: cardUser.card.content,
               start: new Date(
-                moment(cardUser.reviewDate).utc().toDate()
+                moment(cardUser.reviewDate).toDate()
               ),
               end: new Date(
-                moment(cardUser.reviewDate).utc().toDate()
+                moment(cardUser.reviewDate).toDate()
               ),
               // color: cardUser.isReviewed ? "#F5F5F5" : "#c5b4e3",
               color: cardTypeColors[cardUser.card.type],
@@ -78,9 +78,6 @@ function MemoryCalendar(props) {
           if (a.type !== b.type) {
             return order[a.type] > order[b.type] ? 1 : -1;
           }
-
-
-
           return a.title > b.title
 
           // return a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1;
