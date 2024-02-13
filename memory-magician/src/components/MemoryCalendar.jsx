@@ -47,13 +47,39 @@ function MemoryCalendar(props) {
     });
     return initialState;
   });
+
+
   const handleFilterChange = (selectedItems) => {
     setFilter(selectedItems)
     // everytime we apply new filter to all events
-    const filteredFormattedEvents = filter(events, selectedItems)
+    const resultAfterSearch = search(searchTerm, events)
+    const resultAfterSearchAndFilter = filter(resultAfterSearch, selectedItems)
     // and update filtered one
-    setFilteredEvents(filteredFormattedEvents);
+    setFilteredEvents(resultAfterSearchAndFilter);
   };
+
+  /**
+   * update seaerchResults to display results in real-time
+   * 
+   * @param {*} value serachTerm
+   * don't need update searchResults
+   */
+  const handleSearchChange = (value) => {
+    setSearchTerm(value); // sync
+    const resultAfterFilter = filter(events, currentfilter)
+    const resultAfterSearchAndFilter = search(value, resultAfterFilter); // Assuming search now returns the results
+    setFilteredEvents(resultAfterSearchAndFilter);
+  };
+
+
+  const search = (term, inputData) => {
+    if (!term) {
+      return inputData
+    }
+    const normalizedSearchTerm = term.trim().toLowerCase();
+    return inputData.filter(card => card.title.trim().toLowerCase().includes(normalizedSearchTerm));
+  };  
+
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -132,12 +158,12 @@ function MemoryCalendar(props) {
   return (
     <div>
     <MemoryFilter onSelectionChange={handleFilterChange} />
-    {/* <input
+    <input
           type="text"
           value={searchTerm}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search for a card..."
-        />     */}
+    />
     <div style={props.style}>
       <Calendar
         localizer={localizer}
