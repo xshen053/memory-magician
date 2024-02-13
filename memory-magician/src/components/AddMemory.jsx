@@ -41,13 +41,11 @@ function AddMemory() {
   const [selection, setSelection] = useState("ONETIME"); // Initialize with a default value
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
-  const [reviewDates, setReviewDates] = useState([])
-  const [dailyDates, setDailyDates] = useState([])
   const [loading, setLoading] = useState(false);
   const [showRepeatDuration, setShowRepeatDuration] = useState(false);
   const [repeatDuration, setRepeatDuration] = useState('');
   const [titleError, setTitleError] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
   
   /**
    * If no date pass, it use today date, otherwise, reset the date based on input date
@@ -55,20 +53,17 @@ function AddMemory() {
    * @param {*} date The memory start on that date
    */
   const prepareForReviewDatesForNewTask = (date) => {
-    console.log("inside date")
-    console.log(date)
     date.setHours(0, 0, 0, 0);
     const rd = generateAllReviewDates(date);
-    setReviewDates(rd);
     const dd = generateDatesForDailyCards(date);
-    setDailyDates(dd)
     console.log("I am in prepareForReviewDatesForNewTask")
+    return { rd, dd }
   };
 
   useEffect(() => {
     // one day only calculate once
     // TODO: will change in the future if allow customized learning interval
-    prepareForReviewDatesForNewTask(startDate);
+    // prepareForReviewDatesForNewTask(startDate);
   }, []); // Runs only once on component mount
   
   const handleChange = (event) => {
@@ -121,10 +116,9 @@ function AddMemory() {
    * - reviewDate: Date of the review (format description, e.g., ISO 8601 string).
    * - iteration: Number indicating the review iteration.
    */
-  const addDateToCardData = (userCardData) => {
+  const addDateToCardData = (userCardData, reviewDates, dailyDates) => {
     let updatedDataArray = []
     if (selection === "GENERAL") {
-      console.log(reviewDates)
       updatedDataArray = reviewDates.map((reviewDate, index) => {
         // Create a new data object for each call with the updated reviewDate
         return {
@@ -173,7 +167,7 @@ function AddMemory() {
    * 
    * @returns {number}
    */
-  const getTotal = () => {
+  const getTotal = (reviewDates, dailyDates) => {
     if (selection === "GENERAL") {
       return reviewDates.length
     }
@@ -201,12 +195,12 @@ function AddMemory() {
   const createCardAndAddToDataBase = async () => {
     try {
       const today = new Date(); // Today's date   
-      prepareForReviewDatesForNewTask(startDate)
+      const { rd, dd } = prepareForReviewDatesForNewTask(startDate)
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
 
-      const count = getTotal()
+      const count = getTotal(rd, dd)
       
       // create card
       const cardID = await createCardApi(
@@ -225,7 +219,7 @@ function AddMemory() {
         lastTimeReviewDuration: DEFAULTDURATION,
         isReviewed: false,
       }
-      const updatedDataArray = addDateToCardData(userCardData)
+      const updatedDataArray = addDateToCardData(userCardData, rd, dd)
       await createUserCardsBatchAPI(updatedDataArray)
       
     } catch (error) {
@@ -245,6 +239,7 @@ function AddMemory() {
   }
 
   const handleSubmit = async (event) => {
+
     event.preventDefault(); // Prevent the default form submission behavior
     // Check if the title is empty
     if (!title.trim()) {
