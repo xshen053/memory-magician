@@ -36,16 +36,50 @@ const lines = [
 const localizer = momentLocalizer(moment);
 
 function MemoryCalendar(props) {
+  const [searchTerm, setSearchTerm] = useState(''); // only usage is update the box
   const { memoryAdded } = useMemory();
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([])
+  const [currentfilter, setFilter] = useState(() => {
+    const initialState = {};
+    lines.forEach((line) => {
+      initialState[line.id] = true; // Initialize each line as selected (true)
+    });
+    return initialState;
+  });
+
 
   const handleFilterChange = (selectedItems) => {
+    setFilter(selectedItems)
     // everytime we apply new filter to all events
-    const filteredFormattedEvents = filter(events, selectedItems)
+    const resultAfterSearch = search(searchTerm, events)
+    const resultAfterSearchAndFilter = filter(resultAfterSearch, selectedItems)
     // and update filtered one
-    setFilteredEvents(filteredFormattedEvents);
+    setFilteredEvents(resultAfterSearchAndFilter);
   };
+
+  /**
+   * update seaerchResults to display results in real-time
+   * 
+   * @param {*} value serachTerm
+   * don't need update searchResults
+   */
+  const handleSearchChange = (value) => {
+    setSearchTerm(value); // sync
+    const resultAfterFilter = filter(events, currentfilter)
+    const resultAfterSearchAndFilter = search(value, resultAfterFilter); // Assuming search now returns the results
+    setFilteredEvents(resultAfterSearchAndFilter);
+  };
+
+
+  const search = (term, inputData) => {
+    if (!term) {
+      return inputData
+    }
+    const normalizedSearchTerm = term.trim().toLowerCase();
+    return inputData.filter(card => card.title.trim().toLowerCase().includes(normalizedSearchTerm));
+  };  
+
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -84,7 +118,8 @@ function MemoryCalendar(props) {
         });
         // at the beginning, they are the same
         setEvents(formattedEvents)
-        setFilteredEvents(formattedEvents);
+        const filteredFormattedEvents = filter(formattedEvents, currentfilter)
+        setFilteredEvents(filteredFormattedEvents);
       } catch (error) {
         console.log("Error during fetchCards: ", error)
         throw error
@@ -123,6 +158,12 @@ function MemoryCalendar(props) {
   return (
     <div>
     <MemoryFilter onSelectionChange={handleFilterChange} />
+    <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          placeholder="Search for a card..."
+    />
     <div style={props.style}>
       <Calendar
         localizer={localizer}
