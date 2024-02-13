@@ -45,7 +45,8 @@ function AddMemory() {
   const [showRepeatDuration, setShowRepeatDuration] = useState(false);
   const [repeatDuration, setRepeatDuration] = useState('');
   const [titleError, setTitleError] = useState(false);
-  const [startDate, setStartDate] = useState();
+  const [repeatDayError, setRepeatDayError] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
   
   /**
    * If no date pass, it use today date, otherwise, reset the date based on input date
@@ -246,9 +247,13 @@ function AddMemory() {
       setTitleError(true); // Show validation error
       return; // Prevent further processing
     }
+    if (!repeatDuration.trim()) {
+      setRepeatDayError(true);
+      return
+    }
     // Reset validation state if the title passes validation
     setTitleError(false);
-
+    setRepeatDayError(false)
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
@@ -321,7 +326,8 @@ function AddMemory() {
         <FormControl fullWidth style={{ marginBottom: "20px" }}>
           <DatePicker
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            onChange={(date) => {setStartDate(date)
+            }}
             customInput={<TextField label="Memory starts on" fullWidth variant="outlined"/>}
             dateFormat="MMMM d, yyyy"
           />
@@ -385,7 +391,11 @@ function AddMemory() {
               variant="outlined"
               label="Repeat every ..."
               value={repeatDuration}
-              onChange={(e) => setRepeatDuration(e.target.value)}
+              onChange={(e) => {setRepeatDuration(e.target.value);
+                if (repeatDayError && repeatDuration !== '') setRepeatDayError(false)
+              }}
+              error={repeatDayError}
+              helperText={repeatDayError ? "This field cannot be empty." : ""} // Show helper text when there's an error            
               style={{ marginBottom: "20px" }}
               InputProps={{
                 endAdornment: <InputAdornment position="end">days</InputAdornment>,
