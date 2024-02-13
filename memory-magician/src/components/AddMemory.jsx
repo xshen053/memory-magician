@@ -195,7 +195,6 @@ function AddMemory() {
    */
   const createCardAndAddToDataBase = async () => {
     try {
-      const today = new Date(); // Today's date   
       const { rd, dd } = prepareForReviewDatesForNewTask(startDate)
       // get keys
       const currentUser = await fetchUserAttributes()
@@ -247,7 +246,7 @@ function AddMemory() {
       setTitleError(true); // Show validation error
       return; // Prevent further processing
     }
-    if (!repeatDuration.trim()) {
+    if (selection === "PERIODIC" && !repeatDuration.trim()) {
       setRepeatDayError(true);
       return
     }
