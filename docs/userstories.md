@@ -65,6 +65,8 @@ different types of card have different background so it's clear.
 
 ## Catch up screen
 - [ ] As a user, for all the tasks I missed, I want to catch up them
+- [ ] I catched up tasks til now, if I missed again in the future, I should still be able to catch it up
+- [ ] 
 
 ## Search Screen
 - [x] Also search a task I created
