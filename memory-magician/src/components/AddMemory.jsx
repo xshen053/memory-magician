@@ -41,12 +41,11 @@ function AddMemory() {
   const [selection, setSelection] = useState("ONETIME"); // Initialize with a default value
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
-  const [reviewDates, setReviewDates] = useState([])
-  const [dailyDates, setDailyDates] = useState([])
   const [loading, setLoading] = useState(false);
   const [showRepeatDuration, setShowRepeatDuration] = useState(false);
   const [repeatDuration, setRepeatDuration] = useState('');
   const [titleError, setTitleError] = useState(false);
+  const [repeatDayError, setRepeatDayError] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   
   /**
@@ -55,20 +54,17 @@ function AddMemory() {
    * @param {*} date The memory start on that date
    */
   const prepareForReviewDatesForNewTask = (date) => {
-    console.log("inside date")
-    console.log(date)
     date.setHours(0, 0, 0, 0);
     const rd = generateAllReviewDates(date);
-    setReviewDates(rd);
     const dd = generateDatesForDailyCards(date);
-    setDailyDates(dd)
     console.log("I am in prepareForReviewDatesForNewTask")
+    return { rd, dd }
   };
 
   useEffect(() => {
     // one day only calculate once
     // TODO: will change in the future if allow customized learning interval
-    prepareForReviewDatesForNewTask(startDate);
+    // prepareForReviewDatesForNewTask(startDate);
   }, []); // Runs only once on component mount
   
   const handleChange = (event) => {
@@ -121,10 +117,9 @@ function AddMemory() {
    * - reviewDate: Date of the review (format description, e.g., ISO 8601 string).
    * - iteration: Number indicating the review iteration.
    */
-  const addDateToCardData = (userCardData) => {
+  const addDateToCardData = (userCardData, reviewDates, dailyDates) => {
     let updatedDataArray = []
     if (selection === "GENERAL") {
-      console.log(reviewDates)
       updatedDataArray = reviewDates.map((reviewDate, index) => {
         // Create a new data object for each call with the updated reviewDate
         return {
@@ -173,7 +168,7 @@ function AddMemory() {
    * 
    * @returns {number}
    */
-  const getTotal = () => {
+  const getTotal = (reviewDates, dailyDates) => {
     if (selection === "GENERAL") {
       return reviewDates.length
     }
@@ -200,13 +195,12 @@ function AddMemory() {
    */
   const createCardAndAddToDataBase = async () => {
     try {
-      const today = new Date(); // Today's date   
-      prepareForReviewDatesForNewTask(startDate)
+      const { rd, dd } = prepareForReviewDatesForNewTask(startDate)
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
 
-      const count = getTotal()
+      const count = getTotal(rd, dd)
       
       // create card
       const cardID = await createCardApi(
@@ -225,7 +219,7 @@ function AddMemory() {
         lastTimeReviewDuration: DEFAULTDURATION,
         isReviewed: false,
       }
-      const updatedDataArray = addDateToCardData(userCardData)
+      const updatedDataArray = addDateToCardData(userCardData, rd, dd)
       await createUserCardsBatchAPI(updatedDataArray)
       
     } catch (error) {
@@ -245,15 +239,20 @@ function AddMemory() {
   }
 
   const handleSubmit = async (event) => {
+
     event.preventDefault(); // Prevent the default form submission behavior
     // Check if the title is empty
     if (!title.trim()) {
       setTitleError(true); // Show validation error
       return; // Prevent further processing
     }
+    if (selection === "PERIODIC" && !repeatDuration.trim()) {
+      setRepeatDayError(true);
+      return
+    }
     // Reset validation state if the title passes validation
     setTitleError(false);
-
+    setRepeatDayError(false)
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
@@ -326,7 +325,8 @@ function AddMemory() {
         <FormControl fullWidth style={{ marginBottom: "20px" }}>
           <DatePicker
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            onChange={(date) => {setStartDate(date)
+            }}
             customInput={<TextField label="Memory starts on" fullWidth variant="outlined"/>}
             dateFormat="MMMM d, yyyy"
           />
@@ -390,7 +390,11 @@ function AddMemory() {
               variant="outlined"
               label="Repeat every ..."
               value={repeatDuration}
-              onChange={(e) => setRepeatDuration(e.target.value)}
+              onChange={(e) => {setRepeatDuration(e.target.value);
+                if (repeatDayError && repeatDuration !== '') setRepeatDayError(false)
+              }}
+              error={repeatDayError}
+              helperText={repeatDayError ? "This field cannot be empty." : ""} // Show helper text when there's an error            
               style={{ marginBottom: "20px" }}
               InputProps={{
                 endAdornment: <InputAdornment position="end">days</InputAdornment>,
