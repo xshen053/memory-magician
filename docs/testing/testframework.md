@@ -7,10 +7,12 @@ Integration testing?
 
 # Set up Jest
 
+1. 
 npm install --save-dev jest
 
 @testing-library/react @testing-library/jest-dom
 
+2. 
 add in `package.json`
 
 "scripts": {
