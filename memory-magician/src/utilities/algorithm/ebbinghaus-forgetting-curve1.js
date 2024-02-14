@@ -16,16 +16,17 @@ export const generateAllReviewDates = (todayDate, intervals = [0, 1, 5, 10, 20, 
 }
 
 /**
- * repeat a card 20 times periodically
+ * repeat a card 20 times periodically, starting from todayDate
  * 
- * @param {*} todayDate 
+ * @param {*} todayDate e.g. '2024-02-04T00:00:00.000Z'
  * @param {*} n repeat every n days
  */
 export const generateDatesForPeriodicCards = (todayDate, n) => {
+  const date = new Date(todayDate)
   const periodicDates = []
   for (let i = 0; i < 20; i++) {
     const nextDate = new Date(todayDate)
-    nextDate.setDate(todayDate.getDate() + i * n)
+    nextDate.setDate(date.getDate() + i * n)
     periodicDates.push(nextDate.toISOString())
   }
   return periodicDates
@@ -34,13 +35,14 @@ export const generateDatesForPeriodicCards = (todayDate, n) => {
 /**
  * generate 90 dates
  * 
- * @param {*} todayDate 
+ * @param {*} todayDate '2024-02-04T00:00:00.000Z'
  */
 export const generateDatesForDailyCards = (todayDate) => {
+  const date = new Date(todayDate)
   const dailyDates = []
   for (let i = 0; i < 90; i++) {
     const nextDate = new Date(todayDate)
-    nextDate.setDate(todayDate.getDate() + i)
+    nextDate.setDate(date.getDate() + i)
     dailyDates.push(nextDate.toISOString())
   }
   return dailyDates
