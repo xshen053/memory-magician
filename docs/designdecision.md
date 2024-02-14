@@ -11,6 +11,12 @@
 
 # time zone
 
+> all function's input argument is utcDateString format
+
+- we first convert it to utc
+- we don't use setHour anymore
+- all function's input is a utcDateString
+
 
 # db schema
 
@@ -19,7 +25,7 @@
 
 # auth db integration
 
-put user in db after confirmation
+- put user in db after first time log in
 
 # db authorization rules
 
