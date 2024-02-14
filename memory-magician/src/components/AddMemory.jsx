@@ -18,7 +18,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import { addDateToCardData } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
 import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { createCardApi } from '../utilities/apis/cardAPI';
 import { generateAllReviewDates, generateDatesForDailyCards, generateDatesForPeriodicCards } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
@@ -46,31 +46,24 @@ function AddMemory() {
   const [repeatDuration, setRepeatDuration] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [repeatDayError, setRepeatDayError] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
+  const [localStartDate, setStartDate] = useState(new Date());
   
   /**
    * If no date pass, it use today date, otherwise, reset the date based on input date
    * 
-   * @param {*} date The memory start on that date
+   * @param {*} localDateObject local date object
    */
-  const prepareForReviewDatesForNewTask = (date) => {
-    date.setHours(0, 0, 0, 0);
-    const rd = generateAllReviewDates(date);
-    const dd = generateDatesForDailyCards(date);
+  const prepareForReviewDatesForNewTask = (localDateObject) => {
+    const utcDateString = localDateObject.toISOString()
+    const rd = generateAllReviewDates(utcDateString);
+    const dd = generateDatesForDailyCards(utcDateString);
     console.log("I am in prepareForReviewDatesForNewTask")
     return { rd, dd }
   };
 
-  useEffect(() => {
-    // one day only calculate once
-    // TODO: will change in the future if allow customized learning interval
-    // prepareForReviewDatesForNewTask(startDate);
-  }, []); // Runs only once on component mount
-  
   const handleChange = (event) => {
     setSelection(event.target.value);
     setShowRepeatDuration(event.target.value === 'PERIODIC');
-
   };
 
   const handleAddTag = () => {
@@ -85,83 +78,6 @@ function AddMemory() {
     setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
   };
 
-  /**
-   * Add dates to cards based on {@link startDate} that user chose
-   * 
-   * GENERAL task:
-   * - create using {@link reviewDates}
-   * 
-   * DAILY task:
-   * - create using {@link dailyDates}
-   * 
-   * ONETIME task:
-   * - create using {@link startDate}
-   * 
-   * PERIODIC task:
-   * - create PeriodicDates first using {@link startDate}
-   * - create using PeriodicDates
-   * 
-   * @param {Object} userCardData - The data for a user's review card.
-   * @param {string} userCardData.userID - The unique identifier for the user.
-   * @param {string} userCardData.cardID - The unique identifier for the card being reviewed.
-   * @param {number} userCardData.reviewDuration - The duration of the current review session in minutes. Initialized to -1 indicating not started or not applicable.
-   * @param {number} userCardData.lastTimeReviewDuration - The duration of the last review session in minutes. Initialized to -1 indicating no previous review or not applicable.
-   * @param {boolean} userCardData.isReviewed - Flag indicating whether the card has been reviewed in the current session. False indicates not reviewed.
-   * 
-   * @returns {Object[]} An array of objects, each containing:
-   * - userID: Identifier for the user.
-   * - cardID: Identifier for the card.
-   * - reviewDuration: Initial value set to {@link DEFAULTDURATION}.
-   * - lastTimeReviewDuration: Initial value set to {@link DEFAULTDURATION}.
-   * - isReviewed: Boolean indicating if the card has been reviewed, initially false.
-   * - reviewDate: Date of the review (format description, e.g., ISO 8601 string).
-   * - iteration: Number indicating the review iteration.
-   */
-  const addDateToCardData = (userCardData, reviewDates, dailyDates) => {
-    let updatedDataArray = []
-    if (selection === "GENERAL") {
-      updatedDataArray = reviewDates.map((reviewDate, index) => {
-        // Create a new data object for each call with the updated reviewDate
-        return {
-          ...userCardData, 
-          reviewDate: reviewDate,
-          iteration: index 
-        };
-      });
-    }
-    if (selection === "DAILY") {
-      updatedDataArray = dailyDates.map((reviewDate, index) => {
-        return {
-          ...userCardData, 
-          reviewDate: reviewDate,
-          iteration: index 
-        };
-      });
-    }
-    // NOREVIEW is for backward compatibility
-    if (selection === "ONETIME" || selection === "NOREVIEW") {
-      const date = startDate
-      date.setHours(0, 0, 0, 0);
-      updatedDataArray.push({
-        ...userCardData,
-        reviewDate: date.toISOString(),
-        iteration: 0
-      })
-    }        
-    if (selection === "PERIODIC") {
-      const date = startDate
-      date.setHours(0, 0, 0, 0);
-      const periodicDates = generateDatesForPeriodicCards(date, repeatDuration)
-      updatedDataArray = periodicDates.map((reviewDate, index) => {
-        return {
-          ...userCardData,
-          reviewDate: reviewDate,
-          iteration: index 
-        };
-      });      
-    }
-    return updatedDataArray
-  }
 
   /**
    * get total iteration times based on card type
@@ -195,7 +111,7 @@ function AddMemory() {
    */
   const createCardAndAddToDataBase = async () => {
     try {
-      const { rd, dd } = prepareForReviewDatesForNewTask(startDate)
+      const { rd, dd } = prepareForReviewDatesForNewTask(localStartDate)
       // get keys
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
@@ -219,7 +135,7 @@ function AddMemory() {
         lastTimeReviewDuration: DEFAULTDURATION,
         isReviewed: false,
       }
-      const updatedDataArray = addDateToCardData(userCardData, rd, dd)
+      const updatedDataArray = addDateToCardData(localStartDate, selection, userCardData, rd, dd, repeatDuration)
       await createUserCardsBatchAPI(updatedDataArray)
       
     } catch (error) {
@@ -324,7 +240,7 @@ function AddMemory() {
         
         <FormControl fullWidth style={{ marginBottom: "20px" }}>
           <DatePicker
-            selected={startDate}
+            selected={localStartDate}
             onChange={(date) => {setStartDate(date)
             }}
             customInput={<TextField label="Memory starts on" fullWidth variant="outlined"/>}
