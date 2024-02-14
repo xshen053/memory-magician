@@ -2,3 +2,17 @@ Select testing tools and frameworks suitable for your project's requirements. Fo
 For frontend/UI testing: Cypress, Selenium WebDriver, TestCafe
 For backend/API testing: Postman, Rest Assured, Supertest
 For unit testing: Jest, Mocha, JUnit
+
+Integration testing?
+
+# Set up Jest
+
+npm install --save-dev jest
+
+@testing-library/react @testing-library/jest-dom
+
+add in `package.json`
+
+"scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+}
