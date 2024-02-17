@@ -3,7 +3,7 @@ import { userCardsByUserIDAndCardID, getUserCardByCard } from '../../graphql/cus
 import { batchCreateReview, updateUserCards } from '../../graphql/mutations.js';
 import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
-import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
+import amplifyconfig from '../../amplifyconfiguration.json'
 
 Amplify.configure(amplifyconfig);
 const client = generateClient();
