@@ -23,11 +23,10 @@ jobs:
         with:
           node-version: 16
           
-      - name: "📁 Navigate to memory-magician directory"
-        run: cd memory-magician
- 
-      - name: "📦 install dependencies"
-        uses: bahmutov/npm-install@v1
+      - name: Install dependencies
+        run: |
+          cd memory-magician
+          npm install
 
       - name: "🔍 run tests"
         run: npm run test --if-present
