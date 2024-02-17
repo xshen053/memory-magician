@@ -1,5 +1,6 @@
 import { generateClient } from 'aws-amplify/api';
 import { createCard, updateCard } from '../../graphql/mutations.js'
+import { listUserCards } from '../../graphql/queries.js';
 import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js'
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
@@ -69,11 +70,23 @@ export const createCardApi = async (data) => {
  */
 export const getCardsInfoFromUserApi = async (user_id) => {
   try {
+    const startTime = performance.now(); // Start measuring time
+
     let allItems = [];
     let nextToken = null;
+    const batchSize = 3000;
+    // first get all cardID from relation table
+    // next filter all cards
+    
     do {
       const input = {
         userID: user_id,
+        filter: {
+          iteration: {
+          eq: 0
+          }
+        },
+        limit: batchSize,
         nextToken: nextToken
       }
       const r = await client.graphql({
@@ -92,6 +105,10 @@ export const getCardsInfoFromUserApi = async (user_id) => {
         cardIds.add(item.card.id); // Add each card's ID to the Set
       }
     });
+    const endTime = performance.now(); // Stop measuring time
+    const executionTime = endTime - startTime; // Calculate execution time
+
+    console.log("Time taken to run getCardsInfoFromUserApi:", executionTime / 1000, "seconds");
     return cardInfos
     
   } catch (error) {
