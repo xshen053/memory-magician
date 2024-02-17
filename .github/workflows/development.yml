@@ -24,7 +24,7 @@ jobs:
           node-version: 16
           
       - name: "📁 Navigate to memory-magician directory"
-        run: cd memory-magician/memory-magician
+        run: cd memory-magician
  
       - name: "📦 install dependencies"
         uses: bahmutov/npm-install@v1
