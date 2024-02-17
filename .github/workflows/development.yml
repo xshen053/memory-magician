@@ -23,13 +23,11 @@ jobs:
         with:
           node-version: 16
           
-      - name: Install dependencies
+      - name: 🔍 run tests
         run: |
           cd memory-magician
           npm install
-
-      - name: "🔍 run tests"
-        run: npm run test --if-present
+          npm run test --if-present
 
   lint:
     name: Code standards
@@ -44,10 +42,9 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install dependencies
+      - name: 🔍 lint code
         run: |
           cd memory-magician
           npm install
+          npm run lint --if-present
 
-      - name: "🔍 lint code"
-        run: npm run lint --if-present
