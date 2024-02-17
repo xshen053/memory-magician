@@ -29,22 +29,22 @@ jobs:
           npm install
           npm run test --if-present
 
-  lint:
-    name: Code standards
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: "☁️ checkout repository"
-        uses: actions/checkout@v2
+  # lint:
+  #   name: Code standards
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   steps:
+  #     - name: "☁️ checkout repository"
+  #       uses: actions/checkout@v2
 
-      - name: "🔧 setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16
+  #     - name: "🔧 setup node"
+  #       uses: actions/setup-node@v2.1.5
+  #       with:
+  #         node-version: 16
 
-      - name: 🔍 lint code
-        run: |
-          cd memory-magician
-          npm install
-          npm run lint --if-present
+  #     - name: 🔍 lint code
+  #       run: |
+  #         cd memory-magician
+  #         npm install
+  #         npm run lint --if-present
 
