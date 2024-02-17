@@ -52,8 +52,6 @@ has search:
 - allCardsOfUser: all cards
 
 
-
-
 delete:
 
 method 1:
@@ -62,7 +60,19 @@ method 1:
 method 2 (current used):
 - update searchResults set that card's field to deleted
 - update allCardsOfUser to remove that card too
-- benefit: save an long api call
+- benefit: save a long api call
+
+# Global states
 
 
+## today's review
 
+- today's review entry
+
+## calendar
+
+- all reviews entries
+
+## search
+
+- all cards

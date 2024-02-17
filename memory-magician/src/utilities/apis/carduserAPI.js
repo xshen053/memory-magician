@@ -196,6 +196,7 @@ export const createUserCardsBatchAPI = async (dataArray, numberOfSplits = 5) => 
  */
 export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
   try {
+    const startTime = performance.now(); // Start measuring time
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of today
     const startOfToday = today.toISOString();
@@ -205,6 +206,8 @@ export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
  
     let allItems = [];
     let nextToken = null;
+    const batchSize = 5000; // Fetch items in batches of 5000
+    let count = 0
     do {
       const input = {
         userID: user_id,
@@ -214,6 +217,7 @@ export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
             lt: startOfTomorrow // Less than the start of tomorrow
           }
         },
+        limit: batchSize, // Limit number of items per request
         nextToken: nextToken
       }
       const r = await client.graphql({
@@ -222,8 +226,16 @@ export const getAllCardsNeedReviewOfAUserForToday = async (user_id) => {
       });
       allItems = allItems.concat(r.data.userCardsByUserIDAndCardID.items);
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
+      count = count + 1
     } while (nextToken)
     allItems = allItems.filter(item => !item.card.deleted || item.card.deleted === false);
+    console.log("call ", count, "times")
+
+    const endTime = performance.now(); // Stop measuring time
+    const executionTime = endTime - startTime; // Calculate execution time
+
+    console.log("Time taken to run getAllCardsNeedReviewOfAUserForToday:", executionTime / 1000, "seconds");
+
     return allItems
   } catch (error) {
     console.error("Error during getAllUnreviewedCardsOfUserForToday:", error);

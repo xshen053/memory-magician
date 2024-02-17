@@ -18,7 +18,7 @@
 
 # resolver
 
-- [ ] custom batch resolver
+- [x] custom batch resolver
 
 # config auth of graphql
 - [ ] make sure graphql is safe and access is right
