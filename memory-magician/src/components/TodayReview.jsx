@@ -19,6 +19,8 @@ import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, u
 import { useMemory } from "../context/MemoryContext.jsx";
 import '../css/style.css';
 
+import { cardTypeColors } from '../theme/colors.jsx';
+
 const StyledChip = styled(Chip)({
   marginLeft: '8px',
   
@@ -26,15 +28,6 @@ const StyledChip = styled(Chip)({
 
 const textColors = {
   ESTIMATE: "#E2F0CB",
-};
-
-
-const cardTypeColors = {
-  HELP: "#FCE4EC",
-  GENERAL: "transparent",
-  DAILY: "#FFE0B2", 
-  ONETIME: "#B3E5FC", 
-  PERIODIC: "#C8E6C9", 
 };
 
 const lines = [
