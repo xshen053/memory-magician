@@ -14,6 +14,8 @@
 - marked a memory finished
 - use timer
 - filter tasks
+- mark a memory and tomorrow see if the time is updated
+
 
 # calendar
 - filter tasks
