@@ -19,33 +19,12 @@ import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, u
 import { useMemory } from "../context/MemoryContext.jsx";
 import '../css/style.css';
 
-import { cardTypeColors } from '../theme/colors.jsx';
+import { cardTypeColors, textColors } from '../theme/colors.jsx';
+import { memoryWithExplanation as lines}  from '../theme/text.jsx';
+import { StyledChip } from '../theme/componentsStyle.jsx';
+import { typeOrder, boxSize } from '../theme/constants.jsx';
 
-const StyledChip = styled(Chip)({
-  marginLeft: '8px',
-  
-});
 
-const textColors = {
-  ESTIMATE: "#E2F0CB",
-};
-
-const lines = [
-  { id: -1, type: "HELP", text: "Select / Deselect all memories"},
-  { id: 0, type: "DAILY", text: "Daily memory: you want to review it every day." },
-  { id: 1, type: "ONETIME", text: "One-time memory: you want to record some ideas or memory and check them later, but no need to review it, e.g. a flash of inspiration, you name it!" },
-  { id: 2, type: "PERIODIC", text: "Periodic memory: you want to review this memory periodically, e.g. once per 10 days." },
-  { id: 3, type: "GENERAL", text: "General memory: you want to review it and memorize it efficiently according to improved Ebbinghaus's Forgetting Curve: after x days. (x = [0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150])." },
-];
-
-const order = {
-  "DAILY" : 0,
-  "ONETIME" : 1,
-  "PERIODIC" : 2,
-  "GENERAL" : 3
-}
-
-const boxSize = 15; // You can set the size you want for the box and the icon here
 
 function TodayReview() {
   const { memoryAdded } = useMemory();
@@ -307,7 +286,7 @@ function TodayReview() {
 
           // If review status is the same, then sort by card type (daily first)
           if (a.card.type !== b.card.type) {
-            return order[a.card.type] > order[b.card.type] ? 1 : -1;
+            return typeOrder[a.card.type] > typeOrder[b.card.type] ? 1 : -1;
           }
 
           // If both review status and card type are the same, keep original order
