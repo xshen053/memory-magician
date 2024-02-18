@@ -120,7 +120,7 @@ const SearchScreen = () => {
     newSearchResults.filter((cards) => {
       if (cards.id === editingCard.id) {
         cards.content = editingCard.content
-        cards.tags = editingCard.tags
+        cards.tags = tags
       }
     })
     setSearchResults(newSearchResults)
