@@ -350,11 +350,12 @@ export const getAllUserCardsOfUser = async (user_id) => {
 
 
 /**
+ * not ready to use
  * 
  * @param {*} user_id 
  * @returns 
  */
-export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
+const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of today
