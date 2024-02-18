@@ -91,3 +91,40 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
   }
 `;
 
+
+
+export const listUserCardsCustomized = /* GraphQL */ `
+  query ListUserCards(
+    $filter: ModelUserCardsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserCards(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        isReviewed
+        reviewDate
+        cardID
+      }
+      nextToken
+    }
+  }
+`;
+
+export const listCardsCustomized = `
+query ListCards(
+  $filter: ModelCardFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listCards(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      content
+      type
+      deleted
+    }
+    nextToken
+    __typename
+  }
+}
+`;

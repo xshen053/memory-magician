@@ -37,6 +37,7 @@ const HomeScreen = ({ signOut, user }) => {
   return (
     <div>
         <Heading level={1}>Dashboard </Heading>
+        <Heading level={1}>{user.username} </Heading>
 
     <div style={styles.container}>
       <div style={styles.contentContainer}>

@@ -1,5 +1,5 @@
 import { generateClient } from 'aws-amplify/api';
-import { userCardsByUserIDAndCardID, getUserCardByCard } from '../../graphql/customizedQueries.js';
+import { userCardsByUserIDAndCardID, getUserCardByCard, listCardsCustomized, listUserCardsCustomized } from '../../graphql/customizedQueries.js';
 import { batchCreateReview, updateUserCards } from '../../graphql/mutations.js';
 import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
@@ -326,6 +326,8 @@ export const getAllUnreviewedCardsOfUser = async (user_id) => {
  */
 export const getAllUserCardsOfUser = async (user_id) => {
   try {
+    const startTime = performance.now(); // Start measuring time
+
     let allItems = [];
     let nextToken = null;
     do {
@@ -341,6 +343,85 @@ export const getAllUserCardsOfUser = async (user_id) => {
       nextToken = r.data.userCardsByUserIDAndCardID.nextToken;
     } while (nextToken)
     allItems = allItems.filter(item => !item.card.deleted || item.card.deleted === false);
+    const endTime = performance.now(); // Stop measuring time
+    const executionTime = endTime - startTime; // Calculate execution time
+
+    console.log("Time taken to run getAllUserCardsOfUser:", executionTime / 1000, "seconds");
+    
+
+    return allItems
+  } catch (error) {
+    console.error("Error during getAllUserCardsOfUser:", error);
+    throw error;
+  }
+}
+
+/**
+ * first list all user card of current user
+ * second, list all cards
+ * and filter them to avoid network issue
+ * 
+ * @param {*} user_id 
+ * @returns 
+ */
+export const getAllUserCardsOfUser2 = async (user_id) => {
+  try {
+    // const startTime = performance.now(); // Start measuring time
+    let allItems = [];
+    let nextToken = null;
+    do {
+      const input1 = {
+        limit: 5000,
+        filter: {
+          userID: {
+            eq: user_id
+          },
+        },
+        nextToken: nextToken
+      }
+      const r = await client.graphql({
+        query: listUserCardsCustomized,
+        variables: input1
+      });
+      allItems = allItems.concat(r.data.listUserCards.items)
+      nextToken = r.data.listUserCards.nextToken;
+    } while (nextToken)
+    let cards = []
+    do {
+      const input2 = {
+        limit: 5000,
+        filter: {
+          deleted: {
+            ne: true
+          }
+        },
+        nextToken: nextToken
+      }
+      const r = await client.graphql({
+        query: listCardsCustomized,
+        variables: input2
+      });
+      cards = cards.concat(r.data.listCards.items)
+      nextToken = r.data.listCards.nextToken;
+    } while (nextToken)
+    // const startTime = performance.now(); // Start measuring time
+    // build card
+    const c = {}
+      cards.forEach((card) => {
+      c[card.id] = {
+        content: card.content,
+        type: card.type,
+      }
+    })
+    allItems = allItems.filter(item => c.hasOwnProperty(item.cardID))
+    allItems.forEach((item) => {
+        item["card"] = c[item.cardID]
+    })
+    // const endTime = performance.now(); // Stop measuring time
+    // const executionTime = endTime - startTime; // Calculate execution time
+
+    // console.log("Time taken to run getAllUserCardsOfUser:", executionTime / 1000, "seconds");
+    
     return allItems
   } catch (error) {
     console.error("Error during getAllUserCardsOfUser:", error);

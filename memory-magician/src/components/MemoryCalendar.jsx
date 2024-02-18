@@ -5,7 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "../css/MemoryCalendar.css";
-import { getAllUserCardsOfUser } from '../utilities/apis/carduserAPI';
+import { getAllUserCardsOfUser2 } from '../utilities/apis/carduserAPI';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useMemory } from "../context/MemoryContext.jsx"
 import MemoryFilter from './MemoryFilter.jsx';
@@ -85,7 +85,7 @@ function MemoryCalendar(props) {
     const fetchCards = async () => {
       try {
         const currentUser = await fetchUserAttributes()
-        const allCardUser = await getAllUserCardsOfUser(currentUser["sub"])
+        const allCardUser = await getAllUserCardsOfUser2(currentUser["sub"])
         const formattedEvents = [];
         allCardUser.forEach((cardUser) => {
             formattedEvents.push({
