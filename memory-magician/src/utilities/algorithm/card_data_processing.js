@@ -24,10 +24,9 @@ export const getNumOfCardsEachTag = (cards) => {
       if (!tagDict.hasOwnProperty(tag)) {
         tagDict[tag] = 0
       }
-      tagDict[tag] += 1      
+      tagDict[tag] += 1
     })
   })
-
-  return tagDict
+    return tagDict
 }
 
