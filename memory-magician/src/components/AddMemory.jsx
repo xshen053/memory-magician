@@ -155,7 +155,6 @@ function AddMemory() {
   }
 
   const handleSubmit = async (event) => {
-
     event.preventDefault(); // Prevent the default form submission behavior
     // Check if the title is empty
     if (!title.trim()) {

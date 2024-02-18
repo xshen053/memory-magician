@@ -6,6 +6,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
+import Box from "@mui/material/Box";
 
 import '../css/style.css';
 import Dialog from '@mui/material/Dialog';
@@ -41,6 +43,8 @@ const SearchScreen = () => {
     });
     return initialState;
   });
+  const [tags, setTags] = useState([]); // State to hold the tags
+  const [newTag, setNewTag] = useState(""); // State to hold the new tag input
 
   const handleTypeChange = (selectedItems) => {
     setSelectedItems(selectedItems)
@@ -48,6 +52,20 @@ const SearchScreen = () => {
     const resultAfterFilterAndSearch = filt(selectedItems, resultAfterSearch)
     setSearchResults(resultAfterFilterAndSearch)
   };
+
+
+  const handleAddTag = () => {
+    if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
+      setTags(prevTags => [...prevTags, newTag]);
+      setNewTag(""); // Clear input after adding
+    }
+  };
+
+  // Function to remove a tag
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
+  };
+
 
   /**
    * filter inputData using filter
@@ -71,6 +89,7 @@ const SearchScreen = () => {
 
   const handleEditClick = (card) => {
     setEditingCard(card);
+    setTags(card.tags)
     setOpenDialog(true);
   };
 
@@ -78,7 +97,8 @@ const SearchScreen = () => {
     // Here you would call an API to update the card, then fetch and refresh your cards list
     const data = {
       id: editingCard.id,
-      content: editingCard.content
+      content: editingCard.content,
+      tags: tags
     }
     await updateCardInfoApi(data)
     setOpenDialog(false); // Close the dialog after saving
@@ -218,6 +238,38 @@ const SearchScreen = () => {
               value={editingCard ? editingCard.content : ''}
               onChange={(e) => setEditingCard({...editingCard, content: e.target.value})}
             />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="tags"
+              label="tags"
+              type="text"
+              fullWidth
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+            />
+            <Button onClick={handleAddTag} style={{ marginBottom: "5px" }}>
+              Add Tag
+            </Button>   
+
+            {/* show all the current tag of editing cards */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: "20px" }}>
+            {tags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                onDelete={() => handleRemoveTag(tag)}
+                sx={{
+                  bgcolor: '#c5b4e3', // Light blue background
+                  '& .MuiChip-deleteIcon': {
+                    color: '#ffffff', // Dark blue delete icon
+                  },
+                }}
+                color='primary'
+              />
+            ))}
+          </Box>  
+
             {/* Add more fields for tags or other properties here */}
           </DialogContent>
           <DialogActions>
