@@ -1,5 +1,13 @@
 # User stories
 
+# new user
+
+- [ ] add cards to welcome
+- [ ] Hi there!
+- [ ] Thank you for registering!
+- [ ] check a card to finish it
+- [ ] your cards can be removed in search bar
+
 
 ## authentication
 - [ ] user log in using phone number
