@@ -174,6 +174,7 @@ function AddMemory() {
     // Reset validation state if the title passes validation
     setTitleError(false);
     setRepeatDayError(false)
+    setTagError(false)
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
@@ -195,7 +196,7 @@ function AddMemory() {
           },
         }}
         style={{ position: "fixed", bottom: "20px", right: "20px" }}
-        onClick={() => setOpen(true)}
+        onClick={() => {setOpen(true);setTagError(false)}}
       >
         <AddIcon />
       </Fab>

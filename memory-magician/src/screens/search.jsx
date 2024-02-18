@@ -45,6 +45,7 @@ const SearchScreen = () => {
   });
   const [tags, setTags] = useState([]); // State to hold the tags
   const [newTag, setNewTag] = useState(""); // State to hold the new tag input
+  const [tagError, setTagError] = useState(false);
 
   const handleTypeChange = (selectedItems) => {
     setSelectedItems(selectedItems)
@@ -58,8 +59,10 @@ const SearchScreen = () => {
     if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
       setTags(prevTags => [...prevTags, newTag]);
       setNewTag(""); // Clear input after adding
+      setTagError(false)
     }
   };
+
 
   // Function to remove a tag
   const handleRemoveTag = (tagToRemove) => {
@@ -88,12 +91,23 @@ const SearchScreen = () => {
 }  
 
   const handleEditClick = (card) => {
+    setTagError(false)
     setEditingCard(card);
     setTags(card.tags)
     setOpenDialog(true);
   };
 
-  const handleUpdateCard = async () => {
+  const handleUpdateCard = async (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    // Check if the title is empty
+    if (newTag) {
+      setTagError(true);
+      return 
+    }
+    // Reset validation state if the title passes validation
+    setTagError(false)
+
+
     // Here you would call an API to update the card, then fetch and refresh your cards list
     const data = {
       id: editingCard.id,
@@ -225,7 +239,13 @@ const SearchScreen = () => {
             </ListItem>
           ))}
         </List>
-        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="form-dialog-title">
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="form-dialog-title"
+          PaperProps={{
+            style: {
+              width: '500px', // Adjust the width as per your requirement
+            },
+          }}
+        >
           <DialogTitle id="form-dialog-title">Edit Card</DialogTitle>
           <DialogContent>
             <TextField
@@ -246,7 +266,11 @@ const SearchScreen = () => {
               type="text"
               fullWidth
               value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
+              onChange={(e) => {setNewTag(e.target.value);
+                if (tagError && !newTag) setTagError(false)
+              }}
+              error={tagError} // Show error styling if titleError is true
+              helperText={tagError ? "Please click add tag button if you want to add one tag! " : ""} // Show helper text when there's an error                   
             />
             <Button onClick={handleAddTag} style={{ marginBottom: "5px" }}>
               Add Tag
@@ -286,7 +310,7 @@ const SearchScreen = () => {
             <Button onClick={() => setOpenDialog(false)} color="primary">
               Cancel
             </Button>
-            <Button onClick={handleUpdateCard} color="primary">
+            <Button onClick={(e) => handleUpdateCard(e)} color="primary">
               Save
             </Button>
           </DialogActions>
