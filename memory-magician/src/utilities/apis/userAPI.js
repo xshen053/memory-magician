@@ -2,7 +2,7 @@ import { generateClient } from 'aws-amplify/api';
 import { createUser } from '../../graphql/mutations.js';
 import { getUser } from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
-import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
+import amplifyconfig from '../../amplifyconfiguration.json'
 
 Amplify.configure(amplifyconfig);
 const client = generateClient();

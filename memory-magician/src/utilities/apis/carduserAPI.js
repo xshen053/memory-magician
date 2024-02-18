@@ -3,7 +3,7 @@ import { userCardsByUserIDAndCardID, getUserCardByCard } from '../../graphql/cus
 import { batchCreateReview, updateUserCards } from '../../graphql/mutations.js';
 import {listUserCards} from '../../graphql/queries.js'
 import { Amplify } from 'aws-amplify';
-import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
+import amplifyconfig from '../../amplifyconfiguration.json'
 
 Amplify.configure(amplifyconfig);
 const client = generateClient();
@@ -350,11 +350,12 @@ export const getAllUserCardsOfUser = async (user_id) => {
 
 
 /**
+ * not ready to use
  * 
  * @param {*} user_id 
  * @returns 
  */
-export const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
+const getAllUnreviewedCardsOfUserBeforeToday = async (user_id) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of today
