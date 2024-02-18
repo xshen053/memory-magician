@@ -62,6 +62,17 @@ method 2 (current used):
 - update allCardsOfUser to remove that card too
 - benefit: save a long api call
 
+
+## tags and newTag
+
+same as add memory
+
+when we click the card, it set tags to current tag this card has
+and when we input a new tag and add it, it set this newTag to tags
+
+and when we submit, we update tags of this card
+
+
 # Global states
 
 

@@ -46,6 +46,7 @@ function AddMemory() {
   const [repeatDuration, setRepeatDuration] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [repeatDayError, setRepeatDayError] = useState(false);
+  const [tagError, setTagError] = useState(false);
   const [localStartDate, setStartDate] = useState(new Date());
   
   /**
@@ -70,6 +71,7 @@ function AddMemory() {
     if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
       setTags(prevTags => [...prevTags, newTag]);
       setNewTag(""); // Clear input after adding
+      setTagError(false)
     }
   };
 
@@ -155,7 +157,6 @@ function AddMemory() {
   }
 
   const handleSubmit = async (event) => {
-
     event.preventDefault(); // Prevent the default form submission behavior
     // Check if the title is empty
     if (!title.trim()) {
@@ -166,9 +167,14 @@ function AddMemory() {
       setRepeatDayError(true);
       return
     }
+    if (newTag) {
+      setTagError(true);
+      return 
+    }
     // Reset validation state if the title passes validation
     setTitleError(false);
     setRepeatDayError(false)
+    setTagError(false)
     setLoading(true); // Start loading
     await createCardAndAddToDataBase()
     cleanAllStates(); // Call cleanAllStates() after finishing adding
@@ -190,7 +196,7 @@ function AddMemory() {
           },
         }}
         style={{ position: "fixed", bottom: "20px", right: "20px" }}
-        onClick={() => setOpen(true)}
+        onClick={() => {setOpen(true);setTagError(false)}}
       >
         <AddIcon />
       </Fab>
@@ -252,13 +258,18 @@ function AddMemory() {
           variant="outlined"
           label="Add Tag"
           value={newTag}
-          onChange={(e) => setNewTag(e.target.value)}
+          onChange={(e) => {setNewTag(e.target.value);
+            // after click the add button, newTag becomes empty, so set Error to false
+            if (tagError && !newTag) setTagError(false)
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault(); // Prevent form submission on Enter
               handleAddTag();
             }
           }}
+          error={tagError} // Show error styling if titleError is true
+          helperText={tagError ? "Please click add tag button if you want to add one tag! " : ""} // Show helper text when there's an error          
           style={{ marginBottom: "20px" }}
         />        
 

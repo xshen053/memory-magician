@@ -6,6 +6,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
+import Box from "@mui/material/Box";
 
 import '../css/style.css';
 import Dialog from '@mui/material/Dialog';
@@ -41,6 +43,9 @@ const SearchScreen = () => {
     });
     return initialState;
   });
+  const [tags, setTags] = useState([]); // State to hold the tags
+  const [newTag, setNewTag] = useState(""); // State to hold the new tag input
+  const [tagError, setTagError] = useState(false);
 
   const handleTypeChange = (selectedItems) => {
     setSelectedItems(selectedItems)
@@ -48,6 +53,22 @@ const SearchScreen = () => {
     const resultAfterFilterAndSearch = filt(selectedItems, resultAfterSearch)
     setSearchResults(resultAfterFilterAndSearch)
   };
+
+
+  const handleAddTag = () => {
+    if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
+      setTags(prevTags => [...prevTags, newTag]);
+      setNewTag(""); // Clear input after adding
+      setTagError(false)
+    }
+  };
+
+
+  // Function to remove a tag
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
+  };
+
 
   /**
    * filter inputData using filter
@@ -70,15 +91,28 @@ const SearchScreen = () => {
 }  
 
   const handleEditClick = (card) => {
+    setTagError(false)
     setEditingCard(card);
+    setTags(card.tags)
     setOpenDialog(true);
   };
 
-  const handleUpdateCard = async () => {
+  const handleUpdateCard = async (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    // Check if the title is empty
+    if (newTag) {
+      setTagError(true);
+      return 
+    }
+    // Reset validation state if the title passes validation
+    setTagError(false)
+
+
     // Here you would call an API to update the card, then fetch and refresh your cards list
     const data = {
       id: editingCard.id,
-      content: editingCard.content
+      content: editingCard.content,
+      tags: tags
     }
     await updateCardInfoApi(data)
     setOpenDialog(false); // Close the dialog after saving
@@ -205,7 +239,13 @@ const SearchScreen = () => {
             </ListItem>
           ))}
         </List>
-        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="form-dialog-title">
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="form-dialog-title"
+          PaperProps={{
+            style: {
+              width: '500px', // Adjust the width as per your requirement
+            },
+          }}
+        >
           <DialogTitle id="form-dialog-title">Edit Card</DialogTitle>
           <DialogContent>
             <TextField
@@ -218,6 +258,42 @@ const SearchScreen = () => {
               value={editingCard ? editingCard.content : ''}
               onChange={(e) => setEditingCard({...editingCard, content: e.target.value})}
             />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="tags"
+              label="tags"
+              type="text"
+              fullWidth
+              value={newTag}
+              onChange={(e) => {setNewTag(e.target.value);
+                if (tagError && !newTag) setTagError(false)
+              }}
+              error={tagError} // Show error styling if titleError is true
+              helperText={tagError ? "Please click add tag button if you want to add one tag! " : ""} // Show helper text when there's an error                   
+            />
+            <Button onClick={handleAddTag} style={{ marginBottom: "5px" }}>
+              Add Tag
+            </Button>   
+
+            {/* show all the current tag of editing cards */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: "20px" }}>
+            {tags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                onDelete={() => handleRemoveTag(tag)}
+                sx={{
+                  bgcolor: '#c5b4e3', // Light blue background
+                  '& .MuiChip-deleteIcon': {
+                    color: '#ffffff', // Dark blue delete icon
+                  },
+                }}
+                color='primary'
+              />
+            ))}
+          </Box>  
+
             {/* Add more fields for tags or other properties here */}
           </DialogContent>
           <DialogActions>
@@ -234,7 +310,7 @@ const SearchScreen = () => {
             <Button onClick={() => setOpenDialog(false)} color="primary">
               Cancel
             </Button>
-            <Button onClick={handleUpdateCard} color="primary">
+            <Button onClick={(e) => handleUpdateCard(e)} color="primary">
               Save
             </Button>
           </DialogActions>

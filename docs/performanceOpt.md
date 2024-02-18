@@ -29,6 +29,12 @@ different method:
 
 1. fetch data directly: fetch 5000 data, takes 3 seconds
 2. use mutli-threads, each fetch fetch one month, takes 1.5 second
+3. use cache (client-side cache, server-side cache)
+
+nginx, react context, redux
+
+I probably will choose react context, this way
+
 
 
 # opt4
