@@ -62,6 +62,11 @@ function AddMemory() {
     return { rd, dd }
   };
 
+  /**
+   * change card type
+   * 
+   * @param {*} event 
+   */
   const handleChange = (event) => {
     setSelection(event.target.value);
     setShowRepeatDuration(event.target.value === 'PERIODIC');
@@ -100,12 +105,6 @@ function AddMemory() {
     if (selection === "PERIODIC") {
       return PERIDOICCOUNT
     }
-  }
-
-  const isSameDay = (date1, date2) => {
-    return date1.getDate() === date2.getDate() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getFullYear() === date2.getFullYear();
   }
   
   /**

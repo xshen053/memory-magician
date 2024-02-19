@@ -121,7 +121,6 @@ query ListCards(
       id
       content
       type
-      deleted
     }
     nextToken
     __typename
