@@ -1,18 +1,15 @@
-* home screen
-* today review screen
-* catch up screen
-* calendar screen
-
 # metrics
 
-- review rate: actually review count / all cards need to review by far
-- different tags: task number
+
 
 ## home screen
 
-- for each tag, number of card
-- total reviewtime today (sum of each card duration)
-- A calendar heatmap could show the days on which the user is most active in reviewing cards. [optional]
+- [x] for each tag, number of card
+- [ ] review rate: every day review rate (number of cards reviewd / total cards need review) - line graph
+- [ ] reviewed card number past 7 days - line graph
+- [ ] reviewed time past 7 days - line graph
+- [ ] active period - all cards updated time have a set
+- [ ] A calendar heatmap could show the days on which the user is most active in reviewing cards. [optional]
 
 
 ## today review screen:
