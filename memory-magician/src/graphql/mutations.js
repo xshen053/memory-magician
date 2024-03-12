@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
 export const batchCreateReview = /* GraphQL */ `
@@ -23,6 +23,7 @@ export const batchCreateReview = /* GraphQL */ `
         type
         total
         deleted
+        lastReviewDate
         createdAt
         updatedAt
         __typename
@@ -110,6 +111,7 @@ export const createCard = /* GraphQL */ `
       type
       total
       deleted
+      lastReviewDate
       users {
         nextToken
         __typename
@@ -132,6 +134,7 @@ export const updateCard = /* GraphQL */ `
       type
       total
       deleted
+      lastReviewDate
       users {
         nextToken
         __typename
@@ -154,6 +157,7 @@ export const deleteCard = /* GraphQL */ `
       type
       total
       deleted
+      lastReviewDate
       users {
         nextToken
         __typename
@@ -189,6 +193,7 @@ export const createUserCards = /* GraphQL */ `
         type
         total
         deleted
+        lastReviewDate
         createdAt
         updatedAt
         __typename
@@ -229,6 +234,7 @@ export const updateUserCards = /* GraphQL */ `
         type
         total
         deleted
+        lastReviewDate
         createdAt
         updatedAt
         __typename
@@ -269,6 +275,7 @@ export const deleteUserCards = /* GraphQL */ `
         type
         total
         deleted
+        lastReviewDate
         createdAt
         updatedAt
         __typename

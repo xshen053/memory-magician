@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
 export const getUser = /* GraphQL */ `
@@ -56,6 +56,7 @@ export const getCard = /* GraphQL */ `
       type
       total
       deleted
+      lastReviewDate
       users {
         nextToken
         __typename
@@ -80,6 +81,7 @@ export const listCards = /* GraphQL */ `
         type
         total
         deleted
+        lastReviewDate
         createdAt
         updatedAt
         __typename
@@ -111,6 +113,7 @@ export const getUserCards = /* GraphQL */ `
         type
         total
         deleted
+        lastReviewDate
         createdAt
         updatedAt
         __typename

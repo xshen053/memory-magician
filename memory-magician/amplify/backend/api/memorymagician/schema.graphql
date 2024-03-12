@@ -19,6 +19,7 @@ type Card @model {
   type: CardType!         # {daily, general, onetime, periodic}
   total: Int              # how many times is needed for this card
   deleted: Boolean
+  lastReviewDate: AWSDateTime # this works if it is one-many relationship
   users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
 }
 
