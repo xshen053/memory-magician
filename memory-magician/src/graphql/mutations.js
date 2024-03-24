@@ -24,6 +24,7 @@ export const batchCreateReview = /* GraphQL */ `
         total
         deleted
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -53,6 +54,10 @@ export const createUser = /* GraphQL */ `
         nextToken
         __typename
       }
+      createdCards {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       __typename
@@ -70,6 +75,10 @@ export const updateUser = /* GraphQL */ `
       phoneNumber
       name
       cards {
+        nextToken
+        __typename
+      }
+      createdCards {
         nextToken
         __typename
       }
@@ -93,6 +102,10 @@ export const deleteUser = /* GraphQL */ `
         nextToken
         __typename
       }
+      createdCards {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       __typename
@@ -112,6 +125,16 @@ export const createCard = /* GraphQL */ `
       total
       deleted
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -135,6 +158,16 @@ export const updateCard = /* GraphQL */ `
       total
       deleted
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -158,6 +191,16 @@ export const deleteCard = /* GraphQL */ `
       total
       deleted
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -194,6 +237,7 @@ export const createUserCards = /* GraphQL */ `
         total
         deleted
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -235,6 +279,7 @@ export const updateUserCards = /* GraphQL */ `
         total
         deleted
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -276,6 +321,7 @@ export const deleteUserCards = /* GraphQL */ `
         total
         deleted
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
