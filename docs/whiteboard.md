@@ -27,6 +27,46 @@ we want to sort them with the latest create date and return only k of them
 # feature: AI-aided tasks guidance
 
 
+# 3/24/24
+
+based on [2/1/24](#2124)
+
+the current issue is that user can easily give up doing one task on that day.
+
+So for review memory, a better way is: instead of hard coded review date of that memory, leave this space to user.
+
+For each memory, user can know the last date it reviews it.
+
+And user can set a threshold, e.g. last review date > 7 days, all these card can be listed
+
+But for a new memory, it's always better to review it 1 day immediately, we leave this space to user. we give user suggestion which one's better to review today.
+
+we only record last review date of each card and let user make decision what memory to review that day
+
+This improvement can solve some existing issues 
+
+- review time of each card is more accurate, every time user review a card, it add an entry instead of hard coded these entries before user review, it's not like a debt, but something has already happened
+
+- user will not feel overwhelmed any more, since there aren't too many cards need to review every day, it's pretty flexiable. User can choose to review it or not.
+
+- save memory in database
+
+- no longer need to fetch lots of data from db, since now db stores what user actually reviewed in the past
+
+- for future date in calendar, can create these data in client side
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
