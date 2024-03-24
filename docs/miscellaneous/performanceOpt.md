@@ -1,3 +1,5 @@
+> A doc about some performance issues I met and how I solved them
+
 # Problem 1: Fetch data everytime
 
 Everytime navigate to a screen interacting with backend api,

@@ -1,3 +1,5 @@
+> A doc about all user requirments
+
 # User stories
 
 # new user
@@ -39,7 +41,11 @@ different types of card have different background so it's clear.
 - [x] for card I checked, instead of showing the timer, show the time I spent on it
 - [x] filter card to display, e.g., only want to see general card
 - [x] reduce the time to send data, batch
-
+- [ ] for review tasks, I just need to see 
+  - last review date
+  - create time
+  - 距离今天
+  
 
 ### reminder functionaility
 

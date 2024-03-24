@@ -1,3 +1,6 @@
+> This is a doc to show how to add a customized resolver in GraphQL.
+
+
 # a successful resolver
 
 ```graphql

@@ -1,3 +1,6 @@
+> A doc about data visualization, what data we want to show in each screen
+
+
 * home screen
 * today review screen
 * catch up screen
@@ -7,6 +10,7 @@
 
 - review rate: actually review count / all cards need to review by far
 - different tags: task number
+
 
 ## home screen
 
@@ -20,3 +24,8 @@
 - [ ] Use the total field from the Card model and the iteration field from the UserCards model to show progress on individual cards.
 
 
+## Search
+
+- how many time I reviewed for this card
+- when is my last review?
+- 

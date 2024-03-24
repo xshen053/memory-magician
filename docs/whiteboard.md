@@ -1,4 +1,4 @@
-
+> A doc I consider it as a whiteboard to record some random thoughts as a user
 
 
 # Jan 24

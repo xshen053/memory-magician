@@ -1,4 +1,4 @@
-
+> This is a doc to record some colors we use in the application
 ```
 const cardTypeColors = {
   GENERAL: "transparent",

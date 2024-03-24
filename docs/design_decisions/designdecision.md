@@ -1,3 +1,5 @@
+> A doc about some design decisions I made
+
 # Table of Contents
 
 - [Time zone](#linkedlist)
@@ -7,6 +9,7 @@
 - [solve routes problem, refresh](#useEffect)
 - [all the fields in usercard table](#field)
 - [using context api to share the state across different components](#context-api)
+- [CardType](#card-type)
 
 
 # time zone
@@ -126,4 +129,11 @@ const HomeScreen = () => {
 
 
 
+
+# Card Type
+
+- daily card
+- general card
+- one-time card
+- Periodic card
 

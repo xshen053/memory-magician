@@ -1,3 +1,8 @@
+> This is a doc to record states of each screen. This is for developer, not for user.
+
+
+
+
 # search screen
 
 state:

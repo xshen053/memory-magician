@@ -1,3 +1,4 @@
+> Lessions I learned and some random thoughts
 
 开发软件，最重要的一开始一定是设计
 

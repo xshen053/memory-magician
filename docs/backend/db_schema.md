@@ -1,3 +1,5 @@
+> A doc about how to using GraphQL correctly and ifficently
+
 - when fetching data, using nextToken
 
 ```graphql
