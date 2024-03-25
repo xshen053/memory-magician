@@ -45,3 +45,8 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+
+tests/temp.mjs
+tests/temp2.mjs
+src/components/test.jsx

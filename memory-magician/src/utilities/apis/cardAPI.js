@@ -47,38 +47,42 @@ export const createCardApi = async (data) => {
  * @param {*} type 
  */
 export const fetchCards = async (userId, type) => {
+  let nextToken = null;
+  const allCards = [];
+
+  const filter = {
+    and: [
+      { creatorUserID: { eq: userId } },
+      { type: { eq: type } },
+      { deleted: { ne: true } }
+    ],
+  };
+
   try {
-    const filter = {
-      and: [
-        {
-          creatorUserID: {
-            eq: userId
-          }
+    while (true) {
+      const response = await client.graphql({
+        query: listCards,
+        variables: {
+          filter: filter,
+          nextToken: nextToken, // Use the current nextToken
         },
-        {
-          type: {
-            eq: type
-          }
-        },
-        {
-          deleted: {
-            ne: true
-          }
-        }
-      ]
-    };    
-    const r = await client.graphql({
-      query: listCards,
-      variables: {
-        filter: filter
-      },
-    }); 
-    return r.data.listCards.items
+      });
+
+      const fetchedCards = response.data.listCards.items;
+      allCards.push(...fetchedCards); // Add the fetched cards to the accumulator
+
+      nextToken = response.data.listCards.nextToken; // Update nextToken with the new value
+      if (!nextToken) {
+        break; // Exit the loop if there's no nextToken, indicating no more pages to fetch
+      }
+    }
+
+    return allCards;
   } catch (error) {
-    console.error("Error during getUserCard:", error);
-    throw error;  
+    console.error("Error during fetchCards:", error);
+    throw error;
   }
-}
+};
 
 /**
  * use UserCard to do this

@@ -8,7 +8,6 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import AddMemory from "./components/AddMemory";
-import CodingProblemCount from "./components/IsCodingProblem";
 import SearchScreen from './screens/search.jsx'
 import CalendarScreen from './screens/calendar';
 import TodayReviewScreen from './screens/todayreview';
@@ -16,6 +15,7 @@ import HomeScreen from './screens/home';
 import NavBar from './components/NavigationBar';
 import { MemoryProvider } from './context/MemoryContext.jsx';
 import Footer from './components/Footer.jsx'
+import MemoriesScreen from './screens/memories.jsx';
 const initialState = { name: '', description: '' };
 const client = generateClient();
 
@@ -78,6 +78,7 @@ const App = ({ signOut, user }) => {
             <Route path="/search" element={<SearchScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
             <Route path="/todayreview" element={<TodayReviewScreen />} /> 
+            <Route path="/memories" element={<MemoriesScreen />} /> 
           </Routes>
         </div>
         <AddMemory />
