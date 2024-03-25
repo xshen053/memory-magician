@@ -1,6 +1,6 @@
 import { generateClient } from 'aws-amplify/api';
 import { createCard, updateCard } from '../../graphql/mutations.js'
-import { listUserCards } from '../../graphql/queries.js';
+import { listCards, listUserCards } from '../../graphql/queries.js';
 import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js'
 import { Amplify } from 'aws-amplify';
 // import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
@@ -40,9 +40,48 @@ export const createCardApi = async (data) => {
   }
 }
 
+/**
+ * Fetch all cards of a user, way better than {@link getCardsInfoFromUserApi}
+ * 
+ * @param {*} userId 
+ * @param {*} type 
+ */
+export const fetchCards = async (userId, type) => {
+  try {
+    const filter = {
+      and: [
+        {
+          creatorUserID: {
+            eq: userId
+          }
+        },
+        {
+          type: {
+            eq: type
+          }
+        },
+        {
+          deleted: {
+            ne: true
+          }
+        }
+      ]
+    };    
+    const r = await client.graphql({
+      query: listCards,
+      variables: {
+        filter: filter
+      },
+    }); 
+    return r.data.listCards.items
+  } catch (error) {
+    console.error("Error during getUserCard:", error);
+    throw error;  
+  }
+}
 
 /**
- * 
+ * use UserCard to do this
  * @param {*} user_id 
  * @returns array of cards
  * 
