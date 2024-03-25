@@ -9,6 +9,25 @@ import amplifyconfig from '../../amplifyconfiguration.json'
 Amplify.configure(amplifyconfig);
 const client = generateClient();
 
+
+export const mutateCard = async (cardID, reviewedTimes, latestReviewDate) => {
+  try {
+    const r = await client.graphql({
+      query: updateCard,
+      variables: {
+        input: {
+          id: cardID,
+          total: reviewedTimes,
+          lastReviewDate: latestReviewDate,
+        },
+      },
+    });    
+  } catch (error) {
+    console.error("Error during udateCard:", error);
+    throw error;  
+  }
+}
+
 /**
  * Function to create a card with specified content, tags, and type.
  *
@@ -45,18 +64,24 @@ export const createCardApi = async (data) => {
  * 
  * @param {*} userId 
  * @param {*} type 
+ * @return {Array} 
  */
-export const fetchCards = async (userId, type) => {
+export const fetchCards = async (userId, type = null) => {
   let nextToken = null;
   const allCards = [];
 
+  // Start with the mandatory filter criteria
   const filter = {
     and: [
       { creatorUserID: { eq: userId } },
-      { type: { eq: type } },
       { deleted: { ne: true } }
     ],
   };
+
+  // Add type to the filter if it is provided
+  if (type) {
+    filter.and.push({ type: { eq: type } });
+  }
 
   try {
     while (true) {
@@ -76,7 +101,6 @@ export const fetchCards = async (userId, type) => {
         break; // Exit the loop if there's no nextToken, indicating no more pages to fetch
       }
     }
-
     return allCards;
   } catch (error) {
     console.error("Error during fetchCards:", error);

@@ -1,6 +1,6 @@
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import React, { useState, useEffect } from 'react';
-import { getCardsInfoFromUserApi, updateCardInfoApi } from '../utilities/apis/cardAPI';
+import { fetchCards, updateCardInfoApi } from '../utilities/apis/cardAPI';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -150,7 +150,7 @@ const SearchScreen = () => {
 
   const fetchAllCards = async () => {
     const currentUser = await fetchUserAttributes()
-    const r = await getCardsInfoFromUserApi(currentUser["sub"])
+    const r = await fetchCards(currentUser["sub"])
     setCards(r)
     const filteredCards = filt(selectedItems, r)
     setSearchResults(filteredCards)

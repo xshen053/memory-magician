@@ -18,10 +18,11 @@ import { fetchUserAttributes } from 'aws-amplify/auth';
 import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
 import { getOneCardUserFromUserIDCardID, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
-import { fetchCards } from '../utilities/apis/cardAPI.js';
+import { updateCard } from '../graphql/mutations.js';
+import { fetchCards, mutateCard } from '../utilities/apis/cardAPI.js';
 import { useMemory } from "../context/MemoryContext.jsx";
 import '../css/style.css';
-
+import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
 import { cardTypeColors, textColors } from '../theme/colors.jsx';
 import { memoryWithExplanation as lines}  from '../theme/text.jsx';
 import { StyledChip } from '../theme/componentsStyle.jsx';
@@ -30,11 +31,16 @@ import { typeOrder, boxSize } from '../theme/constants.jsx';
 
 
 function MemoriesReview() {
+
+  const DEFAULTDURATION = -1
+
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
   const [curCardDuration, setCurCardDuration] = useState(0)
+  const [localStartDate, setStartDate] = useState(new Date());
+
   const [selectedItems, setSelectedItems] = useState(() => {
     const initialState = {};
     lines.forEach((line) => {
@@ -131,34 +137,43 @@ function MemoriesReview() {
     }
   }
 
+
+
   /**
-   * mark a usercard as reviewed and also update the next review object's lastReviewDuration
+   * create a UserCardReview in the table
+   * update following fields in card
+   * - lastReviewDate
+   * - total (review time)
    * 
    * @param {*} userCardID 
    * @param {*} userID 
    * @param {*} cardID 
    * @param {*} iteration 
    */
-  const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
+  const markMemoryAsReviewed = async (userID, cardID) => {
     try {
+      let updatedDataArray = []
       let duration = 1000
-      if (timers[userCardID]) {
-        console.log("duration")
-        duration = timers[userCardID].elapsedTime
-        console.log(duration)
+      // if (timers[userCardID]) {
+      //   console.log("duration")
+      //   duration = timers[userCardID].elapsedTime
+      //   console.log(duration)
+      // }
+      // generate userCardDate
+      const userCardData = {
+        userID: userID,
+        cardID: cardID,
+        reviewDuration: duration,             
+        lastTimeReviewDuration: duration,
+        isReviewed: true,
       }
-      // update this userCard
-      await markOneUserCardReviewedWithDuration(userCardID, duration)
-      if (type !== "NOREVIEW" && type !== "ONETIME") {
-        const newIteration = iteration + 1
-        const nextUserCardID = await getOneCardUserFromUserIDCardID(userID, cardID, newIteration)
-        // update next userCard's lastReviewDuration field
-        // if it is the last one, will not update
-        if (nextUserCardID) {
-          await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
-        }
-      }
-      setCurCardDuration(duration)
+      updatedDataArray.push({
+        ...userCardData,
+        reviewDate: localStartDate.toISOString(),
+        iteration: todayCards.total + 1 ? todayCards.total !== 11 : 1
+      })
+      await mutateCard(cardID, todayCards.total + 1 ? todayCards.total !== 11 : 1, localStartDate.toISOString())
+      await createUserCardsBatchAPI(updatedDataArray)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
@@ -167,13 +182,24 @@ function MemoriesReview() {
     }
   }
 
+  function calculateDayGap(utcDateStr1, utcDateStr2) {
+    // Parse the dates into Date objects
+    let date1 = new Date(utcDateStr1);
+    const date2 = new Date(utcDateStr2);
+
+    
+    if (utcDateStr1 === null) {
+      return -1
+    }    
   
-  const formatTime = (milliseconds = 0) => {
-    const seconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
+    // Calculate the difference in milliseconds
+    const differenceInMilliseconds = date2 - date1;
+  
+    // Convert milliseconds to days and round the result
+    const differenceInDays = Math.round(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+  
+    return differenceInDays;
+  }
 
   return (
     <div style={{ textAlign: 'left' }}> {/* This div ensures everything inside is left-aligned */}
@@ -200,13 +226,15 @@ function MemoriesReview() {
           <div style={{ display: 'flex', alignItems: 'center' }}> {/* Flex container */}
             <Checkbox
               edge="start"
-              checked={false}
-              disabled={false}
+              checked = {calculateDayGap(card.lastReviewDate, new Date().toISOString()) === 0}
+              disabled={calculateDayGap(card.lastReviewDate, new Date().toISOString()) === 0} // Disable the checkbox if it's already reviewed
               tabIndex={-1}
               disableRipple
               size="medium"
               inputProps={{ 'aria-labelledby': `checkbox-list-label-${card.id}` }}
-              onClick={() => alert("you click!")}
+              onClick={() => 
+                markMemoryAsReviewed(card.creatorUserID, card.id)
+              }
             />
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
@@ -217,19 +245,24 @@ function MemoriesReview() {
             </div>
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
-              primary={"last review date: 2/23/2024, 9:39:06 PM"}
+              primary={`Last reviewed: ${card.lastReviewDate ? card.lastReviewDate.split('T')[0] : null}`}
               style={{ fontWeight: 'bold'}}
             />
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
-              primary={"away from today: 10 days"}
+              primary={`Days since last review: ${calculateDayGap(card.lastReviewDate, new Date().toISOString())} days`}
               style={{ fontWeight: 'bold'}}
             />
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
-              primary={`reviewed times: ${card.total} `}
+              primary={`Times reviewed: ${card.total === 11 ? 0 : card.total}`}
               style={{ fontWeight: 'bold'}}
-            />            
+            />        
+            <ListItemText
+              id={`checkbox-list-label-${card.id}`}
+              primary={`Date created: ${card.createdAt.split('T')[0]}`}
+              style={{ fontWeight: 'bold'}}
+            />                   
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
               primary={

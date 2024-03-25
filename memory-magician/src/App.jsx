@@ -16,6 +16,7 @@ import NavBar from './components/NavigationBar';
 import { MemoryProvider } from './context/MemoryContext.jsx';
 import Footer from './components/Footer.jsx'
 import MemoriesScreen from './screens/memories.jsx';
+import TodayHighlightScreen from './screens/Highlight.jsx';
 const initialState = { name: '', description: '' };
 const client = generateClient();
 
@@ -79,6 +80,7 @@ const App = ({ signOut, user }) => {
             <Route path="/calendar" element={<CalendarScreen />} /> 
             <Route path="/todayreview" element={<TodayReviewScreen />} /> 
             <Route path="/memories" element={<MemoriesScreen />} /> 
+            <Route path="/highlight" element={<TodayHighlightScreen />} /> 
           </Routes>
         </div>
         <AddMemory />
