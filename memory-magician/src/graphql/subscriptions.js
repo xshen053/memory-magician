@@ -73,6 +73,7 @@ export const onCreateCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -103,6 +104,7 @@ export const onUpdateCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -133,6 +135,7 @@ export const onDeleteCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -178,6 +181,7 @@ export const onCreateUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -219,6 +223,7 @@ export const onUpdateUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -260,6 +265,7 @@ export const onDeleteUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt

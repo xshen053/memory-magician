@@ -112,7 +112,8 @@ const SearchScreen = () => {
     const data = {
       id: editingCard.id,
       content: editingCard.content,
-      tags: tags
+      tags: tags,
+      link: editingCard.link
     }
     await updateCardInfoApi(data)
     setOpenDialog(false); // Close the dialog after saving
@@ -262,8 +263,18 @@ const SearchScreen = () => {
             <TextField
               autoFocus
               margin="dense"
+              id="link"
+              label="Link"
+              type="text"
+              fullWidth
+              value={editingCard ? editingCard.link : ''}
+              onChange={(e) => setEditingCard({...editingCard, link: e.target.value})}
+            />            
+            <TextField
+              autoFocus
+              margin="dense"
               id="tags"
-              label="tags"
+              label="Tags"
               type="text"
               fullWidth
               value={newTag}

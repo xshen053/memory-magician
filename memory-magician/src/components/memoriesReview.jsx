@@ -211,9 +211,11 @@ function MemoriesReview() {
                 >
                   {/* {"leetcode link: "} */}
                   {/* Here's the link */}
-                  <Link href="https://www.uw.edu" target="_blank" rel="noopener">
-                    link
+                  <Link href={card.link} target="_blank" rel="noopener noreferrer">
+                    Link
                   </Link>
+
+                  
                 </Typography>
               }
             />                  
