@@ -129,19 +129,17 @@ function AddMemory() {
         creatorUserID: userID
       })
       
-      // general card will only create card
-      if (selection !== "GENERAL") {
-        // generate userCardDate
-        const userCardData = {
-          userID: userID,
-          cardID: cardID,
-          reviewDuration: DEFAULTDURATION,             
-          lastTimeReviewDuration: DEFAULTDURATION,
-          isReviewed: false,
-        }
-        const updatedDataArray = addDateToCardData(localStartDate, selection, userCardData, rd, dd, repeatDuration)
-        await createUserCardsBatchAPI(updatedDataArray)
+      // generate userCardDate
+      const userCardData = {
+        userID: userID,
+        cardID: cardID,
+        reviewDuration: DEFAULTDURATION,             
+        lastTimeReviewDuration: DEFAULTDURATION,
+        isReviewed: false,
       }
+      const updatedDataArray = addDateToCardData(localStartDate, selection, userCardData, rd, dd, repeatDuration)
+      await createUserCardsBatchAPI(updatedDataArray)
+      
     } catch (error) {
       console.log("error when creating new task: ", error)
       setLoading(false); // Stop loading on error

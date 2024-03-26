@@ -17,6 +17,7 @@ import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
+import { mutateCard } from '../utilities/apis/cardAPI.js';
 import '../css/style.css';
 
 import { cardTypeColors, textColors } from '../theme/colors.jsx';
@@ -33,6 +34,7 @@ function TodayReview() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
   const [curCardDuration, setCurCardDuration] = useState(0)
+  const [localStartDate, setStartDate] = useState(new Date());
   const [selectedItems, setSelectedItems] = useState(() => {
     const initialState = {};
     lines.forEach((line) => {
@@ -186,7 +188,7 @@ function TodayReview() {
    * @param {*} cardID 
    * @param {*} iteration 
    */
-  const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
+  const markMemoryAsReviewed = async (total, userCardID, userID, cardID, iteration, type) => {
     try {
       let duration = 1000
       if (timers[userCardID]) {
@@ -205,6 +207,7 @@ function TodayReview() {
           await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
         }
       }
+      await mutateCard(cardID, total !== 11 ? total + 1 : 1, localStartDate.toISOString())
       setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
@@ -355,7 +358,7 @@ function TodayReview() {
               onClick={() => {
                 // Check if timer is not running before marking as reviewed
                 if (!timers[cardUser.id] || !timers[cardUser.id].isRunning) {
-                    markMemoryAsReviewed(cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration, cardUser.card.type);
+                    markMemoryAsReviewed(cardUser.card.total, cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration, cardUser.card.type);
                 } else {
                     alert("Please stop timer before finish the task!")
                 }
