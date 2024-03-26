@@ -111,11 +111,18 @@ function MemoriesReview() {
     }
   }
 
+  /**
+   * Only calculate based on date
+   * @param {*} utcDateStr1 
+   * @param {*} utcDateStr2 
+   * @returns 
+   */
   function calculateDayGap(utcDateStr1, utcDateStr2) {
     // Parse the dates into Date objects
     let date1 = new Date(utcDateStr1);
-    const date2 = new Date(utcDateStr2);
-
+    let date2 = new Date(utcDateStr2);
+    date1.setHours(0, 0, 0, 0);
+    date2.setHours(0, 0, 0, 0);
     
     if (utcDateStr1 === null) {
       return -1
