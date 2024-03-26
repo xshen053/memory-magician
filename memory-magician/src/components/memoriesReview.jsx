@@ -5,6 +5,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
+import FilterSelect from './FilterSelect'; // Adjust the import path as needed
+import Stack from '@mui/material/Stack';
 
 import { Grid, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -29,7 +31,6 @@ import { StyledChip } from '../theme/componentsStyle.jsx';
 import { typeOrder, boxSize } from '../theme/constants.jsx';
 
 
-
 function MemoriesReview() {
 
   const DEFAULTDURATION = -1
@@ -37,9 +38,9 @@ function MemoriesReview() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [estimateTime, setEstimateTime] = useState(0);
   const [curCardDuration, setCurCardDuration] = useState(0)
   const [localStartDate, setStartDate] = useState(new Date());
+  const [sortedTodayCards, setSortedTodayCards] = useState([]);
 
   const [selectedItems, setSelectedItems] = useState(() => {
     const initialState = {};
@@ -49,50 +50,7 @@ function MemoriesReview() {
     return initialState;
   });
   
-  // Add a state to track the timer for each cardUser
-  const [timers, setTimers] = useState({}); // Object with cardUser.id as key and timer info as value
 
-
-  // Start the timer
-  const startTimer = (id) => {
-    setTimers(prevTimers => ({
-      ...prevTimers,
-      [id]: {
-        ...prevTimers[id],
-        startTime: new Date(),
-        isRunning: true,
-        elapsedTime: prevTimers[id] && prevTimers[id].elapsedTime ? prevTimers[id].elapsedTime : 0 // Initialize if not present
-      }
-    }));
-  };
-  
-  // Stop the timer and log the duration
-  const stopTimer = (id) => {
-    setTimers(prevTimers => {
-      const timer = prevTimers[id];
-      if (timer && timer.isRunning) {
-        const duration = new Date() - timer.startTime;
-        const elapsedTime = (timer.elapsedTime || 0) + duration; // Update elapsed time
-        console.log(`Timer for ${id} stopped. Duration: ${duration} ms, Total elapsed: ${elapsedTime} ms`);
-
-        // Update the timer object with the new elapsed time and stop the timer
-        return {
-          ...prevTimers,
-          [id]: { ...timer, isRunning: false, elapsedTime }
-        };
-      }
-      return prevTimers; // Return the timers unchanged if the condition is not met
-    });
-  };
-
-  const resetTimer = (userId) => {
-    setTimers(prevTimers => ({
-      ...prevTimers,
-      [userId]: { ...prevTimers[userId], elapsedTime: 0, isRunning: false }
-    }));
-  };  
-
-  
   useEffect(() => {
     fetchTodaysMemories(); // call it when first render
     if (memoryAdded) {
@@ -100,30 +58,6 @@ function MemoriesReview() {
     }
   }, [memoryAdded]);
 
-
-  useEffect(() => {
-    // Update real-time interval
-    const interval = setInterval(() => {
-      setTimers(prevTimers => {
-        const updatedTimers = { ...prevTimers };
-        Object.keys(updatedTimers).forEach(id => {
-          if (updatedTimers[id].isRunning) {
-            // Calculate the time difference since the timer was started
-            const timeSinceStart = new Date() - updatedTimers[id].startTime;
-            // Add this difference to the existing elapsedTime to accumulate properly
-            updatedTimers[id].elapsedTime = (updatedTimers[id].elapsedTime || 0) + timeSinceStart;
-            // Reset startTime to now for the next interval calculation
-            updatedTimers[id].startTime = new Date();
-          }
-        });
-        return updatedTimers;
-      });
-    }, 1000); // Update every second
-  
-    // Clear the interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
-  
 
   const fetchTodaysMemories = async () => {
     try {
@@ -154,12 +88,6 @@ function MemoriesReview() {
     try {
       let updatedDataArray = []
       let duration = 1000
-      // if (timers[userCardID]) {
-      //   console.log("duration")
-      //   duration = timers[userCardID].elapsedTime
-      //   console.log(duration)
-      // }
-      // generate userCardDate
       const userCardData = {
         userID: userID,
         cardID: cardID,
@@ -209,9 +137,10 @@ function MemoriesReview() {
         This page lists all the memories you plan to review in an efficient manner
       </Typography>    
         
-      <Divider sx={{ bgcolor: 'purple' }} />
+      <Divider sx={{ bgcolor: 'black', marginBottom: '10px' }} />
+      <FilterSelect todayCards={todayCards} setSortedTodayCards={setSortedTodayCards} />
       <List>
-    {todayCards.map((card) => (
+    {sortedTodayCards.map((card) => (
       <ListItem 
         key={card.id}
         style={{ 
@@ -255,14 +184,24 @@ function MemoriesReview() {
             />
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
-              primary={`Times reviewed: ${card.total === 11 ? 0 : card.total}`}
+              primary={`Times reviewed: ${card.total}`}
               style={{ fontWeight: 'bold'}}
             />        
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
               primary={`Date created: ${card.createdAt.split('T')[0]}`}
               style={{ fontWeight: 'bold'}}
-            />                   
+            />    
+            <Stack direction="row" spacing={1}>
+              {card.tags.sort().map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                size="small" // This makes the chip smaller
+                // You can customize the Chip further, e.g., with an icon or variant
+              />
+            ))}
+            </Stack>                        
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
               primary={
@@ -278,22 +217,6 @@ function MemoriesReview() {
                 </Typography>
               }
             />                  
-          </Grid>
-          <Grid item>
-            {/* Your secondary actions or additional info here */}
-            {/* Uncomment and modify according to your needs */}
-            <IconButton onClick={() => {}}>
-              <PlayArrowIcon />
-            </IconButton>
-            <IconButton onClick={() => {}}>
-              <StopIcon />
-            </IconButton>
-            <IconButton onClick={() => {}}>
-              <ReplayIcon />
-            </IconButton>
-            <Typography variant="body2">
-              Timer: {/* Display timer here */}
-            </Typography>
           </Grid>
         </Grid>
       </ListItem>
