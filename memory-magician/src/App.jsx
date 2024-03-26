@@ -78,7 +78,7 @@ const App = ({ signOut, user }) => {
             <Route path="/home" element={<HomeScreen />} />
             <Route path="/panel" element={<SearchScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
-            <Route path="/todayreview" element={<TodayReviewScreen />} /> 
+            <Route path="/plannedMemories" element={<TodayReviewScreen />} /> 
             <Route path="/memories" element={<MemoriesScreen />} /> 
             <Route path="/highlight" element={<TodayHighlightScreen />} /> 
           </Routes>
