@@ -207,7 +207,10 @@ function TodayReview() {
           await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
         }
       }
-      await mutateCard(cardID, total !== 11 ? total + 1 : 1, localStartDate.toISOString())
+      // new function
+      if (type === "GENERAL") {
+        await mutateCard(cardID, total !== 11 ? total + 1 : 1, localStartDate.toISOString())
+      }
       setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
