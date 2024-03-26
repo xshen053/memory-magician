@@ -84,7 +84,7 @@ function MemoriesReview() {
    * @param {*} cardID 
    * @param {*} iteration 
    */
-  const markMemoryAsReviewed = async (userID, cardID) => {
+  const markMemoryAsReviewed = async (total, userID, cardID) => {
     try {
       let updatedDataArray = []
       let duration = 1000
@@ -95,12 +95,13 @@ function MemoriesReview() {
         lastTimeReviewDuration: duration,
         isReviewed: true,
       }
+
       updatedDataArray.push({
         ...userCardData,
         reviewDate: localStartDate.toISOString(),
-        iteration: todayCards.total + 1 ? todayCards.total !== 11 : 1
+        iteration: total !== 11 ? total + 1 : 1
       })
-      await mutateCard(cardID, todayCards.total + 1 ? todayCards.total !== 11 : 1, localStartDate.toISOString())
+      await mutateCard(cardID, total !== 11 ? total + 1 : 1, localStartDate.toISOString())
       await createUserCardsBatchAPI(updatedDataArray)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
@@ -162,7 +163,7 @@ function MemoriesReview() {
               size="medium"
               inputProps={{ 'aria-labelledby': `checkbox-list-label-${card.id}` }}
               onClick={() => 
-                markMemoryAsReviewed(card.creatorUserID, card.id)
+                markMemoryAsReviewed(card.total, card.creatorUserID, card.id)
               }
             />
             <ListItemText
@@ -174,7 +175,7 @@ function MemoriesReview() {
             </div>
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
-              primary={`Last reviewed: ${card.lastReviewDate ? card.lastReviewDate.split('T')[0] : null}`}
+              primary={`Last reviewed: ${card.lastReviewDate ? new Date(card.lastReviewDate).toLocaleDateString().split('T')[0] : null}`}
               style={{ fontWeight: 'bold'}}
             />
             <ListItemText
@@ -189,7 +190,7 @@ function MemoriesReview() {
             />        
             <ListItemText
               id={`checkbox-list-label-${card.id}`}
-              primary={`Date created: ${card.createdAt.split('T')[0]}`}
+              primary={`Date created: ${new Date(card.createdAt).toLocaleDateString().split('T')[0]}`}
               style={{ fontWeight: 'bold'}}
             />    
             <Stack direction="row" spacing={1}>
