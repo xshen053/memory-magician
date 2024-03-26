@@ -502,3 +502,47 @@ export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) =>
     throw error;  
   }
 }
+
+/**
+ * checkReviewDateExists
+ * 
+ * @param {*} user_id 
+ * @param {*} card_id 
+ * @param {*} dateUTC
+ * @effects will mark existing usercard to true if exists 
+ * @returns {boolean}
+ */
+export const checkReviewDateExists = async (user_id, card_id, dateUTC) => {
+  const today = new Date(dateUTC);
+  today.setHours(0, 0, 0, 0); // Set to start of today
+  const startOfToday = today.toISOString();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
+  const startOfTomorrow = tomorrow.toISOString();
+  try {
+    const input = {
+      userID: user_id,
+      cardID: {
+        eq: card_id
+      },
+      filter: {
+        reviewDate : {
+          ge: startOfToday, // Greater than or equal to the start of today
+          lt: startOfTomorrow // Less than the start of tomorrow
+        }
+      },
+    }
+    const r = await client.graphql({
+      query: userCardsByUserIDAndCardID,
+      variables: input
+    });
+    const items = r.data.userCardsByUserIDAndCardID.items;
+    if (items.length > 0) {
+      await markOneUserCardReviewed(items[0].id)
+    }
+    return items.length > 0;
+  } catch (error) {
+    console.error("Error during checkReviewDateExists:", error);
+    throw error;      
+  }
+}

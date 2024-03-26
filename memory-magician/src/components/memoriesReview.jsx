@@ -19,7 +19,7 @@ import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
-import { getOneCardUserFromUserIDCardID, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
+import { checkReviewDateExists, getOneCardUserFromUserIDCardID, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { updateCard } from '../graphql/mutations.js';
 import { fetchCards, mutateCard } from '../utilities/apis/cardAPI.js';
 import { useMemory } from "../context/MemoryContext.jsx";
@@ -74,7 +74,10 @@ function MemoriesReview() {
 
 
   /**
-   * create a UserCardReview in the table
+   * create a UserCardReview in the table indicating you finished a review today!
+   * - But before creation, it will first check if it exists a UserCard for today using {@link checkReviewDateExists} 
+   * - If so, it won't create it!
+   * 
    * update following fields in card
    * - lastReviewDate
    * - total (review time)
@@ -102,7 +105,11 @@ function MemoriesReview() {
         iteration: total !== 11 ? total + 1 : 1
       })
       await mutateCard(cardID, total !== 11 ? total + 1 : 1, localStartDate.toISOString())
-      await createUserCardsBatchAPI(updatedDataArray)
+      if ((await checkReviewDateExists(userID, cardID, localStartDate.toISOString())) === false) {
+        await createUserCardsBatchAPI(updatedDataArray);
+      } else {
+        // mark existing one true
+      }
       setSnackbarOpen(true); // Open the Snackbar to display the success message
       await fetchTodaysMemories(); // Call fetchTodaysMemories again to refresh the list
     } catch (error) {
