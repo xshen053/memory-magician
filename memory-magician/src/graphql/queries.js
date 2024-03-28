@@ -60,6 +60,7 @@ export const getCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -95,6 +96,7 @@ export const listCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -128,6 +130,7 @@ export const getUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -223,6 +226,7 @@ export const cardsByCreatorUserIDAndContent = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt

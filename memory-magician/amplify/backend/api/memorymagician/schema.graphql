@@ -20,6 +20,7 @@ type Card @model {
   type: CardType!         # {daily, general, onetime, periodic}
   total: Int              # total reviewed times
   deleted: Boolean
+  link: String
   lastReviewDate: AWSDateTime # this works if it is one-many relationship
   creatorUserID: ID! @index(name: "byCreator", sortKeyFields: ["content"])  # new field
   creator: User @belongsTo(fields: ["creatorUserID"])                          # new field

@@ -1,6 +1,6 @@
 import { generateClient } from 'aws-amplify/api';
 import { createCard, updateCard } from '../../graphql/mutations.js'
-import { listUserCards } from '../../graphql/queries.js';
+import { listCards, listUserCards } from '../../graphql/queries.js';
 import { userCardsByUserIDAndCardID } from '../../graphql/customizedQueries.js'
 import { Amplify } from 'aws-amplify';
 // import amplifyconfig from '../../amplifyconfiguration.json' assert { type: 'json' };;
@@ -8,6 +8,25 @@ import amplifyconfig from '../../amplifyconfiguration.json'
 
 Amplify.configure(amplifyconfig);
 const client = generateClient();
+
+
+export const mutateCard = async (cardID, reviewedTimes, latestReviewDate) => {
+  try {
+    const r = await client.graphql({
+      query: updateCard,
+      variables: {
+        input: {
+          id: cardID,
+          total: reviewedTimes,
+          lastReviewDate: latestReviewDate,
+        },
+      },
+    });    
+  } catch (error) {
+    console.error("Error during udateCard:", error);
+    throw error;  
+  }
+}
 
 /**
  * Function to create a card with specified content, tags, and type.
@@ -40,9 +59,57 @@ export const createCardApi = async (data) => {
   }
 }
 
+/**
+ * Fetch all cards of a user, way better than {@link getCardsInfoFromUserApi}
+ * 
+ * @param {*} userId 
+ * @param {*} type 
+ * @return {Array} 
+ */
+export const fetchCards = async (userId, type = null) => {
+  let nextToken = null;
+  const allCards = [];
+
+  // Start with the mandatory filter criteria
+  const filter = {
+    and: [
+      { creatorUserID: { eq: userId } },
+      { deleted: { ne: true } }
+    ],
+  };
+
+  // Add type to the filter if it is provided
+  if (type) {
+    filter.and.push({ type: { eq: type } });
+  }
+
+  try {
+    while (true) {
+      const response = await client.graphql({
+        query: listCards,
+        variables: {
+          filter: filter,
+          nextToken: nextToken, // Use the current nextToken
+        },
+      });
+
+      const fetchedCards = response.data.listCards.items;
+      allCards.push(...fetchedCards); // Add the fetched cards to the accumulator
+
+      nextToken = response.data.listCards.nextToken; // Update nextToken with the new value
+      if (!nextToken) {
+        break; // Exit the loop if there's no nextToken, indicating no more pages to fetch
+      }
+    }
+    return allCards;
+  } catch (error) {
+    console.error("Error during fetchCards:", error);
+    throw error;
+  }
+};
 
 /**
- * 
+ * use UserCard to do this
  * @param {*} user_id 
  * @returns array of cards
  * 

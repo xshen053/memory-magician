@@ -125,7 +125,8 @@ function AddMemory() {
         content: title,
         tags: tags,
         type: selection, 
-        total: count
+        total: count,
+        creatorUserID: userID
       })
       
       // generate userCardDate

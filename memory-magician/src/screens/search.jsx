@@ -1,6 +1,6 @@
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import React, { useState, useEffect } from 'react';
-import { getCardsInfoFromUserApi, updateCardInfoApi } from '../utilities/apis/cardAPI';
+import { fetchCards, updateCardInfoApi } from '../utilities/apis/cardAPI';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -112,7 +112,8 @@ const SearchScreen = () => {
     const data = {
       id: editingCard.id,
       content: editingCard.content,
-      tags: tags
+      tags: tags,
+      link: editingCard.link
     }
     await updateCardInfoApi(data)
     setOpenDialog(false); // Close the dialog after saving
@@ -150,7 +151,7 @@ const SearchScreen = () => {
 
   const fetchAllCards = async () => {
     const currentUser = await fetchUserAttributes()
-    const r = await getCardsInfoFromUserApi(currentUser["sub"])
+    const r = await fetchCards(currentUser["sub"])
     setCards(r)
     const filteredCards = filt(selectedItems, r)
     setSearchResults(filteredCards)
@@ -262,8 +263,18 @@ const SearchScreen = () => {
             <TextField
               autoFocus
               margin="dense"
+              id="link"
+              label="Link"
+              type="text"
+              fullWidth
+              value={editingCard ? editingCard.link : ''}
+              onChange={(e) => setEditingCard({...editingCard, link: e.target.value})}
+            />            
+            <TextField
+              autoFocus
+              margin="dense"
               id="tags"
-              label="tags"
+              label="Tags"
               type="text"
               fullWidth
               value={newTag}

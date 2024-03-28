@@ -10,7 +10,7 @@ export function CustomSnackbar({ snackbarOpen, setSnackbarOpen, curCardDuration 
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
     >
       <Alert onClose={() => setSnackbarOpen(false)} severity="success">
-        Good Job! You spent {(curCardDuration / 60000).toFixed(2)} mins
+        Good Job!
       </Alert>
     </Snackbar>
   );

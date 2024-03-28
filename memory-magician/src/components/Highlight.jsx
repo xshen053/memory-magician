@@ -17,24 +17,22 @@ import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
 import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
 import { useMemory } from "../context/MemoryContext.jsx";
-import { mutateCard } from '../utilities/apis/cardAPI.js';
 import '../css/style.css';
 
 import { cardTypeColors, textColors } from '../theme/colors.jsx';
-import { memoryWithExplanation as lines}  from '../theme/text.jsx';
+import { memoryWithoutExplanation as lines}  from '../theme/text.jsx';
 import { StyledChip } from '../theme/componentsStyle.jsx';
 import { typeOrder, boxSize } from '../theme/constants.jsx';
 
 
 
-function TodayReview() {
+function TodayHighlight() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
   const [todayFilteredCards, setTodayFilteredCards] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [estimateTime, setEstimateTime] = useState(0);
   const [curCardDuration, setCurCardDuration] = useState(0)
-  const [localStartDate, setStartDate] = useState(new Date());
   const [selectedItems, setSelectedItems] = useState(() => {
     const initialState = {};
     lines.forEach((line) => {
@@ -146,7 +144,7 @@ function TodayReview() {
   const fetchTodaysMemories = async () => {
     try {
       const currentUser = await fetchUserAttributes()
-      const r = await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])
+      const r = (await getAllCardsNeedReviewOfAUserForToday(currentUser["sub"])).filter(card => card.isReviewed)
       let totalEstimatedTime = r.reduce((accumulator, cardUser) => {
         if (!cardUser.isReviewed) {
           return accumulator + (cardUser.lastTimeReviewDuration >= 0 ? cardUser.lastTimeReviewDuration : 0);
@@ -188,7 +186,7 @@ function TodayReview() {
    * @param {*} cardID 
    * @param {*} iteration 
    */
-  const markMemoryAsReviewed = async (total, userCardID, userID, cardID, iteration, type) => {
+  const markMemoryAsReviewed = async (userCardID, userID, cardID, iteration, type) => {
     try {
       let duration = 1000
       if (timers[userCardID]) {
@@ -206,10 +204,6 @@ function TodayReview() {
         if (nextUserCardID) {
           await updateOneUserCardLastTimeReviewDuration(nextUserCardID, duration)
         }
-      }
-      // new function
-      if (type === "GENERAL") {
-        await mutateCard(cardID, total !== 11 ? total + 1 : 1, localStartDate.toISOString())
       }
       setCurCardDuration(duration)
       setSnackbarOpen(true); // Open the Snackbar to display the success message
@@ -231,53 +225,10 @@ function TodayReview() {
   return (
     <div style={{ textAlign: 'left' }}> {/* This div ensures everything inside is left-aligned */}
       <Typography variant="h5" gutterBottom style={{ marginTop: '50px', color: 'black' }} >
-        Planned memories for today: {todayCards.length}
-      </Typography>
-      <Typography variant="subtitle1" gutterBottom>
-        Estimated time left: 
-        <span style={{ backgroundColor: textColors["ESTIMATE"]}}> {estimateTime.toFixed(2)} </span> 
-         minutes <br /> (excluding memories that are newly added and already reviewed)
-         <br /><br />
+        You have refreshed {todayCards.length} memories today!
       </Typography>
 
-      <Typography variant="subtitle1" style={{ marginTop: '0px', color: 'red' }}>
-      Uncheck the box to filter your memories, your memories will display in following order: 
-          </Typography> 
       {/* <br /> */}
-
-      <Box>
-      {lines.map((line, index) => (
-        <Box key={line.id} display="flex" alignItems="center" marginBottom="5px">
-          <Box
-            sx={{
-              width: boxSize,
-              height: boxSize, // Set the height to auto
-              aspectRatio: '1 / 1', // Maintain the aspect ratio of 1:1
-              bgcolor: cardTypeColors[line.type],
-              border: 1, // 1px solid border
-              borderColor: 'grey.500', // Customize the border color
-              cursor: 'pointer', // Change cursor to pointer to indicate the box is clickable
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: '5px'
-            }}
-            onClick={() => toggleItemSelection(line.id)} // Update selection state on click
-          >
-            {selectedItems[line.id] && (
-              <CheckIcon
-                sx={{
-                  fontSize: boxSize * 0.9, // Use 'fontSize' to scale the icon size
-                }}
-              />
-            )}
-          </Box>
-          <Typography variant="subtitle2" style={{ marginTop: '5px', color: 'black' }}>
-            {line.text}
-          </Typography>
-        </Box>
-      ))}
-    </Box>
         
       <Divider sx={{ bgcolor: 'purple' }} />
 
@@ -300,39 +251,7 @@ function TodayReview() {
         }).map((cardUser) => (
           <ListItem 
             key={cardUser.id} 
-            className={`list-item-hover ${cardUser.isReviewed ? 'strikethrough' : ''}`}
-            secondaryAction={
-              <>
-              <StyledChip 
-                // TODO: 1th / 11 times
-                label={`${cardUser.iteration + 1}/${cardUser.card.total}`} 
-                style={{ backgroundColor: '#E6F7FF', position: 'absolute', marginTop: 15, right:100 }} 
-                />
-                
-              {cardUser.isReviewed && (
-              <>
-                <Typography variant="body2" style={{ marginTop: 55 }}>
-                Time spent: {(cardUser.reviewDuration / 60000).toFixed(2)} min
-              </Typography>
-              </>
-                )}
-
-              { !cardUser.isReviewed && (
-                <>
-                  <IconButton onClick={() => timers[cardUser.id]?.isRunning ? stopTimer(cardUser.id) : startTimer(cardUser.id)}>
-                    {timers[cardUser.id]?.isRunning ? <StopIcon /> : <PlayArrowIcon />}
-                  </IconButton>
-
-                  <IconButton onClick={() => resetTimer(cardUser.id)}>
-                    <ReplayIcon /> 
-                  </IconButton>
-                  <Typography variant="body2">
-                    Timer: {timers[cardUser.id] ? formatTime(timers[cardUser.id].elapsedTime) : '0:00'}
-                  </Typography>
-                </>
-              )}
-            </>
-            }
+            // className={`list-item-container list-item-hover ${cardUser.isReviewed ? 'strikethrough' : ''}`}
             // define the color
             style={{ 
               width: '100%', // Adjust width as needed
@@ -344,13 +263,6 @@ function TodayReview() {
           > 
           
             <Checkbox
-            // sx={{
-            //   color: cardTypeColors[cardUser.card.type] === "transparent" ? 'black' : cardTypeColors[cardUser.card.type],
-            //   '&.Mui-checked': {
-            //     color: cardTypeColors[cardUser.card.type] === "transparent" ? 'black' : cardTypeColors[cardUser.card.type],
-            //   },
-            //   fontWeight: 'bold'
-            // }}
               edge="start"
               checked = {cardUser.isReviewed}
               disabled={cardUser.isReviewed} // Disable the checkbox if it's already reviewed
@@ -361,7 +273,7 @@ function TodayReview() {
               onClick={() => {
                 // Check if timer is not running before marking as reviewed
                 if (!timers[cardUser.id] || !timers[cardUser.id].isRunning) {
-                    markMemoryAsReviewed(cardUser.card.total, cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration, cardUser.card.type);
+                    markMemoryAsReviewed(cardUser.id, cardUser.userID, cardUser.cardID, cardUser.iteration, cardUser.card.type);
                 } else {
                     alert("Please stop timer before finish the task!")
                 }
@@ -370,10 +282,6 @@ function TodayReview() {
             <ListItemText 
               id={`checkbox-list-label-${cardUser.id}`} 
               primary={cardUser.card.content}
-              secondary = {
-                cardUser.lastTimeReviewDuration >= 0
-                ? `est: ${(cardUser.lastTimeReviewDuration / 60000).toFixed(2)} min`
-                : 'first time review'}
               style={{ fontWeight: 'bold' }} // Replace #yourColor with your desired color
               />
           </ListItem>
@@ -389,4 +297,4 @@ function TodayReview() {
   );
 }
 
-export default TodayReview;
+export default TodayHighlight;

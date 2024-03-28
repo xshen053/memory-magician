@@ -23,6 +23,7 @@ export const batchCreateReview = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -124,6 +125,7 @@ export const createCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -157,6 +159,7 @@ export const updateCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -190,6 +193,7 @@ export const deleteCard = /* GraphQL */ `
       type
       total
       deleted
+      link
       lastReviewDate
       creatorUserID
       creator {
@@ -236,6 +240,7 @@ export const createUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -278,6 +283,7 @@ export const updateUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
@@ -320,6 +326,7 @@ export const deleteUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
         lastReviewDate
         creatorUserID
         createdAt
