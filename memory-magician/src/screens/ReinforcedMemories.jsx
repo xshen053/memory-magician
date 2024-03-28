@@ -1,8 +1,8 @@
 import MemoriesReview from "../components/memoriesReview";
-const MemoriesScreen = () => {
+const ReinforcedMemoriesScreen = () => {
   return (
     <MemoriesReview />
     )
 }
 
-export default MemoriesScreen
+export default ReinforcedMemoriesScreen
