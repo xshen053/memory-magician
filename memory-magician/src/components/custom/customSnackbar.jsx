@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Xiaxi Shen 2024
+ */
+
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 

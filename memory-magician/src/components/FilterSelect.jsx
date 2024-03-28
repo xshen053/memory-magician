@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Xiaxi Shen 2024
+ */
+
 import React, { useState, useEffect } from 'react';
 
 const FilterSelect = ({ todayCards, setSortedTodayCards }) => {

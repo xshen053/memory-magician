@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Xiaxi Shen 2024
+ */
+
 import React, { useState } from 'react';
 import { withAuthenticator, Button } from '@aws-amplify/ui-react';
 import { NavLink } from 'react-router-dom';
