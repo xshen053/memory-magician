@@ -19,7 +19,7 @@ import { CustomSnackbar } from './custom/customSnackbar.jsx';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
-import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI';
+import { getOneCardUserFromUserIDCardID, getAllCardsNeedReviewOfAUserForToday, updateOneUserCardLastTimeReviewDuration, markOneUserCardReviewedWithDuration } from '../utilities/apis/carduserAPI.js';
 import { useMemory } from "../context/MemoryContext.jsx";
 import { mutateCard } from '../utilities/apis/cardAPI.js';
 import '../css/style.css';
@@ -31,7 +31,7 @@ import { typeOrder, boxSize } from '../theme/constants.jsx';
 
 
 
-function TodayReview() {
+function PlannedReview() {
   const { memoryAdded } = useMemory();
   const [todayCards, setTodayCards] = useState([]);
   const [todayFilteredCards, setTodayFilteredCards] = useState([]);
@@ -393,4 +393,4 @@ function TodayReview() {
   );
 }
 
-export default TodayReview;
+export default PlannedReview;
