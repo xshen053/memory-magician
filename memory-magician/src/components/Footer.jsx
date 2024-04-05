@@ -1,7 +1,4 @@
-/**
- * Copyright (c) Xiaxi Shen 2024
- */
-
+// Footer.js
 import React from 'react';
 
 function Footer() {

@@ -2,7 +2,7 @@
 /**
  * Generates all review dates based on the provided start date and intervals.
  * @param {string} todayDateString - utc format date string
- * @example 2024-02-04T22:15:52.019Z
+ * e.g. 2024-02-04T22:15:52.019Z
  * @param {number[]} [intervals=[0, 1, 5, 10, 20, 30, 45, 60, 90, 120, 150]] 
  *  - An array of intervals (in days) for review dates. If not provided, defaults to a predefined set of intervals.
  * @returns {string[]} An array of review dates in ISO string format.
@@ -123,20 +123,3 @@ export const generateDatesForDailyCards = (utcStartDateString) => {
     }
     return updatedDataArray
   }
-
-
-  /**
-   * it calculates review dates based on the input date and return 2 arrays of dates
-   * 
-   * @param {*} localDateObject local date object
-   * @return 2 arrays of Review dates for general memory and daily memory
-   *         Dates are in UTC time zone and ISO 8601 Extended Format
-   * 
-   * e.g. 2024-03-27T10:15:30.500Z
-   */
-  export const prepareForReviewDatesForNewTask = (localDateObject) => {
-    const utcDateString = localDateObject.toISOString()
-    const reviewDates = generateAllReviewDates(utcDateString);
-    const dailyDates = generateDatesForDailyCards(utcDateString);
-    return { reviewDates, dailyDates }
-  };  

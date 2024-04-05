@@ -1,7 +1,3 @@
-/**
- * Copyright (c) Xiaxi Shen 2024
- */
-
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment-timezone";
