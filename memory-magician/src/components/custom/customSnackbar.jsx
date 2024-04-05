@@ -1,7 +1,3 @@
-/**
- * Copyright (c) Xiaxi Shen 2024
- */
-
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
@@ -14,7 +10,7 @@ export function CustomSnackbar({ snackbarOpen, setSnackbarOpen, curCardDuration 
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
     >
       <Alert onClose={() => setSnackbarOpen(false)} severity="success">
-        Good Job!
+        Good Job! You spent {(curCardDuration / 60000).toFixed(2)} mins
       </Alert>
     </Snackbar>
   );

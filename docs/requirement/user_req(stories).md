@@ -21,19 +21,6 @@
 - [x] When creating memory, I want to give them tags, e.g. leetcode 3, it is {blind 75, amazon, strings}
 - [x] Add a component to show a user's information, like hello xxx
 
-## Memory screen
-- [ ] First put reviewed times 0 - 2 to the front
-- [ ] sort all memories based on last review date, review it earlier, put it 
-- [x] show last review date 
-- [x] reviewed times: (update based on UserCard)
-- [ ] every time mark reviewed, create a review time, update card's last review, total field
-- [ ] add links
-
-
-## Today's highlight screen
-- [x] show all type of work you done today
-
-
 
 
 ## Today's review screen
@@ -54,10 +41,10 @@ different types of card have different background so it's clear.
 - [x] for card I checked, instead of showing the timer, show the time I spent on it
 - [x] filter card to display, e.g., only want to see general card
 - [x] reduce the time to send data, batch
-- [ ] mark review, update total and last review date in card
-
-
-
+- [ ] for review tasks, I just need to see 
+  - last review date
+  - create time
+  - 距离今天
   
 
 ### reminder functionaility

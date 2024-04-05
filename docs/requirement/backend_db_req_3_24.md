@@ -8,12 +8,8 @@
 
 # mutation
 
-- [x] create a memory (card)
-- [ ] review a memory
-1. add a user card review and reviewed
-2. update memory total review time
-
-
+- [x] create a memory
+- [ ]
 
 
 # other

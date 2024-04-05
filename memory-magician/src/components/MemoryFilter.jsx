@@ -1,6 +1,3 @@
-/**
- * Copyright (c) Xiaxi Shen 2024
- */
 
 import MemoryCalendar from "./MemoryCalendar";
 import React, { useState, useEffect } from 'react';
