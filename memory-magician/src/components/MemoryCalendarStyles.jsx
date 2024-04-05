@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Xiaxi Shen 2024
+ */
+
 import styled from "styled-components";
 
 // Header Style

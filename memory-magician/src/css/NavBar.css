@@ -69,3 +69,85 @@
     margin-left: 8px; /* Smaller margin for mobile */
   }
 }
+
+/* drop down */
+
+/* Adjusted drop down styles for integration */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff; /* Adjusted to match navbar background */
+  min-width: 160px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Consistent with navbar shadow */
+  z-index: 1;
+  border-radius: 5px; /* Consistency with nav-links a styling */
+}
+
+.dropdown-content a {
+  color: #333; /* Consistent with navbar link color */
+  padding: 10px 15px; /* Consistent padding with navbar links */
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.dropdown-content a:hover {
+  background-color: #f0f0f0; /* Consistent with navbar link hover color */
+}
+
+/* Handling hover to display dropdown */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Optionally, style the dropdown button (if not using the default link style) */
+.dropbtn {
+  background-color: transparent; /* Ensures consistency with other nav links */
+  color: #333; /* Text color to match other navigation links */
+  padding: 10px 15px; /* Padding to match */
+  border-radius: 5px; /* Rounded corners like other buttons/links */
+  border: none; /* No border */
+  cursor: pointer; /* Cursor pointer on hover */
+  font-size: inherit; /* Inherits font size from parent */
+}
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #f0f0f0; /* Hover and focus background color */
+}
+
+/* Consider adding styles for when the dropdown is active/open */
+.dropdown-active .dropdown-content {
+  display: block;
+}
+
+.dropdown-active .dropbtn {
+  background-color: #3e8e41; /* Active button background color */
+}
+
+/* arrow icon */
+.dropbtn::after {
+  content: '▼';
+  font-size: 0.5em;
+  margin-left: 0.5em; /* Adjust as needed */
+}
+
+/* Rotate the arrow when dropdown is active */
+.dropdown-active .dropbtn::after {
+  transform: rotate(180deg);
+}
+
+
+/* Show the dropdown content on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+
+/* Rotate the arrow on hover to indicate an open dropdown */
+.dropdown:hover .dropbtn::after {
+  transform: rotate(180deg);
+}

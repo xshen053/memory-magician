@@ -1,6 +1,19 @@
 > This is a doc to record states of each screen. This is for developer, not for user.
 
 
+# Memories screen
+
+state:
+- all review cards of current User
+
+what we display:
+- card content
+- last review date
+- how many days away from today
+- review times
+
+
+
 
 
 # search screen
