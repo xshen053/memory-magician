@@ -14,7 +14,6 @@ export const batchCreateReview = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       card {
@@ -25,7 +24,6 @@ export const batchCreateReview = /* GraphQL */ `
         total
         deleted
         link
-        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -35,7 +33,6 @@ export const batchCreateReview = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
-      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -64,7 +61,6 @@ export const createUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -89,7 +85,6 @@ export const updateUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -114,7 +109,6 @@ export const deleteUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -132,7 +126,6 @@ export const createCard = /* GraphQL */ `
       total
       deleted
       link
-      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -142,7 +135,6 @@ export const createCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       users {
@@ -168,7 +160,6 @@ export const updateCard = /* GraphQL */ `
       total
       deleted
       link
-      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -178,7 +169,6 @@ export const updateCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       users {
@@ -204,7 +194,6 @@ export const deleteCard = /* GraphQL */ `
       total
       deleted
       link
-      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -214,7 +203,6 @@ export const deleteCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       users {
@@ -243,7 +231,6 @@ export const createUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       card {
@@ -254,7 +241,6 @@ export const createUserCards = /* GraphQL */ `
         total
         deleted
         link
-        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -264,7 +250,6 @@ export const createUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
-      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -289,7 +274,6 @@ export const updateUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       card {
@@ -300,7 +284,6 @@ export const updateUserCards = /* GraphQL */ `
         total
         deleted
         link
-        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -310,7 +293,6 @@ export const updateUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
-      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -335,7 +317,6 @@ export const deleteUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
-        owner
         __typename
       }
       card {
@@ -346,7 +327,6 @@ export const deleteUserCards = /* GraphQL */ `
         total
         deleted
         link
-        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -356,7 +336,6 @@ export const deleteUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
-      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
