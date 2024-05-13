@@ -77,7 +77,6 @@ const App = ({ signOut, user }) => {
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<HomeScreen />} />
             <Route path="/panel" element={<SearchScreen />} />
-            <Route path="/panel" element={<SearchScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
             <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} /> 
             <Route path="/ReinforcedMemories" element={<ReinforcedMemoriesScreen />} /> 
