@@ -12,8 +12,13 @@ export const getUser = /* GraphQL */ `
         nextToken
         __typename
       }
+      createdCards {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -40,6 +45,7 @@ export const listUsers = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -56,7 +62,20 @@ export const getCard = /* GraphQL */ `
       type
       total
       deleted
+      link
+      owner
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -81,7 +100,10 @@ export const listCards = /* GraphQL */ `
         type
         total
         deleted
+        link
+        owner
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -104,6 +126,7 @@ export const getUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -113,7 +136,10 @@ export const getUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
+        owner
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -121,6 +147,7 @@ export const getUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -143,6 +170,7 @@ export const listUserCards = /* GraphQL */ `
         iteration
         isReviewed
         reviewDuration
+        owner
         lastTimeReviewDuration
         reviewDate
         createdAt
@@ -176,6 +204,44 @@ export const usersByEmail = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const cardsByCreatorUserIDAndContent = /* GraphQL */ `
+  query CardsByCreatorUserIDAndContent(
+    $creatorUserID: ID!
+    $content: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelCardFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    cardsByCreatorUserIDAndContent(
+      creatorUserID: $creatorUserID
+      content: $content
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        content
+        tags
+        type
+        total
+        deleted
+        link
+        owner
+        lastReviewDate
+        creatorUserID
+        createdAt
+        updatedAt
         __typename
       }
       nextToken
@@ -207,6 +273,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
         iteration
         isReviewed
         reviewDuration
+        owner
         lastTimeReviewDuration
         reviewDate
         createdAt
@@ -242,6 +309,7 @@ export const userCardsByCardIDAndUserID = /* GraphQL */ `
         iteration
         isReviewed
         reviewDuration
+        owner
         lastTimeReviewDuration
         reviewDate
         createdAt

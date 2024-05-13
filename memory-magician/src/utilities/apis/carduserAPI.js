@@ -87,7 +87,7 @@ export const updateOneUserCardLastTimeReviewDuration = async (id, duration) => {
  * @param {} dataArray - The Array of data
  *
  * @example usage:
- * const data = [{
+ * const cardData = [{
  *   userID: "069eff2b-8019-4291-aa12-a91709a0189e", // Replace with actual User ID
  *   cardID: "ee6e33b9-d593-4278-a46f-24d6c6a4f4a8", // Replace with actual Card ID
  *   reviewDuration: -1, // Duration in minutes for the review
@@ -500,5 +500,49 @@ export const getOneCardUserFromUserIDCardID = async (user_id, card_id, index) =>
   } catch (error) {
     console.error("Error during getOneCardUserFromUserIDCardID:", error);
     throw error;  
+  }
+}
+
+/**
+ * checkReviewDateExists
+ * 
+ * @param {*} user_id 
+ * @param {*} card_id 
+ * @param {*} dateUTC
+ * @effects will mark existing usercard to true if exists 
+ * @returns {boolean}
+ */
+export const checkReviewDateExists = async (user_id, card_id, dateUTC) => {
+  const today = new Date(dateUTC);
+  today.setHours(0, 0, 0, 0); // Set to start of today
+  const startOfToday = today.toISOString();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1); // Set to start of tomorrow
+  const startOfTomorrow = tomorrow.toISOString();
+  try {
+    const input = {
+      userID: user_id,
+      cardID: {
+        eq: card_id
+      },
+      filter: {
+        reviewDate : {
+          ge: startOfToday, // Greater than or equal to the start of today
+          lt: startOfTomorrow // Less than the start of tomorrow
+        }
+      },
+    }
+    const r = await client.graphql({
+      query: userCardsByUserIDAndCardID,
+      variables: input
+    });
+    const items = r.data.userCardsByUserIDAndCardID.items;
+    if (items.length > 0) {
+      await markOneUserCardReviewed(items[0].id)
+    }
+    return items.length > 0;
+  } catch (error) {
+    console.error("Error during checkReviewDateExists:", error);
+    throw error;      
   }
 }

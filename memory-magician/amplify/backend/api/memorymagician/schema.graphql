@@ -1,38 +1,45 @@
 # This "input" configures a global authorization rule to enable public access to
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+# input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
 
-type User @model {
+type User @model @auth(rules: [{ allow: owner }]) {
   cognitoID: ID! @primaryKey
   email: String! @index
   phoneNumber: String
   name: String
   cards: [UserCards] @hasMany(indexName: "byUser", fields: ["cognitoID"])
+  createdCards: [Card] @hasMany(indexName: "byCreator", fields: ["cognitoID"]) # new field
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
 
-type Card @model {
+
+type Card @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   content: String!
   tags: [String]
   type: CardType!         # {daily, general, onetime, periodic}
-  total: Int              # how many times is needed for this card
+  total: Int              # total reviewed times
   deleted: Boolean
+  link: String
+  owner: String
   lastReviewDate: AWSDateTime # this works if it is one-many relationship
+  creatorUserID: ID! @index(name: "byCreator", sortKeyFields: ["content"])  # new field
+  creator: User @belongsTo(fields: ["creatorUserID"])                          # new field
   users: [UserCards] @hasMany(indexName: "byCard", fields: ["id"])
 }
 
-type UserCards @model {
+type UserCards @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   userID: ID! @index(name: "byUser", sortKeyFields: ["cardID"])
   cardID: ID! @index(name: "byCard", sortKeyFields: ["userID"])
   user: User @belongsTo(fields: ["userID"])
   card: Card @belongsTo(fields: ["cardID"])
   iteration: Int!                   # the ith time to review
-  isReviewed: Boolean! 
-  reviewDuration: Int
-  lastTimeReviewDuration: Int       # last time review duration, ONETIME Card ignores this feature
+  isReviewed: Boolean!              # Old field
+  reviewDuration: Int               
+  owner: String
+  lastTimeReviewDuration: Int       # Old field
   reviewDate: AWSDateTime
 }
 

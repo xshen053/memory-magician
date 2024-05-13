@@ -14,6 +14,7 @@ export const batchCreateReview = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -23,7 +24,10 @@ export const batchCreateReview = /* GraphQL */ `
         type
         total
         deleted
+        link
+        owner
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -31,6 +35,7 @@ export const batchCreateReview = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -53,8 +58,13 @@ export const createUser = /* GraphQL */ `
         nextToken
         __typename
       }
+      createdCards {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -73,8 +83,13 @@ export const updateUser = /* GraphQL */ `
         nextToken
         __typename
       }
+      createdCards {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -93,8 +108,13 @@ export const deleteUser = /* GraphQL */ `
         nextToken
         __typename
       }
+      createdCards {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -111,7 +131,20 @@ export const createCard = /* GraphQL */ `
       type
       total
       deleted
+      link
+      owner
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -134,7 +167,20 @@ export const updateCard = /* GraphQL */ `
       type
       total
       deleted
+      link
+      owner
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -157,7 +203,20 @@ export const deleteCard = /* GraphQL */ `
       type
       total
       deleted
+      link
+      owner
       lastReviewDate
+      creatorUserID
+      creator {
+        cognitoID
+        email
+        phoneNumber
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
       users {
         nextToken
         __typename
@@ -184,6 +243,7 @@ export const createUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -193,7 +253,10 @@ export const createUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
+        owner
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -201,6 +264,7 @@ export const createUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -225,6 +289,7 @@ export const updateUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -234,7 +299,10 @@ export const updateUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
+        owner
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -242,6 +310,7 @@ export const updateUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -266,6 +335,7 @@ export const deleteUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -275,7 +345,10 @@ export const deleteUserCards = /* GraphQL */ `
         type
         total
         deleted
+        link
+        owner
         lastReviewDate
+        creatorUserID
         createdAt
         updatedAt
         __typename
@@ -283,6 +356,7 @@ export const deleteUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt

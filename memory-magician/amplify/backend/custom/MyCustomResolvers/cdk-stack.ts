@@ -14,10 +14,15 @@ const requestVTL = `
 $util.qr($ctx.stash.put("defaultValues", $util.defaultIfNull($ctx.stash.defaultValues, {})))
 #set( $createdAt = $util.time.nowISO8601() )
 #set($UserCardsArray = [])
+#set($userId = $ctx.identity.sub)  ## This assumes Cognito User Pools; adjust if using a different auth provider
 #foreach($item in \${ctx.args.reviews})
   $util.qr($item.put("id", $util.defaultIfNullOrBlank($item.id, $util.autoId())))
   $util.qr($item.put("createdAt", $util.defaultIfNull($item.createdAt, $createdAt)))
   $util.qr($item.put("updatedAt", $util.defaultIfNull($item.updatedAt, $createdAt)))
+
+  ## Set 'owner' to the authenticated user's ID if it's not already set in the item
+  $util.qr($item.put("owner", $util.defaultIfNull($item.owner, $userId)))
+
   $util.qr($item.put("__typename", "UserCards"))
   $util.qr($UserCardsArray.add($util.dynamodb.toMapValues($item)))
 #end

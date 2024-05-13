@@ -1,33 +1,37 @@
-import React, { useState, useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import { InputAdornment } from '@mui/material';
-import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Chip from '@mui/material/Chip';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { addDateToCardData } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
-import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
-import { createCardApi } from '../utilities/apis/cardAPI';
-import { generateAllReviewDates, generateDatesForDailyCards, generateDatesForPeriodicCards } from '../utilities/algorithm/ebbinghaus-forgetting-curve1';
-import { fetchUserAttributes } from 'aws-amplify/auth';
-import { useMemory } from '../context/MemoryContext.jsx';
+/**
+ * Copyright (c) Xiaxi Shen 2024
+ */
 
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Typography,
+  Modal,
+  Box,
+  Fab,
+  Snackbar,
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  Backdrop,
+  CircularProgress,
+  InputAdornment
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useMemory } from "../context/MemoryContext";
+import { createCardApi } from "../utilities/apis/cardAPI";
+import { createUserCardsBatchAPI } from '../utilities/apis/carduserAPI';
+import { prepareForReviewDatesForNewTask, addDateToCardData } from "../utilities/algorithm/ebbinghaus-forgetting-curve1";
+import { fetchUserAttributes } from "aws-amplify/auth";
 
 function AddMemory() {
-  // iteration of card starts from 0
+  // invariant: iteration field of UserCard starts from 0
 
   const PERIDOICCOUNT = 50
   const ONETIMECOUNT = 1
@@ -48,30 +52,31 @@ function AddMemory() {
   const [repeatDayError, setRepeatDayError] = useState(false);
   const [tagError, setTagError] = useState(false);
   const [localStartDate, setStartDate] = useState(new Date());
-  
-  /**
-   * If no date pass, it use today date, otherwise, reset the date based on input date
-   * 
-   * @param {*} localDateObject local date object
-   */
-  const prepareForReviewDatesForNewTask = (localDateObject) => {
-    const utcDateString = localDateObject.toISOString()
-    const rd = generateAllReviewDates(utcDateString);
-    const dd = generateDatesForDailyCards(utcDateString);
-    console.log("I am in prepareForReviewDatesForNewTask")
-    return { rd, dd }
-  };
 
   /**
-   * change card type
+   * Handles the change event when the user selects a different card type.
+   * Updates the selection state and controls the visibility of the repeat duration input.
    * 
-   * @param {*} event 
+   * @param {object} event The event object containing information about the change event.
+   *                      Should include a 'value' property representing the selected card type.
    */
-  const handleChange = (event) => {
+  const handleCardTypeChange = (event) => {
+    // Update the selection state based on the user's choice
     setSelection(event.target.value);
-    setShowRepeatDuration(event.target.value === 'PERIODIC');
+    
+    // Determine whether to show the repeat duration input based on the selected card type
+    const isPeriodic = event.target.value === 'PERIODIC';
+    setShowRepeatDuration(isPeriodic);
   };
 
+  /**
+   * precondition:
+   * new tag is updated in {@link newTag}
+   * 
+   * Get called when user clicks add tag 
+   * 
+   * @effects {@link newTag} is set to empty since the tag user wants to add is updated in {@link tag}
+   */
   const handleAddTag = () => {
     if (newTag && !tags.includes(newTag)) { // Prevent adding empty or duplicate tags
       setTags(prevTags => [...prevTags, newTag]);
@@ -80,18 +85,22 @@ function AddMemory() {
     }
   };
 
-  // Function to remove a tag
+  /**
+   * Remove input tag from {@link tags}
+   * 
+   * @param {*} tagToRemove 
+   * @effect {@link tags} gets updated
+   */
   const handleRemoveTag = (tagToRemove) => {
     setTags(prevTags => prevTags.filter(tag => tag !== tagToRemove));
   };
 
-
   /**
    * get total iteration times based on card type
    * 
-   * @returns {number}
+   * @returns {number} number of iteartion needed
    */
-  const getTotal = (reviewDates, dailyDates) => {
+  const getTotalReviewTimes = (reviewDates, dailyDates) => {
     if (selection === "GENERAL") {
       return reviewDates.length
     }
@@ -108,37 +117,38 @@ function AddMemory() {
   }
   
   /**
-   * will add date to cards and store them in the db
+   * Precondition:
+   * This function requires the following states to be initialized and populated with valid data:
+   * - {@link title}: The `title` state must hold the content or description of the card to be created.
+   * - {@link tags}: The `tags` state should contain an array of tags associated with the card.
+   * - {@link selection}: The `selection` state needs to specify the type of card (e.g., DAILY, GENERAL).
+   * - {@link count}: The `count` state should represent the total number of review dates or interactions expected for the card.
+   * - {@link localStartDate}: The `localStartDate` records today's date (new Date())
+   * 
+   * Functionality:
+   * Create a card and associated review dates entries in the database.
+   * Utilizes user input from various states to configure and initiate the creation of a new card,
+   * followed by generating and adding review dates based on predefined logic.
+   * 
+   * Gernerate review dates entries by following steps:
+   * 1. Prepare review dates based on the memory's start date using {@link prepareForReviewDatesForNewTask}
+   * 2. Assemble review entries with user and card data using {@link addDateToCardData}
+   * 3. Batch add these entries to the database using {@link createUserCardsBatchAPI}
+   * @effects Upon successful completion, a new card and several review date entries are added to the database.
+   *          In case of failure, it logs and rethrows the error for upstream handling.
    */
   const createCardAndAddToDataBase = async () => {
     try {
-      const { rd, dd } = prepareForReviewDatesForNewTask(localStartDate)
-      // get keys
+      const { reviewDates, dailyDates } = prepareForReviewDatesForNewTask(localStartDate)
       const currentUser = await fetchUserAttributes()
       const userID = currentUser["sub"]
-
-      const count = getTotal(rd, dd)
-      
-      // create card
-      const cardID = await createCardApi(
-      {
-        content: title,
-        tags: tags,
-        type: selection, 
-        total: count
-      })
-      
-      // generate userCardDate
-      const userCardData = {
-        userID: userID,
-        cardID: cardID,
-        reviewDuration: DEFAULTDURATION,             
-        lastTimeReviewDuration: DEFAULTDURATION,
-        isReviewed: false,
-      }
-      const updatedDataArray = addDateToCardData(localStartDate, selection, userCardData, rd, dd, repeatDuration)
-      await createUserCardsBatchAPI(updatedDataArray)
-      
+      const count = getTotalReviewTimes(reviewDates, dailyDates)
+      const cardID = await createCardApi({ content: title, tags: tags, type: selection, total: count, creatorUserID: userID });
+      // assembe UserCard entry
+      const utcStartDateString = localStartDate.toISOString();
+      const unassembledUserCard = { userID: userID, cardID: cardID, reviewDuration: DEFAULTDURATION, lastTimeReviewDuration: DEFAULTDURATION, isReviewed: false };
+      const assembledUserCard = addDateToCardData(utcStartDateString, selection, unassembledUserCard, reviewDates, dailyDates, repeatDuration)
+      await createUserCardsBatchAPI(assembledUserCard)
     } catch (error) {
       console.log("error when creating new task: ", error)
       setLoading(false); // Stop loading on error
@@ -147,20 +157,56 @@ function AddMemory() {
     }
   }
 
+  /**
+   * When user finishs adding a card and clicked submit
+   * This function gets called to set all states back to default
+   */
   const cleanAllStates = () => {
-        setLoading(false); // Stop loading on success
         setTags([]);
         setOpen(false);
         setSnackbarOpen(true);
         setTitle("")
   }
 
+  /**
+   * Triggered when user clicks add button to add a new card
+   * 
+   * It first check if following states are valid:
+   * 1. {@link title} if a user forgets to input title
+   * 2. {@link repeatDuration} If a user wants to create a "PERIODIC" card,
+   * but forgot to input how ofter he wants to repeat
+   * 3. {@link newTag} if a user wants to add a tag (typed something in the box)
+   * but forgot to add it by clicking Add Tag button
+   * 
+   * @effects_error If it didn't pass above checks, it will directly return and show some errors
+   * by setting error states to true,
+   * using {@link setTitleError}, {@link setRepeatDayError}, {@link setTagError}
+   * 
+   * If it passes above check, it will then do following things:
+   * 1. reset error states using {@link setTitleError}, {@link setRepeatDayError}, {@link setTagError}
+   * 2. add a loading animation using {@link setLoading}
+   * 3. call {@link createCardAndAddToDataBase} to interact with the database to add datas
+   * 4. clean all states {@link cleanAllStates}
+   * 5. update all pages having dependency with cards update by calling {@link triggerMemoryAdded}
+   * 
+   * @effects_success database gets updated
+   * @param {Event} event - The event object associated with the form submission. This object 
+   * contains all the information about the event, including the element that triggered the event
+   * (e.g., the submit button). The `event` object is used primarily to prevent the default 
+   * form submission behavior, allowing for custom validation and data handling.
+   * 
+   * The `event` parameter is a standard DOM event object and supports all properties and methods
+   * defined by the Event interface, such as `event.preventDefault()` and `event.target`.
+   */
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+    // Prevent the default form submission behavior
+    event.preventDefault(); 
     // Check if the title is empty
     if (!title.trim()) {
-      setTitleError(true); // Show validation error
-      return; // Prevent further processing
+      // Show validation error
+      setTitleError(true); 
+      // Prevent further processing
+      return; 
     }
     if (selection === "PERIODIC" && !repeatDuration.trim()) {
       setRepeatDayError(true);
@@ -174,10 +220,23 @@ function AddMemory() {
     setTitleError(false);
     setRepeatDayError(false)
     setTagError(false)
-    setLoading(true); // Start loading
-    await createCardAndAddToDataBase()
-    cleanAllStates(); // Call cleanAllStates() after finishing adding
-    triggerMemoryAdded(); // trigger a context to refresh place need the card in all screens
+    // Start loading
+    setLoading(true); 
+    try {
+      // Try to execute the database operation
+      await createCardAndAddToDataBase();
+      // If successful, perform further actions
+      cleanAllStates(); // Reset states after successful database interaction
+      triggerMemoryAdded(); // Update UI or notify other components
+    } catch (error) {
+      // Handle any errors that occur during the database operation
+      console.error("Failed to create card and add to database:", error);
+      // Optionally, set an error state to provide feedback to the user
+      alert(error)
+    } finally {
+      // This block runs regardless of try/catch outcome
+      setLoading(false); // Ensure loading state is reset when operation is complete
+    }
   };
 
   return (
@@ -199,7 +258,6 @@ function AddMemory() {
       >
         <AddIcon />
       </Fab>
-
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -227,7 +285,6 @@ function AddMemory() {
           >
             Add Card
           </Typography>
-
           <TextField
             fullWidth
             variant="outlined"
@@ -302,7 +359,7 @@ function AddMemory() {
               id="demo-simple-select"
               value={selection.toUpperCase()} // Convert selection to uppercase
               label="Options"
-              onChange={handleChange}
+              onChange={handleCardTypeChange}
               >
               <MenuItem value="ONETIME">One-time</MenuItem>
               <MenuItem value="GENERAL">General</MenuItem>
