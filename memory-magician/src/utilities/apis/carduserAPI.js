@@ -87,7 +87,7 @@ export const updateOneUserCardLastTimeReviewDuration = async (id, duration) => {
  * @param {} dataArray - The Array of data
  *
  * @example usage:
- * const data = [{
+ * const cardData = [{
  *   userID: "069eff2b-8019-4291-aa12-a91709a0189e", // Replace with actual User ID
  *   cardID: "ee6e33b9-d593-4278-a46f-24d6c6a4f4a8", // Replace with actual Card ID
  *   reviewDuration: -1, // Duration in minutes for the review

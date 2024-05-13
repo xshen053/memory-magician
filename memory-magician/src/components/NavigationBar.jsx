@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Xiaxi Shen 2024
+ */
+
 import React, { useState } from 'react';
 import { withAuthenticator, Button } from '@aws-amplify/ui-react';
 import { NavLink } from 'react-router-dom';
@@ -19,7 +23,7 @@ const NavBar = ({ signOut }) => {
           <Button className="dropbtn">Memories</Button>
           {(
             <div className="dropdown-content">
-              <NavLink to="/memories" className={({ isActive }) => isActive ? 'active-link' : ''}>Reinforced</NavLink>
+              <NavLink to="/ReinforcedMemories" className={({ isActive }) => isActive ? 'active-link' : ''}>Reinforced</NavLink>
               <NavLink to="/plannedMemories" className={({ isActive }) => isActive ? 'active-link' : ''}>Planned</NavLink>
               <NavLink to="/panel" className={({ isActive }) => isActive ? 'active-link' : ''}>Explorer</NavLink>
               {/* Add more dropdown links here if needed */}

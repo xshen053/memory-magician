@@ -29,20 +29,35 @@ export const mutateCard = async (cardID, reviewedTimes, latestReviewDate) => {
 }
 
 /**
- * Function to create a card with specified content, tags, and type.
+ * Asynchronously creates a card in the database with the specified details.
  *
- * @param {Object} data - The data object containing card details.
- * @return cardId - the id of the newly created card
+ * This function takes a data object containing the necessary details for creating a card,
+ * such as its content, associated tags, type, the total number of review dates (if applicable),
+ * and the ID of the creator user. It returns the ID of the newly created card.
+ *
+ * @param {Object} data The data object containing card details.
+ * @param {string} data.content The content or description of the card.
+ * @param {Array<string>} data.tags An array of tags associated with the card.
+ * @param {string} data.type The type of the card (e.g., "DAILY", "GENERAL").
+ * @param {number} data.total The total number of review dates associated with the card; use -1 for cards with type "NOREVIEW".
+ * @param {string} data.creatorUserID The ID of the user creating the card.
+ * @returns {Promise<string>} A promise that resolves with the ID of the newly created card.
  * 
  * @example
- * Example usage for creating a new card
+ * // Example usage for creating a new card with specific details
  * const cardData = {
- *   content: "Django knowledge", // Description or content of the card
- *   tags: ["blind75", "leetcode"], // Array of tags associated with the card
- *   type: "DAILY", // Type of the card (e.g., DAILY, GENERAL, etc.)  
- *   total: selection === 'NOREVIEW' ? -1 : reviewDates.length 
- * 
+ *   content: "Django knowledge",
+ *   tags: ["blind75", "leetcode"],
+ *   type: "DAILY",
+ *   total: selection === 'NOREVIEW' ? -1 : reviewDates.length,
+ *   creatorUserID: "user123",
  * };
+ * 
+ * createCardApi(cardData).then(cardId => {
+ *   console.log("Created card ID:", cardId);
+ * }).catch(error => {
+ *   console.error("Failed to create card:", error);
+ * });
  */
 export const createCardApi = async (data) => {
   try {

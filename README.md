@@ -32,3 +32,15 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 `npm test`
 
 
+# How Users Benefit
+
+I have been using this application since last august, and I combine it with Anki.
+
+![alt text](./img/calendar.png)
+
+The result is to be honest, incrediable. It is a reminder for me every day to tell me what I should memorize and review every day. And During the second half of last year. Since August, I have been refreshing memories every day. This is a memory palace for me.
+![alt text](./img/reviews.png)
+
+The next step, I am gonna bring this app up, so that other studnets can benefit and build their own memory palace!
+
+

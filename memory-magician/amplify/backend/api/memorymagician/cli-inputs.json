@@ -4,10 +4,8 @@
     "apiName": "memorymagician",
     "serviceName": "AppSync",
     "defaultAuthType": {
-      "mode": "API_KEY",
-      "expirationTime": 365,
-      "apiKeyExpirationDate": "2025-02-14T07:26:27.699Z",
-      "keyDescription": ""
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authmemorymagician6532fd10"
     },
     "conflictResolution": {},
     "additionalAuthTypes": []

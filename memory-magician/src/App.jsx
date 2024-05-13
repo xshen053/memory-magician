@@ -10,12 +10,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } f
 import AddMemory from "./components/AddMemory";
 import SearchScreen from './screens/search.jsx'
 import CalendarScreen from './screens/calendar';
-import TodayReviewScreen from './screens/todayreview';
+import PlannedMemoriesScreen from './screens/PlannedMemories.jsx';
 import HomeScreen from './screens/home';
 import NavBar from './components/NavigationBar';
 import { MemoryProvider } from './context/MemoryContext.jsx';
 import Footer from './components/Footer.jsx'
-import MemoriesScreen from './screens/memories.jsx';
+import ReinforcedMemoriesScreen from './screens/ReinforcedMemories.jsx';
 import TodayHighlightScreen from './screens/Highlight.jsx';
 const initialState = { name: '', description: '' };
 const client = generateClient();
@@ -78,8 +78,8 @@ const App = ({ signOut, user }) => {
             <Route path="/home" element={<HomeScreen />} />
             <Route path="/panel" element={<SearchScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
-            <Route path="/plannedMemories" element={<TodayReviewScreen />} /> 
-            <Route path="/memories" element={<MemoriesScreen />} /> 
+            <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} /> 
+            <Route path="/ReinforcedMemories" element={<ReinforcedMemoriesScreen />} /> 
             <Route path="/highlight" element={<TodayHighlightScreen />} /> 
           </Routes>
         </div>
