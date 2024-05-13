@@ -2,8 +2,11 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
-    onCreateUser(filter: $filter) {
+  subscription OnCreateUser(
+    $filter: ModelSubscriptionUserFilterInput
+    $owner: String
+  ) {
+    onCreateUser(filter: $filter, owner: $owner) {
       cognitoID
       email
       phoneNumber
@@ -18,13 +21,17 @@ export const onCreateUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
 `;
 export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
-    onUpdateUser(filter: $filter) {
+  subscription OnUpdateUser(
+    $filter: ModelSubscriptionUserFilterInput
+    $owner: String
+  ) {
+    onUpdateUser(filter: $filter, owner: $owner) {
       cognitoID
       email
       phoneNumber
@@ -39,13 +46,17 @@ export const onUpdateUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
 `;
 export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
-    onDeleteUser(filter: $filter) {
+  subscription OnDeleteUser(
+    $filter: ModelSubscriptionUserFilterInput
+    $owner: String
+  ) {
+    onDeleteUser(filter: $filter, owner: $owner) {
       cognitoID
       email
       phoneNumber
@@ -60,13 +71,17 @@ export const onDeleteUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
 `;
 export const onCreateCard = /* GraphQL */ `
-  subscription OnCreateCard($filter: ModelSubscriptionCardFilterInput) {
-    onCreateCard(filter: $filter) {
+  subscription OnCreateCard(
+    $filter: ModelSubscriptionCardFilterInput
+    $owner: String
+  ) {
+    onCreateCard(filter: $filter, owner: $owner) {
       id
       content
       tags
@@ -74,6 +89,7 @@ export const onCreateCard = /* GraphQL */ `
       total
       deleted
       link
+      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -83,6 +99,7 @@ export const onCreateCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       users {
@@ -96,8 +113,11 @@ export const onCreateCard = /* GraphQL */ `
   }
 `;
 export const onUpdateCard = /* GraphQL */ `
-  subscription OnUpdateCard($filter: ModelSubscriptionCardFilterInput) {
-    onUpdateCard(filter: $filter) {
+  subscription OnUpdateCard(
+    $filter: ModelSubscriptionCardFilterInput
+    $owner: String
+  ) {
+    onUpdateCard(filter: $filter, owner: $owner) {
       id
       content
       tags
@@ -105,6 +125,7 @@ export const onUpdateCard = /* GraphQL */ `
       total
       deleted
       link
+      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -114,6 +135,7 @@ export const onUpdateCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       users {
@@ -127,8 +149,11 @@ export const onUpdateCard = /* GraphQL */ `
   }
 `;
 export const onDeleteCard = /* GraphQL */ `
-  subscription OnDeleteCard($filter: ModelSubscriptionCardFilterInput) {
-    onDeleteCard(filter: $filter) {
+  subscription OnDeleteCard(
+    $filter: ModelSubscriptionCardFilterInput
+    $owner: String
+  ) {
+    onDeleteCard(filter: $filter, owner: $owner) {
       id
       content
       tags
@@ -136,6 +161,7 @@ export const onDeleteCard = /* GraphQL */ `
       total
       deleted
       link
+      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -145,6 +171,7 @@ export const onDeleteCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       users {
@@ -160,8 +187,9 @@ export const onDeleteCard = /* GraphQL */ `
 export const onCreateUserCards = /* GraphQL */ `
   subscription OnCreateUserCards(
     $filter: ModelSubscriptionUserCardsFilterInput
+    $owner: String
   ) {
-    onCreateUserCards(filter: $filter) {
+    onCreateUserCards(filter: $filter, owner: $owner) {
       id
       userID
       cardID
@@ -172,6 +200,7 @@ export const onCreateUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -182,6 +211,7 @@ export const onCreateUserCards = /* GraphQL */ `
         total
         deleted
         link
+        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -191,6 +221,7 @@ export const onCreateUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -202,8 +233,9 @@ export const onCreateUserCards = /* GraphQL */ `
 export const onUpdateUserCards = /* GraphQL */ `
   subscription OnUpdateUserCards(
     $filter: ModelSubscriptionUserCardsFilterInput
+    $owner: String
   ) {
-    onUpdateUserCards(filter: $filter) {
+    onUpdateUserCards(filter: $filter, owner: $owner) {
       id
       userID
       cardID
@@ -214,6 +246,7 @@ export const onUpdateUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -224,6 +257,7 @@ export const onUpdateUserCards = /* GraphQL */ `
         total
         deleted
         link
+        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -233,6 +267,7 @@ export const onUpdateUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -244,8 +279,9 @@ export const onUpdateUserCards = /* GraphQL */ `
 export const onDeleteUserCards = /* GraphQL */ `
   subscription OnDeleteUserCards(
     $filter: ModelSubscriptionUserCardsFilterInput
+    $owner: String
   ) {
-    onDeleteUserCards(filter: $filter) {
+    onDeleteUserCards(filter: $filter, owner: $owner) {
       id
       userID
       cardID
@@ -256,6 +292,7 @@ export const onDeleteUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -266,6 +303,7 @@ export const onDeleteUserCards = /* GraphQL */ `
         total
         deleted
         link
+        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -275,6 +313,7 @@ export const onDeleteUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt

@@ -18,6 +18,7 @@ export const getUser = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -44,6 +45,7 @@ export const listUsers = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -61,6 +63,7 @@ export const getCard = /* GraphQL */ `
       total
       deleted
       link
+      owner
       lastReviewDate
       creatorUserID
       creator {
@@ -70,6 +73,7 @@ export const getCard = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       users {
@@ -97,6 +101,7 @@ export const listCards = /* GraphQL */ `
         total
         deleted
         link
+        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -121,6 +126,7 @@ export const getUserCards = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       card {
@@ -131,6 +137,7 @@ export const getUserCards = /* GraphQL */ `
         total
         deleted
         link
+        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -140,6 +147,7 @@ export const getUserCards = /* GraphQL */ `
       iteration
       isReviewed
       reviewDuration
+      owner
       lastTimeReviewDuration
       reviewDate
       createdAt
@@ -162,6 +170,7 @@ export const listUserCards = /* GraphQL */ `
         iteration
         isReviewed
         reviewDuration
+        owner
         lastTimeReviewDuration
         reviewDate
         createdAt
@@ -195,6 +204,7 @@ export const usersByEmail = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -227,6 +237,7 @@ export const cardsByCreatorUserIDAndContent = /* GraphQL */ `
         total
         deleted
         link
+        owner
         lastReviewDate
         creatorUserID
         createdAt
@@ -262,6 +273,7 @@ export const userCardsByUserIDAndCardID = /* GraphQL */ `
         iteration
         isReviewed
         reviewDuration
+        owner
         lastTimeReviewDuration
         reviewDate
         createdAt
@@ -297,6 +309,7 @@ export const userCardsByCardIDAndUserID = /* GraphQL */ `
         iteration
         isReviewed
         reviewDuration
+        owner
         lastTimeReviewDuration
         reviewDate
         createdAt
