@@ -1,17 +1,23 @@
 {
   "api": {
     "memorymagician": {
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "memorymagician6532fd10"
+        }
+      ],
       "output": {
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "apiKeyConfig": {
-              "apiKeyExpirationDate": "2025-02-14T07:26:27.699Z",
-              "apiKeyExpirationDays": 365,
-              "description": ""
-            },
-            "authenticationType": "API_KEY"
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authmemorymagician6532fd10"
+            }
           }
         }
       },
@@ -52,7 +58,6 @@
       "dependsOn": [
         {
           "attributes": [
-            "GraphQLAPIKeyOutput",
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
           ],
