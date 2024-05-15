@@ -75,10 +75,10 @@ const App = ({ signOut, user }) => {
           {/* Main content */}
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<HomeScreen />} />
+            <Route path="/home" element={<PlannedMemoriesScreen />} />
             <Route path="/panel" element={<SearchScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
-            <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} /> 
+            {/* <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} />  */}
             <Route path="/ReinforcedMemories" element={<ReinforcedMemoriesScreen />} /> 
             <Route path="/highlight" element={<TodayHighlightScreen />} /> 
           </Routes>
