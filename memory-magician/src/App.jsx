@@ -17,6 +17,7 @@ import { MemoryProvider } from './context/MemoryContext.jsx';
 import Footer from './components/Footer.jsx'
 import ReinforcedMemoriesScreen from './screens/ReinforcedMemories.jsx';
 import TodayHighlightScreen from './screens/Highlight.jsx';
+import Banner from './components/Banner.jsx';
 const initialState = { name: '', description: '' };
 const client = generateClient();
 
@@ -68,6 +69,7 @@ const App = ({ signOut, user }) => {
         <div className="user-greeting">
           Hello, {userEmail}!
         </div>      
+        <Banner />
         <NavBar /> {/* NavBar is always displayed */}
         <div className="App">
         <div className="site-container">
