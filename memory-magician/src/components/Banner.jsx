@@ -19,11 +19,11 @@ const Banner = () => {
           Welcome to Merym! A platform revolutionizes task planning with smart, scientifically-backed scheduling to boost productivity and learning efficiency.
           <br></br>
         </h1>
-        <h2>
+        <h1>
           <a href="https://docs.google.com/document/d/1b_OJgL8P6szx9_sLAQXc9_NvQHuS7cmdAITq4Y3raa4/edit?usp=sharing" target="_blank" rel="noopener noreferrer">
-            Click here to get started!
+            Click here to quick start!
           </a>
-        </h2>
+        </h1>
       </div>
     )
   );
