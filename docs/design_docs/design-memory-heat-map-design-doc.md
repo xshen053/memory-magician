@@ -15,12 +15,26 @@ User has lots of general memories, he wants to know the progress so far. A visua
 ### Functional Requirements
 - User should be able to see status of all their general memories through this board
 - These blocks are sorted by title of each memory
+- The color of a block indicates its last review time, user is able to set threshold on their own.
+e.g., if user sets a value to be 14.
+- It will show color of memories reviewed in past 14 days from a gradient
+- But for memories > 14, they will all be transparent
+
 - When user hovers over a block, it will show following information of that card
   - title
-  - last review
-  - also, visualize the forgetting curve of the memory
-- If user clicks that block, it will open a small window, so that user can check information of that memory, same as 
-this page: https://mymemorycompanion.com/ReinforcedMemories
+  - last reviewed day
+- If user clicks a block, it will open a small window, showing information of this memory
+  - title
+  - last review date
+  - review total times
+  - a review plot of that memory
+- below the heatmap, there will be a summary
+  - you reviewed xx% of your general memories (num / total) in the past y days
+  - xx% of memories haven't been reviewed in the past y days
+  - xx% of memories have never been reviewed since added
+
+
+
 
 ### Non-Functional Requirements
 - The board should be responsive and work on desktop

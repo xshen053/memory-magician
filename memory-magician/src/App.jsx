@@ -17,6 +17,7 @@ import { MemoryProvider } from './context/MemoryContext.jsx';
 import Footer from './components/Footer.jsx'
 import ReinforcedMemoriesScreen from './screens/ReinforcedMemories.jsx';
 import TodayHighlightScreen from './screens/Highlight.jsx';
+import MemoryHeatMapScreen from './screens/MemoryHeatMapScreen.jsx';
 const initialState = { name: '', description: '' };
 const client = generateClient();
 
@@ -80,6 +81,7 @@ const App = ({ signOut, user }) => {
             <Route path="/calendar" element={<CalendarScreen />} /> 
             <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} /> 
             <Route path="/ReinforcedMemories" element={<ReinforcedMemoriesScreen />} /> 
+            <Route path="/MemoryPalace" element={<MemoryHeatMapScreen />} /> 
             <Route path="/highlight" element={<TodayHighlightScreen />} /> 
           </Routes>
         </div>
