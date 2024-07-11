@@ -2,10 +2,24 @@
 
 Authors: [Xiaxi Shen](https://github.com/xshen053)
 
+## Table of Contents
+
+1. [Project Description](#project-description)  
+   1.1 [Goal](#goal)  
+   1.2 [tech stack](#tech-stack)
+2. [Software Architecture](#software-architecture)
+3. [Project Demo](#project-demo)
+4. [Testing](#testing)  
+   4.1 [Run Test](#run-test)
+5. [How Users Benefit](#how-users-benefit)
+
 ## Project Description
 
-- The goal of this project is to build a task management tool to help student or anyone who has a need to manage their task and learning plans succeed.
+### Goal
+- The goal of this project is to build a task management tool to help student or anyone who has a need to manage their task and learning plans to succeed.
 
+
+### Tech stack
 - The languages/tools/technologies I used.
 
   - [React](https://react.dev/) -  Using react for frontend
@@ -24,6 +38,12 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 ![avatar](./img/sw_arch.png)
 
 ## Project Demo
+
+### Feature: memory palace
+> This is a screen where user can see visualized heatmap of their general memories, this can help user understand reviewing progress of each of their memories and help them prioritize which memory they should review first
+
+![heatmap](./img/heatmap.gif)
+
 
 # Testing
 
