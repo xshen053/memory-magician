@@ -1,6 +1,8 @@
-# Memory Mate
+# Memory Mate (Merym)
 
-Authors: [Xiaxi Shen](https://github.com/xshen053)
+Author: [Xiaxi Shen](https://github.com/xshen053)
+
+[Connect on Linkedin](https://www.linkedin.com/in/xiaxishen)
 
 ## Table of Contents
 
@@ -12,6 +14,7 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 4. [Testing](#testing)  
    4.1 [Run Test](#run-test)
 5. [How Users Benefit](#how-users-benefit)
+6. [Get Started!](#get-started)
 
 ## Project Description
 
@@ -41,6 +44,10 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 ![avatar](./img/sw_arch.png)
 
 ## Project Demo
+
+
+
+### Feature: 
 
 ### Feature: memory palace
 
@@ -73,4 +80,12 @@ The result is to be honest, incrediable. It is a reminder for me every day to te
 
 The next step, I am gonna bring this app up, so that other studnets can benefit and build their own memory palace!
 
+
+# Get Started
+
+https://docs.google.com/document/d/1b_OJgL8P6szx9_sLAQXc9_NvQHuS7cmdAITq4Y3raa4/edit?usp=sharing
+
+You can follow this guide to create all different types of memories (now it has 4 different types) to understand this platform better. 
+
+> Estimated time: 5 minutes
 
