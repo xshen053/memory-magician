@@ -1,0 +1,44 @@
+/* src/css/Banner.css */
+.banner {
+  background-color: pink;
+  color: palevioletred;
+  padding: 0 0px; /* Added top padding */
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  position: relative; /* Added to position the close button */
+}
+
+.banner h1 {
+  margin: 0;
+  font-size: 1.5em; /* Reduced font size */
+}
+
+.banner h2 {
+  margin: 10px 0 0;
+  font-size: 1em; /* Reduced font size */
+}
+
+.banner a {
+  color: blue;
+  text-decoration: underline;
+}
+
+.banner a:hover {
+  text-decoration: none;
+}
+
+.close-button {
+  position: absolute; /* Positioning the close button */
+  top: 10px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #ff0000; /* Change color on hover */
+}
