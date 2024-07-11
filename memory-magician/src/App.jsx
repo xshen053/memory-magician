@@ -18,6 +18,7 @@ import Footer from './components/Footer.jsx'
 import ReinforcedMemoriesScreen from './screens/ReinforcedMemories.jsx';
 import TodayHighlightScreen from './screens/Highlight.jsx';
 import MemoryHeatMapScreen from './screens/MemoryHeatMapScreen.jsx';
+import Banner from './components/Banner.jsx';
 const initialState = { name: '', description: '' };
 const client = generateClient();
 
@@ -69,6 +70,7 @@ const App = ({ signOut, user }) => {
         <div className="user-greeting">
           Hello, {userEmail}!
         </div>      
+        <Banner />
         <NavBar /> {/* NavBar is always displayed */}
         <div className="App">
         <div className="site-container">
@@ -76,10 +78,10 @@ const App = ({ signOut, user }) => {
           {/* Main content */}
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<HomeScreen />} />
+            <Route path="/home" element={<PlannedMemoriesScreen />} />
             <Route path="/panel" element={<SearchScreen />} />
             <Route path="/calendar" element={<CalendarScreen />} /> 
-            <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} /> 
+            {/* <Route path="/plannedMemories" element={<PlannedMemoriesScreen />} />  */}
             <Route path="/ReinforcedMemories" element={<ReinforcedMemoriesScreen />} /> 
             <Route path="/MemoryPalace" element={<MemoryHeatMapScreen />} /> 
             <Route path="/highlight" element={<TodayHighlightScreen />} /> 

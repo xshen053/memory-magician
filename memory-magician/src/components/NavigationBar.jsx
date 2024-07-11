@@ -16,7 +16,7 @@ const NavBar = ({ signOut }) => {
       </div>
       
       <div className="nav-links">
-        <NavLink to="/home" className={({ isActive }) => isActive ? 'active-link' : ''}>Home</NavLink>
+        <NavLink to="/home" className={({ isActive }) => isActive ? 'active-link' : ''}>Today's Memories (To-do)</NavLink>
         <NavLink to="/highlight" className={({ isActive }) => isActive ? 'active-link' : ''}>Today's Highlight</NavLink>
         <NavLink to="/calendar" className={({ isActive }) => isActive ? 'active-link' : ''}>Calendar</NavLink>
         <div className="dropdown">
