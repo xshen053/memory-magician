@@ -6,7 +6,7 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 
 1. [Project Description](#project-description)  
    1.1 [Goal](#goal)  
-   1.2 [tech stack](#tech-stack)
+   1.2 [Tech stack](#tech-stack)
 2. [Software Architecture](#software-architecture)
 3. [Project Demo](#project-demo)
 4. [Testing](#testing)  
@@ -24,14 +24,17 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 
   - [React](https://react.dev/) -  Using react for frontend
 
-  - [Aws Amplify](https://aws.amazon.com/amplify) - Using amplify to provide backend service
+  - [AWS Amplify](https://aws.amazon.com/amplify) - Using amplify to provide backend service
+
+  - [AWS Dynamodb](https://aws.amazon.com/dynamodb/) - I used aws dynamodb for data model
 
   - [Javascript](https://www.javascript.com/) - I used javascript programming language
 
   - [Visual Studio Code](https://code.visualstudio.com/) - I used VS Code as Integrated development environment.
 
-
   - [Jest](https://jestjs.io/) - I used jest for testing
+  
+  - [Github Action](https://docs.github.com/en/actions) - I used github action for CI/CD
 
 ## Software Architecture
 
@@ -40,9 +43,16 @@ Authors: [Xiaxi Shen](https://github.com/xshen053)
 ## Project Demo
 
 ### Feature: memory palace
+
+https://mymemorycompanion.com/MemoryPalace
+
 > This is a screen where user can see visualized heatmap of their general memories, this can help user understand reviewing progress of each of their memories and help them prioritize which memory they should review first
 
 ![heatmap](./img/heatmap.gif)
+
+If you move the cursor to a certain cell, it will show up what memory it is
+
+![heatmap-with-cursor](./img/heatmap-with-cursor.gif)
 
 
 # Testing
