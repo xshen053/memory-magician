@@ -24,7 +24,8 @@ const NavBar = ({ signOut }) => {
           {(
             <div className="dropdown-content">
               <NavLink to="/ReinforcedMemories" className={({ isActive }) => isActive ? 'active-link' : ''}>Reinforced</NavLink>
-              {/* <NavLink to="/plannedMemories" className={({ isActive }) => isActive ? 'active-link' : ''}>Planned</NavLink> */}
+              <NavLink to="/plannedMemories" className={({ isActive }) => isActive ? 'active-link' : ''}>Planned</NavLink>
+              <NavLink to="/MemoryPalace" className={({ isActive }) => isActive ? 'active-link' : ''}>Palace</NavLink>
               <NavLink to="/panel" className={({ isActive }) => isActive ? 'active-link' : ''}>Explorer</NavLink>
               {/* Add more dropdown links here if needed */}
             </div>
