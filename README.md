@@ -82,10 +82,9 @@ The next step, I am gonna bring this app up, so that other studnets can benefit 
 
 
 # Get Started
-
-https://docs.google.com/document/d/1b_OJgL8P6szx9_sLAQXc9_NvQHuS7cmdAITq4Y3raa4/edit?usp=sharing
-
 You can follow this guide to create all different types of memories (now it has 4 different types) to understand this platform better. 
 
 > Estimated time: 5 minutes
+
+https://docs.google.com/document/d/1b_OJgL8P6szx9_sLAQXc9_NvQHuS7cmdAITq4Y3raa4/edit?usp=sharing
 
