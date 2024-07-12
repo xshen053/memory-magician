@@ -4,17 +4,26 @@ Author: [Xiaxi Shen](https://github.com/xshen053)
 
 [Connect on Linkedin](https://www.linkedin.com/in/xiaxishen)
 
+
 ## Table of Contents
 
-1. [Project Description](#project-description)  
-   1.1 [Goal](#goal)  
-   1.2 [Tech stack](#tech-stack)
-2. [Software Architecture](#software-architecture)
-3. [Project Demo](#project-demo)
-4. [Testing](#testing)  
-   4.1 [Run Test](#run-test)
-5. [How Users Benefit](#how-users-benefit)
-6. [Get Started!](#get-started)
+- [Project Description](#project-description)  
+  - [Goal](#goal)
+  - [Tech stack](#tech-stack)
+- [Software Architecture](#software-architecture)
+- [Demo](#project-demo)
+  - [Features](#features)
+    - [1 - Today's Memories](#1---todays-memories)
+    - [2 - Today's Highlight](#2---todays-highlight)
+    - [3 - Calendar](#3---calendar)
+    - [4 - Reinforced Memories](#4---reinforced-memories)
+    - [5 - Memory Palace](#5---memory-palace)
+    - [6 - Explorer](#6---explorer)
+    - [7 - Sign in / Sign Out](#7---sign-in-sign-out)
+- [Testing](#testing)
+  - [Run Test](#run-test)
+- [How Users Benefit](#how-users-benefit)
+- [Get Started!](#get-started)
 
 ## Project Description
 
@@ -47,9 +56,34 @@ Author: [Xiaxi Shen](https://github.com/xshen053)
 
 
 
-### Feature: 
+### Features
 
-### Feature: memory palace
+#### 0 - Add memories
+> A button on the right bottom corner that user uses to add memory
+
+#### 1 - Today's Memories
+> This is the screen showing user all memories it suggests you to refresh today
+![today-todo](./img/feature-today-memory-1.gif)
+
+
+#### 2 - Today's Highlight
+> This is the screen showing all memories you refreshed today
+![hightlight1](./img/feature-today-hightlight-1.gif)
+
+
+#### 3 - Calendar
+> This is the screen showing a calendar so that you can see what memories you need to check or you already refreshed every day
+
+#### 4 - Reinforced memories
+> This is the screen where user can see information of user's all general memories (reinforced memory) including information like
+- last review date
+- creation date
+- review times
+- title
+
+![reinforced1](./img/feature-reinforced-1.gif)
+
+#### 5 - memory palace
 
 https://mymemorycompanion.com/MemoryPalace
 
@@ -61,6 +95,13 @@ If you move the cursor to a certain cell, it will show up what memory it is
 
 ![heatmap-with-cursor](./img/heatmap-with-cursor.gif)
 
+#### 6 - Explorer
+> A page to search all memories (4 types) a user added
+
+![explorer](./img/feature-explorer-1.gif)
+
+#### 7 - Sign in Sign Out
+![sign-in-out](./img/feature-sign-in-out.gif)
 
 # Testing
 
