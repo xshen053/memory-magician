@@ -85,6 +85,8 @@ Author: [Xiaxi Shen](https://github.com/xshen053)
 
 #### 5 - memory palace
 
+*The latest feature!*
+
 https://mymemorycompanion.com/MemoryPalace
 
 > This is a screen where user can see visualized heatmap of their general memories, this can help user understand reviewing progress of each of their memories and help them prioritize which memory they should review first
